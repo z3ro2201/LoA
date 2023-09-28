@@ -3,6 +3,7 @@
 node_modules/
 dist/
 
+src/config/config.ts
 src/functions/check/getLostarkServerStatus.ts
 
 .env
