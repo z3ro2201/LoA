@@ -1,0 +1,39 @@
+import axios from 'axios'
+import global from '../../config/config'
+
+async function getEquipmentText(characterName: string) {
+    const apiUrl = `${global.apiUrl.lostark}armories/characters/${characterName}?filters=profiles%2Bequipment`;
+
+    try {
+        const response = await axios.get(apiUrl, {
+            headers: global.token.lostarkHeader
+        });
+
+        const data = response.data;
+        const profile = data.ArmoryProfile;
+        const equipment = data.ArmoryEquipment;
+
+        // 서버 응답을 파싱하여 캐릭터 정보를 추출
+        const engravingArr = [];
+        let i: number = 0;
+        let qualityValue: number = 0;
+        for(let tmp of equipment) {
+            if(i > 5) break;
+            const toolTips = tmp.Tooltip.replace(global.regex.htmlEntity, '');
+            const quality = JSON.parse(toolTips).Element_001.value.qualityValue;
+            engravingArr.push(`${tmp.Grade}  ${tmp.Type}    ${tmp.Name} (품질: ${quality})`);
+            qualityValue += parseInt(quality);
+            i++;
+        }
+
+        const characterData = `[${profile.ServerName}] ${profile.CharacterName}\n\n
+        ${engravingArr.join('\n')}\n
+        아이템레벨: ${profile.ItemMaxLevel}\n
+        평균품질: ${qualityValue/6}`;
+        return characterData;
+    } catch (error) {
+        throw error; // 오류를 호출자로 던짐
+    }
+}
+
+export default getEquipmentText;
