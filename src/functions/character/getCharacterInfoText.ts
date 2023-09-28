@@ -53,16 +53,14 @@ async function getCharacterInfoText(characterName: string) {
         }
         engravingText = (engravingText !== '') ? `[각인정보]\n${engravingText}\n` : '';
 
-        const characterData = `[${profile.CharacterClassName}]\n${characterTitle}\n\n
-        [캐릭터 기본정보]\n
-        템/전/원      ${profile.ItemAvgLevel}/${profile.CharacterLevel}/${profile.ExpeditionLevel}\n
-        서버/길드     ${profile.ServerName}/${guildName}\n
-        체력/공격력    ${profile.Stats[6].Value}/${profile.Stats[7].Value}\n
-        스킬포인트     ${profile.UsingSkillPoint}/${profile.TotalSkillPoint}\n
-        \n
-        [PVP정보] PVP 등급: ${profile.PvpGradeName}\n\n
-        ${engravingText}
-        ${statsText}`;
+        const characterData = `[${profile.CharacterClassName}]\n${characterTitle}\n\n` +
+                              `[캐릭터 기본정보]\n` +
+                              `템/전/원      ${profile.ItemAvgLevel}/${profile.CharacterLevel}/${profile.ExpeditionLevel}\n` +
+                              `서버/길드     ${profile.ServerName}/${guildName}\n` +
+                              `체력/공격력    ${profile.Stats[6].Value}/${profile.Stats[7].Value}\n` +
+                              `스킬포인트     ${profile.UsingSkillPoint}/${profile.TotalSkillPoint}\n\n` +
+                              `${engravingText}` +
+                              `${statsText}`;
         return characterData;
     } catch (error) {
         throw error; // 오류를 호출자로 던짐
