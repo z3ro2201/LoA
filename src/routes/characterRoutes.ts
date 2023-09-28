@@ -13,6 +13,7 @@ import getAccessoryText from '../functions/character/getCharacterAccessoryText'
 import getCharacterGemText from '../functions/character/getCharacterGemText'
 import getCharacterSkillText from '../functions/character/getCharacterSkills'
 import getCharacterCardText from '../functions/character/getCharacterCardText'
+import getCharacterCollectText from '../functions/character/getCharacterCollect'
 
 const characterRouter: Router = express.Router();
 
@@ -218,6 +219,26 @@ characterRouter.get('/:characterName/cards', async (req: Request, res: Response)
     const characterName = req.params.characterName;
     try {
         const characterData = await getCharacterCardText(characterName);
+        res.status(200).send({
+            code: 200,
+            message: '정상적으로 처리되었습니다.',
+            characterData: characterData
+        })
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            error: {
+                message: "처리과정에 문제가 발생하였습니다."
+            }
+        })
+    }
+});
+
+// 내실정보
+characterRouter.get('/:characterName/collects', async (req: Request, res: Response) => {
+    const characterName = req.params.characterName;
+    try {
+        const characterData = await getCharacterCollectText(characterName);
         res.status(200).send({
             code: 200,
             message: '정상적으로 처리되었습니다.',
