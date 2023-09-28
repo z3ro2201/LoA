@@ -3,7 +3,7 @@ import characterRouter from './routes/characterRoutes'
 import checkRouter from './routes/checkRoutes'
 
 const app: Application = express();
-const port:Number = 3000;
+const port:Number = 5000;
 
 app.disable('x-powered-by');
 

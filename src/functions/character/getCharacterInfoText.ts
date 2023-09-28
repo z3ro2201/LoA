@@ -53,7 +53,7 @@ async function getCharacterInfoText(characterName: string) {
         }
         engravingText = (engravingText !== '') ? `[각인정보]\n${engravingText}\n` : '';
 
-        const characterData = `[${profile.CharacterClassName}]\n${characterTitle}\n\n` +
+        const characterData = `[${profile.CharacterClassName}]\n${characterTitle}${profile.CharacterName}\n\n` +
                               `[캐릭터 기본정보]\n` +
                               `템/전/원      ${profile.ItemAvgLevel}/${profile.CharacterLevel}/${profile.ExpeditionLevel}\n` +
                               `서버/길드     ${profile.ServerName}/${guildName}\n` +
