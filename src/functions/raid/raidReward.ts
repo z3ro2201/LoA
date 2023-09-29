@@ -339,9 +339,7 @@ export const raidRewardKarmenHard = (isGold: string) => {
         }
     }
     else {
-        for(var i = 1; i <= 4; i++) {
-            message += `\n[1관문] 골드: ${reward.checkpoint_1}\n재료: 어둠의 볼x6, 마력의 샘물x6\n더보기 재료: 어둠의 볼x6, 마력의 샘물x6 (필요 골드: 2,000 골드)\n\n[2관문] 골드: ${reward.checkpoint_2}\n재료: 어둠의 볼x8, 마력의 샘물x9\n더보기 재료: 어둠의 볼x8, 마력의 샘물x9 (필요 골드: 2,400 골드)\n\n[3관문] 골드: ${reward.checkpoint_3}\n재료: 어둠의 볼x12, 마력의 샘물x12, 농축 돌파석x9,야금술(또는 재봉술)x1, 혼돈의돌x7\n더보기 재료: 어둠의 볼x12, 마력의 샘물x12, 농축 돌파석x5 (필요 골드: 2,800 골드)\n\n[4관문] 골드: ${reward.checkpoint_4}\n재료: 어둠의 볼x12, 마력의 샘물x12, 농축 돌파석x12, 야금술(또는 재봉술) 복합x1, 혼돈의 돌x10\n더보기 재료: 어둠의 볼x12, 마력의 샘물x12, 농축 돌파석x7 (필요 골드: 3,600 골드)\n\n[합계] 골드: ${reward.total}, 더보기 필요 골드: 10,800골드, 재료: 어둠의 볼x38, 마력의 샘물x39, 야금술(또는 재봉술) 특화x1, 혼돈의돌x17 더보기재료: 어둠의 볼x38, 마력의 샘물x39, 농축 돌파석x12\n\nhttps://loaapi.2er0.io/assets/images/Karmen/hard.png`
-        }
+        message += `\n[1관문] 골드: ${reward.checkpoint_1}\n재료: 어둠의 볼x6, 마력의 샘물x6\n더보기 재료: 어둠의 볼x6, 마력의 샘물x6 (필요 골드: 2,000 골드)\n\n[2관문] 골드: ${reward.checkpoint_2}\n재료: 어둠의 볼x8, 마력의 샘물x9\n더보기 재료: 어둠의 볼x8, 마력의 샘물x9 (필요 골드: 2,400 골드)\n\n[3관문] 골드: ${reward.checkpoint_3}\n재료: 어둠의 볼x12, 마력의 샘물x12, 농축 돌파석x9,야금술(또는 재봉술)x1, 혼돈의돌x7\n더보기 재료: 어둠의 볼x12, 마력의 샘물x12, 농축 돌파석x5 (필요 골드: 2,800 골드)\n\n[4관문] 골드: ${reward.checkpoint_4}\n재료: 어둠의 볼x12, 마력의 샘물x12, 농축 돌파석x12, 야금술(또는 재봉술) 복합x1, 혼돈의 돌x10\n더보기 재료: 어둠의 볼x12, 마력의 샘물x12, 농축 돌파석x7 (필요 골드: 3,600 골드)\n\n[합계] 골드: ${reward.total}, 더보기 필요 골드: 10,800골드, 재료: 어둠의 볼x38, 마력의 샘물x39, 야금술(또는 재봉술) 특화x1, 혼돈의돌x17 더보기재료: 어둠의 볼x38, 마력의 샘물x39, 농축 돌파석x12\n\nhttps://loaapi.2er0.io/assets/images/Karmen/hard.png`
     }
     return message;
 }
