@@ -33,7 +33,7 @@ async function getCharacterSkillText(characterName: string) {
                     if(TripodsTmp.IsSelected === true)
                         tmpTripods.push(`[${TripodsTmp.Tier} 티어] Lv ${TripodsTmp.Level}. ${TripodsTmp.Name}`);
                 }
-                tripodsArr.push(tmpTripods.join('\n'));
+                if(tmpTripods.length > 0) tripodsArr.push(tmpTripods.join('\n'));
             }
             const runeData = (tmp.Rune !== null) ? `(룬: ${tmp.Rune.Name}[${tmp.Rune.Grade}])` : ``;
             const tripods = (tripodsArr.length > 0) ? `<트라이포드>\n${tripodsArr.join('\n')}` : '';
