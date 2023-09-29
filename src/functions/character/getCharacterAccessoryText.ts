@@ -17,7 +17,7 @@ async function getAccessoryText(characterName: string) {
         const engravingArr = [];
         let i: number = 0;
         for(let tmp of equipment) {
-            if(i > 5 && i < 12) {
+            if(i > 5 && i < 13) {
                 const toolTips = tmp.Tooltip.replace(global.regex.htmlEntity, '');
                 const quality = (i < 11) ? JSON.parse(toolTips).Element_001.value.qualityValue : 0;
                 const qualityText = (i < 11) ? `(품질: ${quality})` : '';
@@ -40,9 +40,7 @@ async function getAccessoryText(characterName: string) {
             i++;
         }
 
-        const characterData = `[${profile.ServerName}] ${profile.CharacterName}\n\n
-        ${engravingArr.join('\n')}\n
-        아이템레벨: ${profile.ItemMaxLevel}`;
+        const characterData = `[${profile.ServerName}] ${profile.CharacterName}\n\n${engravingArr.join('\n')}\n아이템레벨: ${profile.ItemMaxLevel}`;
         return characterData;
     } catch (error) {
         throw error; // 오류를 호출자로 던짐

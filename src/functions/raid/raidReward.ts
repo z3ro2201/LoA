@@ -288,7 +288,7 @@ export const raidRewardSangatapHard = (isGold: string) => {
         checkpoint_4: '6,000 골드',
         total: '14,500 골드'
     };
-    let message = `[상아탑(노말) 하드]\n입장가능 레벨: ${reward.level}`;
+    let message = `[상아탑(하드) 보상]\n입장가능 레벨: ${reward.level}`;
     if(isGold === "true") {
         for (var i = 1; i <= 4; i++) {
             const checkpoint = 'checkpoint_' + i;
@@ -297,6 +297,52 @@ export const raidRewardSangatapHard = (isGold: string) => {
         }
     }
     else message += `\n[1관문] 골드: ${reward.checkpoint_1}\n재료: 지혜의기운x2\n더보기 재료: 지혜의기운x2 (필요 골드: 1,000골드)\n\n[2관문] 골드: ${reward.checkpoint_2}\n재료: 지혜의기운x2\n더보기 재료: 지혜의기운x2 (필요 골드: 1,000골드)\n\n[3관문] 골드: ${reward.checkpoint_3}\n재료: 지혜의기운x3\n더보기 재료: 지혜의기운x3 (필요 골드: 1,500골드)\n\n[4관문] 골드: ${reward.checkpoint_4}\n재료: 지혜의기운x1, 엘릭서x1\n더보기 재료: 지혜의기운x1, 엘릭서x1 (필요 골드: 2,000골드)\n\n[합계] 골드: ${reward.total}, 더보기 필요 골드: 5,500골드, 재료: 지혜의기운x8, 엘릭서x1, 더보기 재료: 지혜의기운x8, 엘릭서x1\n\nhttps://loaapi.2er0.io/assets/images/Sangatap/hard.png`
+    return message;
+}
+
+
+export const raidRewardKarmenNormal = (isGold: string) => {
+    const reward = {
+        level: '1,610',
+        checkpoint_1: '3,500 골드',
+        checkpoint_2: '4,000 골드',
+        checkpoint_3: '5,500 골드',
+        total: '13,000 골드'
+    };
+    let message = `[카멘(노말) 보상]\n입장가능 레벨: ${reward.level}`;
+    if(isGold === "true") {
+        for (var i = 1; i <= 4; i++) {
+            const checkpoint = 'checkpoint_' + i;
+            const checkpoint_key = reward[checkpoint];
+            message += `\n[${i}관문]\n 획득가능 골드: ${checkpoint_key}\n`;
+        }
+    }
+    else message += `\n[1관문] 골드: ${reward.checkpoint_1}\n재료: 어둠의 볼x3, 마력의 샘물x2\n더보기 재료: 어둠의 볼x3, 마력의 샘물x2 (필요 골드: 1,500 골드)\n\n[2관문] 골드: ${reward.checkpoint_2}\n재료: 어둠의 볼x4, 마력의 샘물x3\n더보기 재료: 어둠의 볼x4, 마력의 샘물x3 (필요 골드: 1,800 골드)\n\n[3관문] 골드: ${reward.checkpoint_3}\n재료: 어둠의 볼x6, 마력의 샘물x4, 농축 돌파석x5, 야금술(또는 재봉술) 특화x1, 혼돈의 돌x5\n더보기 재료: 어둠의 볼x6, 마력의 샘물x4, 농축 돌파석x3 (필요 골드: 2,500 골드)\n\n[합계] 골드: ${reward.total}, 더보기 필요 골드: 5,800골드, 재료: 어둠의 볼x13, 마력의 샘물x9, 농축 돌파석x5, 야금술(또는 재봉술) 특화x1, 혼돈의 돌x5, 더보기 재료: 어둠의 볼x13, 마력의 샘물x9, 농축 돌파석x3\n\nhttps://loaapi.2er0.io/assets/images/Karmen/normal.png`
+    return message;
+}
+
+export const raidRewardKarmenHard = (isGold: string) => {
+    const reward = {
+        level: '1,630',
+        checkpoint_1: '5,000 골드',
+        checkpoint_2: '6,000 골드',
+        checkpoint_3: '9,000 골드',
+        checkpoint_4: '21,000 골드',
+        total: '41,000 (20,000) 골드'
+    };
+    let message = `[카멘(하드) 보상]\n입장가능 레벨: ${reward.level}`;
+    if(isGold === "true") {
+        for (var i = 1; i <= 4; i++) {
+            const checkpoint = 'checkpoint_' + i;
+            const checkpoint_key = reward[checkpoint];
+            message += `\n[${i}관문]\n 획득가능 골드: ${checkpoint_key}\n`;
+        }
+    }
+    else {
+        for(var i = 1; i <= 4; i++) {
+            message += `\n[1관문] 골드: ${reward.checkpoint_1}\n재료: 어둠의 볼x6, 마력의 샘물x6\n더보기 재료: 어둠의 볼x6, 마력의 샘물x6 (필요 골드: 2,000 골드)\n\n[2관문] 골드: ${reward.checkpoint_2}\n재료: 어둠의 볼x8, 마력의 샘물x9\n더보기 재료: 어둠의 볼x8, 마력의 샘물x9 (필요 골드: 2,400 골드)\n\n[3관문] 골드: ${reward.checkpoint_3}\n재료: 어둠의 볼x12, 마력의 샘물x12, 농축 돌파석x9,야금술(또는 재봉술)x1, 혼돈의돌x7\n더보기 재료: 어둠의 볼x12, 마력의 샘물x12, 농축 돌파석x5 (필요 골드: 2,800 골드)\n\n[4관문] 골드: ${reward.checkpoint_4}\n재료: 어둠의 볼x12, 마력의 샘물x12, 농축 돌파석x12, 야금술(또는 재봉술) 복합x1, 혼돈의 돌x10\n더보기 재료: 어둠의 볼x12, 마력의 샘물x12, 농축 돌파석x7 (필요 골드: 3,600 골드)\n\n[합계] 골드: ${reward.total}, 더보기 필요 골드: 10,800골드, 재료: 어둠의 볼x38, 마력의 샘물x39, 야금술(또는 재봉술) 특화x1, 혼돈의돌x17 더보기재료: 어둠의 볼x38, 마력의 샘물x39, 농축 돌파석x12\n\nhttps://loaapi.2er0.io/assets/images/Karmen/hard.png`
+        }
+    }
     return message;
 }
 
