@@ -263,9 +263,9 @@ export const raidRewardSangatapNormal = (isGold: string) => {
         level: '1,600',
         checkpoint_1: '1,500 골드',
         checkpoint_2: '1,750 골드',
-        checkpoint_3: '2,250 골드',
+        checkpoint_3: '2,500 골드',
         checkpoint_4: '3,250 골드',
-        total: '8,750 골드'
+        total: '9,000 골드'
     };
     let message = `[상아탑(노말) 보상]\n입장가능 레벨: ${reward.level}`;
     if(isGold === "true") {
