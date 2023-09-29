@@ -34,7 +34,7 @@ async function getCharacterCardText(characterName: string) {
         const characterTitle = (profile.Title === null) ? '' : `${profile.Title}`;
         const cardList = (cardsArr.length > 0) ? `${cardsArr.join('\n')}` : '장착중인 카드가 없습니다.';
         const cardEffect = (cardEffectArr.length > 0) ? `\n[세트효과]\n${cardEffectArr.join('\n')}` : '발동 된 세트효과가 없습니다.';
-        const characterData = `[${profile.CharacterClassName}]\n${characterTitle} ${profile.CharacterName}\n\n[카드목록]\n${cardList}\n\n[세트효과]\n${cardEffect}`;
+        const characterData = `[${profile.CharacterClassName}]\n${characterTitle} ${profile.CharacterName}\n\n[카드목록]\n${cardList}\n\n${cardEffect}`;
         return characterData;
     } catch (error) {
         throw error; // 오류를 호출자로 던짐
