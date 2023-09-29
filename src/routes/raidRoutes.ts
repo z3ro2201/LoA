@@ -5,7 +5,7 @@ import raidReward, {
     raidRewardOreha,raidRewardAreugoseu,raidRewardBaltanNormal,raidRewardBaltanHard,
     raidRewardBiackissNormal,raidRewardBiackissHard,raidRewardKoukuSaton,raidRewardAbrelshudNormal,
     raidRewardAbrelshudHard,raidRewardIlliakanNormal,raidRewardIlliakanHard,raidRewardKayanggelNormal,
-    raidRewardKayanggelHard,raidRewardSangatapNormal,raidRewardSangatapHard
+    raidRewardKayanggelHard,raidRewardSangatapNormal,raidRewardSangatapHard,raidRewardKarmenNormal,raidRewardKarmenHard
 } from '../functions/raid/raidReward'
 
 const raidRouter: Router = express.Router();
@@ -153,6 +153,26 @@ raidRouter.get('/Sangatap/Normal', (req: Request, res: Response) => {
 raidRouter.get('/Sangatap/Hard', (req: Request, res: Response) => {
     const queryStr:string = req.query.gold;
     const raidRewardMessage = raidRewardSangatapHard(queryStr);
+    res.status(200).json({
+        code: 200,
+        message: raidRewardMessage
+    });
+});
+
+// 카멘(노말) 보상
+raidRouter.get('/Karmen/Normal', (req: Request, res: Response) => {
+    const queryStr:string = req.query.gold;
+    const raidRewardMessage = raidRewardKarmenNormal(queryStr);
+    res.status(200).json({
+        code: 200,
+        message: raidRewardMessage
+    });
+});
+
+// 카멘(하드) 보상
+raidRouter.get('/Karmen/Hard', (req: Request, res: Response) => {
+    const queryStr:string = req.query.gold;
+    const raidRewardMessage = raidRewardKarmenHard(queryStr);
     res.status(200).json({
         code: 200,
         message: raidRewardMessage
