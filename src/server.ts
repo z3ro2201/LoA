@@ -3,6 +3,7 @@ import characterRouter from './routes/characterRoutes'
 import checkRouter from './routes/checkRoutes'
 import raidRouter from './routes/raidRoutes'
 import helpRouter from './routes/helpRoutes'
+import path from 'path';
 
 const app: Application = express();
 const port:Number = 5000;
@@ -19,7 +20,7 @@ app.use('/character', characterRouter);
 app.use('/check', checkRouter);
 app.use('/reward', raidRouter);
 app.use('/help', helpRouter);
-app.use('/assets', express.static('assets'));
+app.use('/assets', express.static(path.join(__dirname, 'assets')));
 
 app.get('/', (req, res) => {
     res.json({
