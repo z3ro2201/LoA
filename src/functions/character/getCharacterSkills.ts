@@ -35,7 +35,7 @@ async function getCharacterSkillText(characterName: string) {
                 }
                 tripodsArr.push(tmpTripods.join('\n'));
             }
-            const runeData = (tmp.Rune !== null) ? `(룬: ${tmp.Rune.Name})` : ``;
+            const runeData = (tmp.Rune !== null) ? `(룬: ${tmp.Rune.Name}[${tmp.Rune.Grade}])` : ``;
             const tripods = (tripodsArr.length > 0) ? `<트라이포드>\n${tripodsArr.join('\n')}` : '';
             const tmpData = `${tmp.Name.replace(global.regex.htmlEntity, '')} ${runeData}\n${tripods}`;
             skilsArr.push(tmpData);
