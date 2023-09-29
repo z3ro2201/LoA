@@ -15,30 +15,21 @@ async function getCharacterSkillText(characterName: string) {
         // 보석정보
         const skilsArr = [];
         for(var tmp of skils) {
-            const cleanedToolTipString = tmp.Tooltip.replace(/<[^>]+>/g, '').replace(/\\n/g, '');
-            const tooltipObject = JSON.parse(cleanedToolTipString);
-            let toolTipText = '';
-            for(const tmpData in tooltipObject) {
-                if(tooltipObject.hasOwnProperty(tmpData)) {
-                    const element = tooltipObject[tmpData];
-                    if(element && element.value && element.value.Element_000 && element.value.Element_000 === '효과') {
-                        toolTipText = `\nㄴ장비효과: ${element.value.Element_001}`;
+            if(tmp.Level > 1 && tmp.IsAwakening === true) {
+                const tripodsArr = [];
+                if(tmp.Tripods !== null) {
+                    const tmpTripods = [];
+                    for(const TripodsTmp of tmp.Tripods) {
+                        if(TripodsTmp.IsSelected === true)
+                            tmpTripods.push(`[${TripodsTmp.Tier} 티어] Lv ${TripodsTmp.Level}. ${TripodsTmp.Name}`);
                     }
+                    if(tmpTripods.length > 0) tripodsArr.push(tmpTripods.join('\n'));
                 }
+                const runeData = (tmp.Rune !== null) ? `(룬: ${tmp.Rune.Name}[${tmp.Rune.Grade}])` : ``;
+                const tripods = (tripodsArr.length > 0) ? `<트라이포드>\n${tripodsArr.join('\n')}` : '';
+                const tmpData = `${tmp.Name.replace(global.regex.htmlEntity, '')} ${runeData}\n${tripods}`;
+                skilsArr.push(tmpData);
             }
-            const tripodsArr = [];
-            if(tmp.Tripods !== null) {
-                const tmpTripods = [];
-                for(const TripodsTmp of tmp.Tripods) {
-                    if(TripodsTmp.IsSelected === true)
-                        tmpTripods.push(`[${TripodsTmp.Tier} 티어] Lv ${TripodsTmp.Level}. ${TripodsTmp.Name}`);
-                }
-                if(tmpTripods.length > 0) tripodsArr.push(tmpTripods.join('\n'));
-            }
-            const runeData = (tmp.Rune !== null) ? `(룬: ${tmp.Rune.Name}[${tmp.Rune.Grade}])` : ``;
-            const tripods = (tripodsArr.length > 0) ? `<트라이포드>\n${tripodsArr.join('\n')}` : '';
-            const tmpData = `${tmp.Name.replace(global.regex.htmlEntity, '')} ${runeData}\n${tripods}`;
-            skilsArr.push(tmpData);
         }
 
         // 서버 응답을 파싱하여 캐릭터 정보를 추출
