@@ -15,7 +15,7 @@ async function getCharacterSkillText(characterName: string) {
         // 보석정보
         const skilsArr = [];
         for(var tmp of skils) {
-            if(tmp.Level > 1 && tmp.IsAwakening === true) {
+            if(tmp.Level > 1 || tmp.IsAwakening === true) {
                 const tripodsArr = [];
                 if(tmp.Tripods !== null) {
                     const tmpTripods = [];
