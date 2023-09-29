@@ -19,6 +19,7 @@ app.use('/character', characterRouter);
 app.use('/check', checkRouter);
 app.use('/reward', raidRouter);
 app.use('/help', helpRouter);
+app.use('/assets', express.static('assets'));
 
 app.get('/', (req, res) => {
     res.json({
