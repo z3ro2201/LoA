@@ -28,7 +28,7 @@ async function getAccessoryText(characterName: string) {
                     if(tooltipObject.hasOwnProperty(tmpData)) {
                         const element = tooltipObject[tmpData];
                         if(element && element.value && element.type && element.type.indexOf('ItemPartBox') !== -1) {
-                            if(i !== 12) toolTipText = `\n[추가효과] ${element.value.Element_001.replace(/<[^>]+>/g, '').replace(/\n/g, '')}`;
+                            if(i !== 12) toolTipText = `\n[추가효과]\n${element.value.Element_001.replace(/<[^>]+>/g, '').replace(/\n/g, '')}`;
                             else {
                                 const toolTip_bracelet = element.value.Element_001.split('<BR>');
                                 toolTipText = `\n[추가효과] ${toolTip_bracelet.join('\n').replace(global.regex.htmlEntity,'')}`;
