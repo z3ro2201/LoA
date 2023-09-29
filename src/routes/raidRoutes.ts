@@ -30,7 +30,8 @@ raidRouter.get('/Areugoseu', (req: Request, res: Response) => {
 
 // 발탄(노말) 보상
 raidRouter.get('/Baltan/Normal', (req: Request, res: Response) => {
-    const raidRewardMessage = raidRewardBaltanNormal();
+    const queryStr:string = req.query.gold;
+    const raidRewardMessage = raidRewardBaltanNormal(queryStr);
     res.status(200).json({
         code: 200,
         message: raidRewardMessage
@@ -39,7 +40,8 @@ raidRouter.get('/Baltan/Normal', (req: Request, res: Response) => {
 
 // 발탄(하드) 보상
 raidRouter.get('/Baltan/Hard', (req: Request, res: Response) => {
-    const raidRewardMessage = raidRewardBaltanHard();
+    const queryStr:string = req.query.gold;
+    const raidRewardMessage = raidRewardBaltanHard(queryStr);
     res.status(200).json({
         code: 200,
         message: raidRewardMessage
@@ -49,7 +51,8 @@ raidRouter.get('/Baltan/Hard', (req: Request, res: Response) => {
 
 // 비아(노말) 보상
 raidRouter.get('/Biackiss/Normal', (req: Request, res: Response) => {
-    const raidRewardMessage = raidRewardBiackissNormal();
+    const queryStr:string = req.query.gold;
+    const raidRewardMessage = raidRewardBiackissNormal(queryStr);
     res.status(200).json({
         code: 200,
         message: raidRewardMessage
@@ -58,7 +61,8 @@ raidRouter.get('/Biackiss/Normal', (req: Request, res: Response) => {
 
 // 비아(하드) 보상
 raidRouter.get('/Biackiss/Hard', (req: Request, res: Response) => {
-    const raidRewardMessage = raidRewardBiackissHard();
+    const queryStr:string = req.query.gold;
+    const raidRewardMessage = raidRewardBiackissHard(queryStr);
     res.status(200).json({
         code: 200,
         message: raidRewardMessage
@@ -67,7 +71,8 @@ raidRouter.get('/Biackiss/Hard', (req: Request, res: Response) => {
 
 // 쿠크세이튼 보상
 raidRouter.get('/KoukuSaton', (req: Request, res: Response) => {
-    const raidRewardMessage = raidRewardKoukuSaton();
+    const queryStr:string = req.query.gold;
+    const raidRewardMessage = raidRewardKoukuSaton(queryStr);
     res.status(200).json({
         code: 200,
         message: raidRewardMessage
@@ -76,7 +81,8 @@ raidRouter.get('/KoukuSaton', (req: Request, res: Response) => {
 
 // 아브(노말) 보상
 raidRouter.get('/Abrelshud/Normal', (req: Request, res: Response) => {
-    const raidRewardMessage = raidRewardAbrelshudNormal();
+    const queryStr:string = req.query.gold;
+    const raidRewardMessage = raidRewardAbrelshudNormal(queryStr);
     res.status(200).json({
         code: 200,
         message: raidRewardMessage
@@ -85,7 +91,8 @@ raidRouter.get('/Abrelshud/Normal', (req: Request, res: Response) => {
 
 // 아브(하드) 보상
 raidRouter.get('/Abrelshud/Hard', (req: Request, res: Response) => {
-    const raidRewardMessage = raidRewardAbrelshudHard();
+    const queryStr:string = req.query.gold;
+    const raidRewardMessage = raidRewardAbrelshudHard(queryStr);
     res.status(200).json({
         code: 200,
         message: raidRewardMessage
@@ -94,7 +101,8 @@ raidRouter.get('/Abrelshud/Hard', (req: Request, res: Response) => {
 
 // 일리아칸(노말) 보상
 raidRouter.get('/Illiakan/Normal', (req: Request, res: Response) => {
-    const raidRewardMessage = raidRewardIlliakanNormal();
+    const queryStr:string = req.query.gold;
+    const raidRewardMessage = raidRewardIlliakanNormal(queryStr);
     res.status(200).json({
         code: 200,
         message: raidRewardMessage
@@ -103,7 +111,8 @@ raidRouter.get('/Illiakan/Normal', (req: Request, res: Response) => {
 
 // 일리아칸(하드) 보상
 raidRouter.get('/Illiakan/Hard', (req: Request, res: Response) => {
-    const raidRewardMessage = raidRewardIlliakanHard();
+    const queryStr:string = req.query.gold;
+    const raidRewardMessage = raidRewardIlliakanHard(queryStr);
     res.status(200).json({
         code: 200,
         message: raidRewardMessage
@@ -112,7 +121,8 @@ raidRouter.get('/Illiakan/Hard', (req: Request, res: Response) => {
 
 // 카양겔(노말) 보상
 raidRouter.get('/Kayanggel/Normal', (req: Request, res: Response) => {
-    const raidRewardMessage = raidRewardKayanggelNormal();
+    const queryStr:string = req.query.gold;
+    const raidRewardMessage = raidRewardKayanggelNormal(queryStr);
     res.status(200).json({
         code: 200,
         message: raidRewardMessage
@@ -121,7 +131,8 @@ raidRouter.get('/Kayanggel/Normal', (req: Request, res: Response) => {
 
 // 카양겔(하드) 보상
 raidRouter.get('/Kayanggel/Hard', (req: Request, res: Response) => {
-    const raidRewardMessage = raidRewardKayanggelHard();
+    const queryStr:string = req.query.gold;
+    const raidRewardMessage = raidRewardKayanggelHard(queryStr);
     res.status(200).json({
         code: 200,
         message: raidRewardMessage
@@ -130,7 +141,8 @@ raidRouter.get('/Kayanggel/Hard', (req: Request, res: Response) => {
 
 // 상아탑(노말) 보상
 raidRouter.get('/Sangatap/Normal', (req: Request, res: Response) => {
-    const raidRewardMessage = raidRewardSangatapNormal();
+    const queryStr:string = req.query.gold;
+    const raidRewardMessage = raidRewardSangatapNormal(queryStr);
     res.status(200).json({
         code: 200,
         message: raidRewardMessage
@@ -139,7 +151,8 @@ raidRouter.get('/Sangatap/Normal', (req: Request, res: Response) => {
 
 // 상아탑(하드) 보상
 raidRouter.get('/Sangatap/Hard', (req: Request, res: Response) => {
-    const raidRewardMessage = raidRewardSangatapHard();
+    const queryStr:string = req.query.gold;
+    const raidRewardMessage = raidRewardSangatapHard(queryStr);
     res.status(200).json({
         code: 200,
         message: raidRewardMessage
