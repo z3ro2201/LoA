@@ -1,6 +1,8 @@
 import express, { Application } from 'express'
 import characterRouter from './routes/characterRoutes'
 import checkRouter from './routes/checkRoutes'
+import raidRouter from './routes/raidRoutes'
+import helpRouter from './routes/helpRoutes'
 
 const app: Application = express();
 const port:Number = 5000;
@@ -15,6 +17,8 @@ app.use((req, res, next) => {
 
 app.use('/character', characterRouter);
 app.use('/check', checkRouter);
+app.use('/reward', raidRouter);
+app.use('/help', helpRouter);
 
 app.get('/', (req, res) => {
     res.json({

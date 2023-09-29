@@ -1,6 +1,12 @@
 import axios from 'axios'
 import global from '../../config/config'
 
+export const command: Record<string, string>= {
+    command: global.prefix + '캐릭터',
+    help: '[캐릭터이름]',
+    description: '캐릭터 정보를 볼 수 있습니다.'
+}
+
 async function getCharacterInfoText(characterName: string) {
     const apiUrl = `${global.apiUrl.lostark}armories/characters/${characterName}`;
 
