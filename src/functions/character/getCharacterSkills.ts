@@ -21,7 +21,7 @@ async function getCharacterSkillText(characterName: string) {
                     const tmpTripods = [];
                     for(const TripodsTmp of tmp.Tripods) {
                         if(TripodsTmp.IsSelected === true) {
-                            tmpTripods.push(`[${TripodsTmp.Tier} 티어] Lv ${TripodsTmp.Level}. ${TripodsTmp.Name}`);
+                            tmpTripods.push(`[${parseInt(TripodsTmp.Tier+1)} 티어] Lv ${TripodsTmp.Level}. ${TripodsTmp.Name}`);
                         }
                     }
                     if(tmpTripods.length > 0) tripodsArr.push(tmpTripods.join('\n'));
