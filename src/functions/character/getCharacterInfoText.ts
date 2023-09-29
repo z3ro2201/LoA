@@ -45,7 +45,7 @@ async function getCharacterInfoText(characterName: string) {
                 engravingSlots.push(tmp.Name);
             }
             if(engravingSlots.length > 0) {
-                engravingText = `[각인 슬롯] ${engravingSlots.join(', ')}\n`;
+                engravingText = `[장착 각인] ${engravingSlots.join(', ')}\n`;
             }
         }
         if(engraving.Effects !== null) {
