@@ -60,7 +60,7 @@ async function getCharacterInfoText(characterName: string) {
         // 활성화된 세트효과
         const cardEffectArr = [];
         for(const tmp of card.Effects[0].Items) {
-            cardEffectArr.push(`<${tmp.Name}>\n${tmp.Description}`);
+            cardEffectArr.push(`${tmp.Name}\n${tmp.Description}`);
         }
 
         const cardEffect = (cardEffectArr.length > 0) ? `\n\n[카드세트효과]\n${cardEffectArr[cardEffectArr.length - 1]}` : '';
