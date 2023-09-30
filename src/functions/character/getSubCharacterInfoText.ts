@@ -26,11 +26,6 @@ async function getSubCharacterInfoText(characterName: string) {
 
         // 레벨 순 정렬
         characterListArr.sort((a:subCharacterList, b:subCharacterList) => {
-            /*if(a.combatLevel !== b.combatLevel) {
-                return b.combatLevel - a.combatLevel;
-            } else {
-                return b.itemLevel - a.itemLevel;
-            }*/
             return b.itemLevel - a.itemLevel;
         })
 

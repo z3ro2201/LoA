@@ -28,15 +28,6 @@ async function getAccessoryText(characterName: string) {
                     if(tooltipObject.hasOwnProperty(tmpData)) {
                         const element = tooltipObject[tmpData];
                         if(element && element.value && element.type && element.type.indexOf('ItemPartBox') !== -1) {
-                            // if(i !== 12) {
-                            //     const toolTip_accessory = element.value.Element_001.split('<BR>');
-                            //     //toolTipText = `\n[추가효과]\n${element.value.Element_001.replace(/<[^>]+>/g, '').replace(/\n/g, '')}`;
-                            //     toolTipText = `\n[추가효과]\n${toolTip_accessory.join('\n').replace(global.regex.htmlEntity,'')}`;
-                            // }
-                            // else {
-                            //     const toolTip_bracelet = element.value.Element_001.split('<BR>');
-                            //     toolTipText = `\n[추가효과]\n${toolTip_bracelet.join('\n').replace(global.regex.htmlEntity,'')}`;
-                            // } 
                             const toolTip_bracelet = element.value.Element_001.split('<BR>');
                             toolTipText = `\n(추가효과)\n${toolTip_bracelet.join('\n').replace(global.regex.htmlEntity,'')}`;
                         }

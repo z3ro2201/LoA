@@ -21,7 +21,32 @@ async function getEquipmentText(characterName: string) {
             if(i > 5) break;
             const toolTips = tmp.Tooltip.replace(global.regex.htmlEntity, '');
             const quality = JSON.parse(toolTips).Element_001.value.qualityValue;
-            engravingArr.push(`${tmp.Grade}  ${tmp.Type}    ${tmp.Name} (품질: ${quality})`);
+            const cleanedToolTipString = tmp.Tooltip;
+            const tooltipObject = JSON.parse(cleanedToolTipString);
+            let toolTipText = '';
+            for(const tmpData in tooltipObject) {
+                if(tooltipObject.hasOwnProperty(tmpData)) {
+                    const element = tooltipObject[tmpData];
+                    if (element && element.value && element.type && element.type.indexOf('IndentStringGroup') !== -1) {
+                        const indentContentStr = element.value.Element_000.contentStr;
+                        const indentTopStr = element.value.Element_000.topStr;
+                        if (indentTopStr) {
+                            const title = indentTopStr.toUpperCase().split('<BR>');
+                            toolTipText += `\n${title.join(': ').replace(global.regex.htmlEntity, '')}`
+                        }
+                        if (indentContentStr) {
+                            Object.keys(indentContentStr).forEach(keyName => {
+                                const key = indentContentStr[keyName];
+                                if (key && key.contentStr) {
+                                    const toolTipSplit = key.contentStr.toUpperCase().replace(/(<BR>|\\)/g, '<BR>').split('<BR>');
+                                    toolTipText += `\n${toolTipSplit.join('\n').replace(global.regex.htmlEntity, '')}`
+                                }
+                            });
+                        }
+                    }
+                }
+            }
+            engravingArr.push(`${tmp.Grade}  ${tmp.Type}    ${tmp.Name} (품질: ${quality})${toolTipText}`);
             qualityValue += parseInt(quality);
             i++;
         }
