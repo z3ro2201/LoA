@@ -42,7 +42,7 @@ async function getEquipmentText(characterName: string) {
             i++;
         }
 
-        const characterData = `[${profile.ServerName}] ${profile.CharacterName}\n\n${engravingArr.join('\n\n')}\n아이템레벨: ${profile.ItemMaxLevel}\n평균품질: ${qualityValue/6}`;
+        const characterData = `[${profile.ServerName}] ${profile.CharacterName}\n\n${engravingArr.join('\n\n')}\n\n아이템레벨: ${profile.ItemMaxLevel}\n평균품질: ${qualityValue/6}`;
         return characterData;
     } catch (error) {
         throw error; // 오류를 호출자로 던짐
