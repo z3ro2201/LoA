@@ -24,7 +24,7 @@ async function getCharacterGemText(characterName: string) {
                 if(tooltipObject.hasOwnProperty(tmpData)) {
                     const element = tooltipObject[tmpData];
                     if(element && element.value && element.value.Element_000 && element.value.Element_000 === '효과') {
-                        toolTipText = `: ${element.value.Element_001.replace(/^\[[^\]]+\] /, '')}`;
+                        toolTipText = `${element.value.Element_001.replace(/^\[[^\]]+\] /, '')}`;
                     }
                 }
             }
@@ -35,7 +35,7 @@ async function getCharacterGemText(characterName: string) {
 
         // 서버 응답을 파싱하여 캐릭터 정보를 추출
         const characterTitle = (profile.Title === null) ? '' : `${profile.Title}`;     
-        const characterData = `[${profile.CharacterClassName}]\n${characterTitle} ${profile.CharacterName}\n[보석정보]\n${gemsArr.join('\n')}`;
+        const characterData = `[${profile.CharacterClassName}]\n${characterTitle} ${profile.CharacterName}\n\n[보석정보]\n${gemsArr.join('\n')}`;
         return characterData;
     } catch (error) {
         throw error; // 오류를 호출자로 던짐
