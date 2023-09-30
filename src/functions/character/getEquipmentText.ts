@@ -55,7 +55,7 @@ async function getEquipmentText(characterName: string) {
         }
         if(elixirTotalArr.length > 0) elixirDataArr.push(elixirTotalArr[elixirTotalArr.length - 1]);
         const elixirMessage = (elixirDataArr.length > 0) ? `\n&nbsp;\n[엘릭서 확인은 전체보기]\n${elixirDataArr.join('\n')}` : '';
-        const characterData = `${engravingArr.join('\n')}\n\n아이템레벨: ${profile.ItemMaxLevel}\n평균품질: ${qualityValue/6}${elixirMessage}`;
+        const characterData = `${engravingArr.join('\n')}\n\n아이템레벨: ${profile.ItemMaxLevel}\n평균품질: ${(qualityValue/6).toFixed(3)}${elixirMessage}`;
         return characterData;
     } catch (error) {
         throw error; // 오류를 호출자로 던짐
