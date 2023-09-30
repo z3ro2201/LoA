@@ -34,7 +34,7 @@ async function getEquipmentText(characterName: string) {
                             const title = indentTopStr.toUpperCase().split('<BR>');
                             toolTipText += `\n${title.join(': ').replace(global.regex.htmlEntity, '')}`
                         }
-                        if (indentContentStr) {
+                        /*if (indentContentStr) {
                             Object.keys(indentContentStr).forEach(keyName => {
                                 const key = indentContentStr[keyName];
                                 if (key && key.contentStr) {
@@ -42,7 +42,7 @@ async function getEquipmentText(characterName: string) {
                                     toolTipText += `\n${toolTipSplit.join('\n').replace(global.regex.htmlEntity, '')}`
                                 }
                             });
-                        }
+                        }*/
                     }
                 }
             }
