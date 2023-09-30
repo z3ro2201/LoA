@@ -37,7 +37,8 @@ async function getEquipmentText(characterName: string) {
                     }
                 }
             }
-            engravingArr.push(`[${tmp.Grade} || ${tmp.Type}]\n${tmp.Name} (품질: ${quality})${toolTipText}`);
+            const guideline = (toolTipText !== "") ? `---\n${toolTipText}\n---` : '';
+            engravingArr.push(`[${tmp.Type} || ${tmp.Grade}]\n${tmp.Name} (품질: ${quality})${guideline}`);
             qualityValue += parseInt(quality);
             i++;
         }
