@@ -34,19 +34,10 @@ async function getEquipmentText(characterName: string) {
                             const title = indentTopStr.toUpperCase().split('<BR>');
                             toolTipText += `\n${title.join(': ').replace(global.regex.htmlEntity, '')}`
                         }
-                        /*if (indentContentStr) {
-                            Object.keys(indentContentStr).forEach(keyName => {
-                                const key = indentContentStr[keyName];
-                                if (key && key.contentStr) {
-                                    const toolTipSplit = key.contentStr.toUpperCase().replace(/(<BR>|\\)/g, '<BR>').split('<BR>');
-                                    toolTipText += `\n${toolTipSplit.join('\n').replace(global.regex.htmlEntity, '')}`
-                                }
-                            });
-                        }*/
                     }
                 }
             }
-            engravingArr.push(`${tmp.Grade}  ${tmp.Type}    ${tmp.Name} (품질: ${quality})${toolTipText}`);
+            engravingArr.push(`[${tmp.Type}]\n${tmp.Grade} ${tmp.Name.replace('+', '&nbsp;&nbsp;')} (품질: ${quality})${toolTipText}`);
             qualityValue += parseInt(quality);
             i++;
         }
