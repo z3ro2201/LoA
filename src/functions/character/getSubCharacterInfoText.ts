@@ -21,16 +21,17 @@ async function getSubCharacterInfoText(characterName: string) {
         const characterListArr = [];
         for(const tmp of data) {
             if(characterServer[0].ServerName === tmp.ServerName)
-                characterListArr.push({combatLevel: tmp.CharacterLevel, itemLevel: tmp.ItemAvgLevel, textStr: `[${tmp.CharacterClassName}]\n Lv ${tmp.CharacterLevel.toString().padStart(2, '0')}  ${tmp.CharacterName}  (${tmp.ItemAvgLevel})`})
+                characterListArr.push({combatLevel: tmp.CharacterLevel, itemLevel: parseFloat(tmp.ItemAvgLevel.replace(',', '')), textStr: `[${tmp.CharacterClassName}]\n Lv ${tmp.CharacterLevel.toString().padStart(2, '0')}  ${tmp.CharacterName}  (${tmp.ItemAvgLevel})`})
         }
 
         // 레벨 순 정렬
         characterListArr.sort((a:subCharacterList, b:subCharacterList) => {
-            if(a.combatLevel !== b.combatLevel) {
+            /*if(a.combatLevel !== b.combatLevel) {
                 return b.combatLevel - a.combatLevel;
             } else {
                 return b.itemLevel - a.itemLevel;
-            }
+            }*/
+            return b.itemLevel - a.itemLevel;
         })
 
         // combatLevel, itemLevel 삭제 후 textStr만 남기기
