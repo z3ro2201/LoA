@@ -29,14 +29,14 @@ async function getCharacterGemText(characterName: string) {
                     }
                 }
             }
-            const tmpData = `${tmp.Name.replace(global.regex.htmlEntity, '').replace(/(\d+)레벨 (.+)의 보석/, 'Lv.$1 $2')} [${toolTipText}]`;
+            const tmpData = `${tmp.Name.replace(global.regex.htmlEntity, '').replace(/(\d+)레벨 (.+)의 보석/, '$1 $2')} [${toolTipText}]`;
             gemsArr.push(tmpData);
             i++;
         }
 
         // 서버 응답을 파싱하여 캐릭터 정보를 추출
         const characterTitle = (profile.Title === null) ? '' : `${profile.Title}`;     
-        const characterData = `[${profile.CharacterClassName}]\n${characterTitle} ${profile.CharacterName}\n\n[보석정보]\n${gemsArr.join('\n')}`;
+        const characterData = `${gemsArr.join('\n')}`;
         return characterData;
     } catch (error) {
         throw error; // 오류를 호출자로 던짐
