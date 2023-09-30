@@ -29,7 +29,7 @@ async function getCharacterGemText(characterName: string) {
                     }
                 }
             }
-            const tmpData = `${tmp.Name.replace(global.regex.htmlEntity, '').replace(/(\d+)레벨 (.+)의 보석/, 'Lv.$1 $2')} [${toolTipText}]\n`;
+            const tmpData = `${tmp.Name.replace(global.regex.htmlEntity, '').replace(/(\d+)레벨 (.+)의 보석/, 'Lv.$1 $2')} [${toolTipText}]`;
             gemsArr.push(tmpData);
             i++;
         }
