@@ -16,7 +16,9 @@ async function getCharacterGemText(characterName: string) {
         const gemsArr = [];
         let i:number = 0;
         for(const tmp of gems.Gems) {
-            const tmpData = `${tmp.Name.replace(global.regex.htmlEntity, '').replace(/(\d+)레벨 (.+)의 보석/, '$1 $2')} ${gems.Effects[i].Name}`;
+            const skillsName = gems.Effects.filter((item) => tmp.Slot === item.GemSlot)[0];
+            console.log(skillsName[0])
+            const tmpData = `${tmp.Name.replace(global.regex.htmlEntity, '').replace(/(\d+)레벨 (.+)의 보석/, '$1 $2')} ${skillsName.Name}`;
             gemsArr.push(tmpData);
             i++;
         }
