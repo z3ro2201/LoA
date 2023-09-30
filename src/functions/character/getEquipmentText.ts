@@ -28,7 +28,6 @@ async function getEquipmentText(characterName: string) {
                 if(tooltipObject.hasOwnProperty(tmpData)) {
                     const element = tooltipObject[tmpData];
                     if (element && element.value && element.type && element.type.indexOf('IndentStringGroup') !== -1) {
-                        const indentContentStr = element.value.Element_000.contentStr;
                         const indentTopStr = element.value.Element_000.topStr;
                         if (indentTopStr) {
                             const title = indentTopStr.toUpperCase().split('<BR>');
@@ -37,8 +36,8 @@ async function getEquipmentText(characterName: string) {
                     }
                 }
             }
-            const guideline = (toolTipText !== "") ? `\n---\n${toolTipText}\n-` : '';
-            engravingArr.push(`[${tmp.Type} || ${tmp.Grade}]\n${tmp.Name} (품질: ${quality})${guideline}`);
+            const guideline = (toolTipText !== "") ? `\n---${toolTipText}` : '';
+            engravingArr.push(`-\n[${tmp.Type} || ${tmp.Grade}]\n${tmp.Name} (품질: ${quality})${guideline}`);
             qualityValue += parseInt(quality);
             i++;
         }
