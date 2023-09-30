@@ -21,7 +21,7 @@ async function getSubCharacterInfoText(characterName: string) {
         const characterListArr = [];
         for(const tmp of data) {
             if(characterServer[0].ServerName === tmp.ServerName)
-                characterListArr.push({combatLevel: tmp.CharacterLevel, itemLevel: parseFloat(tmp.ItemAvgLevel.replace(',', '')), textStr: `[${tmp.CharacterClassName}]\n Lv ${tmp.CharacterLevel.toString().padStart(2, '0')}  ${tmp.CharacterName}  (${tmp.ItemAvgLevel})`})
+                characterListArr.push({combatLevel: tmp.CharacterLevel, itemLevel: parseFloat(tmp.ItemAvgLevel.replace(',', '')), textStr: `${tmp.CharacterClassName} Lv ${tmp.CharacterLevel.toString().padStart(2, '0')}  ${tmp.CharacterName}  (${tmp.ItemAvgLevel})`})
         }
 
         // 레벨 순 정렬
@@ -34,7 +34,7 @@ async function getSubCharacterInfoText(characterName: string) {
 
         // 정렬된 배열을 기반으로 문자열 생성 및 추가
         const characterDataArr = sortedCharacterListArr.map(character => character.textStr);
-        const characterData = `[${characterServer[0].ServerName}] ${characterName}\n${characterDataArr.join('\n')}\n\n총 ${characterDataArr.length}개의 캐릭터 보유`;
+        const characterData = `[${characterServer[0].ServerName} 서버]\n ${characterDataArr.join('\n')}\n\n총 ${characterDataArr.length}개의 캐릭터 보유`;
         return characterData;
     } catch (error) {
         throw error; // 오류를 호출자로 던짐
