@@ -34,10 +34,13 @@ async function getEquipmentText(characterName: string) {
                         if (indentContentStr) {
                             Object.keys(indentContentStr).forEach(keyName => {
                                 const key = indentContentStr[keyName].contentStr;
-                                if(!key.includes('재사용 대기시간') && !key.includes('레벨 합'))
-                                    tmpElementElixir.push(key.toUpperCase().split('<BR>')[0].replace(global.regex.htmlEntity, ''));
-                                if(key.includes('레벨 합'))
-                                    elixirTotalArr.push(key.toUpperCase().split('<BR>')[0].replace(global.regex.htmlEntity, '').replace(/\d단계 : /, ''));
+                                const topStr = element.value.Element_000.topStr;
+                                if(topStr.includes('엘릭서 효과')) {
+                                    if(!key.includes('재사용 대기시간') && !key.includes('레벨 합'))
+                                        tmpElementElixir.push(key.toUpperCase().split('<BR>')[0].replace(global.regex.htmlEntity, ''));
+                                    if(key.includes('레벨 합'))
+                                        elixirTotalArr.push(key.toUpperCase().split('<BR>')[0].replace(global.regex.htmlEntity, '').replace(/\d단계 : /, ''));
+                                }
                             });
                         }
                     }
