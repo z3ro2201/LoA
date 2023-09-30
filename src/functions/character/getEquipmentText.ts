@@ -38,8 +38,10 @@ async function getEquipmentText(characterName: string) {
                                 if(topStr.includes('엘릭서 효과')) {
                                     if(!key.includes('재사용 대기시간') && !key.includes('레벨 합'))
                                         tmpElementElixir.push(key.toUpperCase().split('<BR>')[0].replace(global.regex.htmlEntity, ''));
-                                    if(key.includes('레벨 합'))
+                                } else {
+                                    if(key.includes('레벨 합')) {
                                         elixirTotalArr.push(key.toUpperCase().split('<BR>')[0].replace(global.regex.htmlEntity, '').replace(/\d단계 : /, ''));
+                                    }
                                 }
                             });
                         }
@@ -47,13 +49,12 @@ async function getEquipmentText(characterName: string) {
                     if(tmpElementElixir.length > 0) elixirDataArr.push(`${tmp.Type} ${tmpElementElixir.join(' ')}`);
                 }
             }
-            engravingArr.push(`${tmp.Grade} ${tmp.Type} ${tmp.Name.replace('+', '　　　')} : ${quality}`);
+            engravingArr.push(`${tmp.Grade} ${tmp.Type} ${tmp.Name.replace('+', ' ')} : ${quality}`);
             qualityValue += parseInt(quality);
             i++;
         }
         if(elixirTotalArr.length > 0) elixirDataArr.push(elixirTotalArr[elixirTotalArr.length - 1]);
-        const Lw = ' '.repeat(500);
-        const elixirMessage = (elixirDataArr.length > 0) ? `\n&nbsp;\n[엘릭서 확인은 전체보기]\n${Lw}\n${elixirDataArr.join('\n')}` : '';
+        const elixirMessage = (elixirDataArr.length > 0) ? `\n&nbsp;\n[엘릭서 확인은 전체보기]\n${elixirDataArr.join('\n')}` : '';
         const characterData = `${engravingArr.join('\n')}\n\n아이템레벨: ${profile.ItemMaxLevel}\n평균품질: ${qualityValue/6}${elixirMessage}`;
         return characterData;
     } catch (error) {
