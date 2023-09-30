@@ -28,22 +28,18 @@ async function getAccessoryText(characterName: string) {
                     if(tooltipObject.hasOwnProperty(tmpData)) {
                         const element = tooltipObject[tmpData];
                         if(element && element.value && element.type && element.type.indexOf('ItemPartBox') !== -1) {
-                            if(i !== 12) toolTipText = `\n[추가효과]\n${element.value.Element_001.replace(/<[^>]+>/g, '').replace(/\n/g, '')}`;
-                            else {
-                                const toolTip_bracelet = element.value.Element_001.split('<BR>');
-                                toolTipText = `\n[추가효과]\n ${toolTip_bracelet.join('\n').replace(global.regex.htmlEntity,'')}`;
-                                //.split('<BR>').replace(global.regex.htmlEntity, '')
-                            } 
+                            // if(i !== 12) {
+                            //     const toolTip_accessory = element.value.Element_001.split('<BR>');
+                            //     //toolTipText = `\n[추가효과]\n${element.value.Element_001.replace(/<[^>]+>/g, '').replace(/\n/g, '')}`;
+                            //     toolTipText = `\n[추가효과]\n${toolTip_accessory.join('\n').replace(global.regex.htmlEntity,'')}`;
+                            // }
+                            // else {
+                            //     const toolTip_bracelet = element.value.Element_001.split('<BR>');
+                            //     toolTipText = `\n[추가효과]\n${toolTip_bracelet.join('\n').replace(global.regex.htmlEntity,'')}`;
+                            // } 
+                            const toolTip_bracelet = element.value.Element_001.split('<BR>');
+                            toolTipText = `\n[추가효과]\n${toolTip_bracelet.join('\n').replace(global.regex.htmlEntity,'')}`;
                         }
-                        // if(element && element.value && element.type && element.type.indexOf('IndentStringGroup') !== -1) {
-                        //     const indentLength = Object.keys(element.value.Element_000.contentStr).length;
-                        //     for(let k = 0; k <= indentLength; k++) {
-                        //         const keyName = 'Element_00' + k;
-                        //         const key = element.value.Element_000.contentStr[keyName];
-                        //         //toolTipText = `\n${element.value.Element_000.contentStr.Element_000.contentStr.replace(global.regex.htmlEntity, '')} \n aa:${indentLength}`;
-                        //         toolTipText += `\n${key.contentStr.replace(global.regex.htmlEntity, '')} \n aa:${indentLength}`;
-                        //     }
-                        // }
                         if (element && element.value && element.type && element.type.indexOf('IndentStringGroup') !== -1) {
                             const indentContentStr = element.value.Element_000.contentStr; // Element_006의 contentStr
                             if (indentContentStr) {
