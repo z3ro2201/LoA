@@ -16,20 +16,7 @@ async function getCharacterGemText(characterName: string) {
         const gemsArr = [];
         let i:number = 0;
         for(const tmp of gems.Gems) {
-            if(i > 5) break;
-            const cleanedToolTipString = tmp.Tooltip.replace(/<[^>]+>/g, '').replace(/\\n/g, '');
-            const tooltipObject = JSON.parse(cleanedToolTipString);
-            let toolTipText = '';
-            for(const tmpData in tooltipObject) {
-                if(tooltipObject.hasOwnProperty(tmpData)) {
-                    const element = tooltipObject[tmpData];
-                    if(element && element.value && element.value.Element_000 && element.value.Element_000 === '효과') {
-                        //toolTipText = `${element.value.Element_001.replace(/^\[[^\]]+\] /, '')}`;
-                        toolTipText = `${element.value.Element_001.split(' ')[1]}`;
-                    }
-                }
-            }
-            const tmpData = `${tmp.Name.replace(global.regex.htmlEntity, '').replace(/(\d+)레벨 (.+)의 보석/, '$1 $2')} ${toolTipText}`;
+            const tmpData = `${tmp.Name.replace(global.regex.htmlEntity, '').replace(/(\d+)레벨 (.+)의 보석/, '$1 $2')} ${gems.Effects[i].Name}`;
             gemsArr.push(tmpData);
             i++;
         }
