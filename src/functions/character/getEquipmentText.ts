@@ -47,13 +47,13 @@ async function getEquipmentText(characterName: string) {
                     if(tmpElementElixir.length > 0) elixirDataArr.push(`${tmp.Type} ${tmpElementElixir.join(' ')}`);
                 }
             }
-            engravingArr.push(`${tmp.Grade} ${tmp.Type} ${tmp.Name} : ${quality}`);
+            engravingArr.push(`${tmp.Grade} ${tmp.Type} ${tmp.Name.replace('+', '   ')} : ${quality}`);
             qualityValue += parseInt(quality);
             i++;
         }
         if(elixirTotalArr.length > 0) elixirDataArr.push(elixirTotalArr[elixirTotalArr.length - 1]);
-        const elixirMessage = (elixirDataArr.length > 0) ? `\n<엘릭서 확인은 전체보기>\n${elixirDataArr.join('\n')}` : '';
-        const characterData = `${engravingArr.join('\n\n')}\n\n아이템레벨: ${profile.ItemMaxLevel}\n평균품질: ${qualityValue/6}${elixirMessage}`;
+        const elixirMessage = (elixirDataArr.length > 0) ? `\n[엘릭서 확인은 전체보기]\n${elixirDataArr.join('\n')}` : '';
+        const characterData = `${engravingArr.join('\n')}\n\n아이템레벨: ${profile.ItemMaxLevel}\n평균품질: ${qualityValue/6}${elixirMessage}`;
         return characterData;
     } catch (error) {
         throw error; // 오류를 호출자로 던짐
