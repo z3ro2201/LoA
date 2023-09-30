@@ -47,7 +47,7 @@ async function getAccessoryText(characterName: string) {
                                     const key = indentContentStr[keyName];
                                     if (key && key.contentStr) {
                                         const toolTipSplit = key.contentStr.replace(/(<BR>|\\)/g, '<BR>').split('<BR>');
-                                        toolTipText += `\n${toolTipSplit.join('').replace(/\\n/g, '').replace(global.regex.htmlEntity, '')}`
+                                        toolTipText += `\n[각인효과]\n${toolTipSplit.join('').replace(/\\n/g, '').replace(global.regex.htmlEntity, '')}`
                                     }
                                 });
                             }
