@@ -31,7 +31,7 @@ async function getAccessoryText(characterName: string) {
                             if(i !== 12) toolTipText = `\n[추가효과]\n${element.value.Element_001.replace(/<[^>]+>/g, '').replace(/\n/g, '')}`;
                             else {
                                 const toolTip_bracelet = element.value.Element_001.split('<BR>');
-                                toolTipText = `\n[추가효과] ${toolTip_bracelet.join('\n').replace(global.regex.htmlEntity,'')}`;
+                                toolTipText = `\n[추가효과]\n ${toolTip_bracelet.join('\n').replace(global.regex.htmlEntity,'')}`;
                                 //.split('<BR>').replace(global.regex.htmlEntity, '')
                             } 
                         }
