@@ -36,7 +36,7 @@ async function getCharacterSkillText(characterName: string) {
 
         // 서버 응답을 파싱하여 캐릭터 정보를 추출
         const characterTitle = (profile.Title === null) ? '' : `${profile.Title}`;     
-        const characterData = `[${profile.CharacterClassName}]\n${characterTitle} ${profile.CharacterName}\n\n[스킬정보]\n${skilsArr.join('\n')}\n * 각성 스킬은 활성화 여부를 알 수 없어 기본적으로 모두 출력됩니다.`;
+        const characterData = `${skilsArr.join('\n')}\n * 각성 스킬은 활성화 여부를 알 수 없어 기본적으로 모두 출력됩니다.`;
         return characterData;
     } catch (error) {
         throw error; // 오류를 호출자로 던짐
