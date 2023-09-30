@@ -27,7 +27,7 @@ async function getCharacterSkillText(characterName: string) {
                     if(tmpTripods.length > 0) tripodsArr.push(tmpTripods.join('\n'));
                 }
                 const isAwakening:string = (tmp.IsAwakening === true)?'[각성기]' : '';
-                const runeData = (tmp.Rune !== null) ? `(룬: ${tmp.Rune.Name}[${tmp.Rune.Grade}])` : ``;
+                const runeData = (tmp.Rune !== null) ? `[${tmp.Rune.Grade}] ${tmp.Rune.Name}` : ``;
                 const tripods = (tripodsArr.length > 0) ? `<트라이포드>\n${tripodsArr.join('\n')}` : '';
                 const tmpData = `${isAwakening}Lv.${tmp.Level} ${tmp.Name.replace(global.regex.htmlEntity, '')} ${runeData}${tripods}`;
                 skilsArr.push(tmpData + '\n');
