@@ -35,8 +35,26 @@ async function getAccessoryText(characterName: string) {
                                 //.split('<BR>').replace(global.regex.htmlEntity, '')
                             } 
                         }
-                        if(element && element.value && element.type && element.type.indexOf('IndentStringGroup') !== -1) {
-                            toolTipText = `\n${element.value.Element_000.contentStr.Element_000.contentStr.replace(global.regex.htmlEntity, '')}`;
+                        // if(element && element.value && element.type && element.type.indexOf('IndentStringGroup') !== -1) {
+                        //     const indentLength = Object.keys(element.value.Element_000.contentStr).length;
+                        //     for(let k = 0; k <= indentLength; k++) {
+                        //         const keyName = 'Element_00' + k;
+                        //         const key = element.value.Element_000.contentStr[keyName];
+                        //         //toolTipText = `\n${element.value.Element_000.contentStr.Element_000.contentStr.replace(global.regex.htmlEntity, '')} \n aa:${indentLength}`;
+                        //         toolTipText += `\n${key.contentStr.replace(global.regex.htmlEntity, '')} \n aa:${indentLength}`;
+                        //     }
+                        // }
+                        if (element && element.value && element.type && element.type.indexOf('IndentStringGroup') !== -1) {
+                            const indentContentStr = element.value.Element_000.contentStr; // Element_006의 contentStr
+                            if (indentContentStr) {
+                                Object.keys(indentContentStr).forEach(keyName => {
+                                    const key = indentContentStr[keyName];
+                                    if (key && key.contentStr) {
+                                        const toolTipSplit = key.contentStr.replace(/(<BR>|\\)/g, '<BR>').split('<BR>');
+                                        toolTipText += `\n${toolTipSplit.join('').replace(/\\n/g, '').replace(global.regex.htmlEntity, '')}`
+                                    }
+                                });
+                            }
                         }
                     }
                 }
