@@ -17,6 +17,7 @@ async function getCharacterInfoText(characterName: string) {
 
         const profile = response.data.ArmoryProfile;
         const engraving = response.data.ArmoryEngraving;
+        const card = response.data.ArmoryCard;
 
         // 스탯정보
         const statsArr = [];
@@ -27,8 +28,6 @@ async function getCharacterInfoText(characterName: string) {
             statsArr.push(tmpData);
             i++;
         }
-
-
 
         // 서버 응답을 파싱하여 캐릭터 정보를 추출
         const characterTitle = (profile.Title === null) ? '' : `${profile.Title} `;
@@ -58,6 +57,14 @@ async function getCharacterInfoText(characterName: string) {
         }
         engravingText = (engravingText !== '') ? `[각인정보]\n${engravingText}\n` : '';
 
+        // 활성화된 세트효과
+        const cardEffectArr = [];
+        for(const tmp of card.Effects[0].Items) {
+            cardEffectArr.push(`${tmp.Name}  ${tmp.Description}`);
+        }
+
+        const cardEffect = (cardEffectArr.length > 0) ? `\n\n[카드세트효과]\n${cardEffectArr[cardEffectArr.length - 1]}` : '';
+
         const characterData = `[${profile.CharacterClassName}]\n${characterTitle}${profile.CharacterName}\n\n` +
                               `[캐릭터 기본정보]\n` +
                               `템/전/원      ${profile.ItemAvgLevel}/${profile.CharacterLevel}/${profile.ExpeditionLevel}\n` +
@@ -65,7 +72,8 @@ async function getCharacterInfoText(characterName: string) {
                               `체력/공격력    ${profile.Stats[6].Value}/${profile.Stats[7].Value}\n` +
                               `스킬포인트     ${profile.UsingSkillPoint}/${profile.TotalSkillPoint}\n\n` +
                               `${engravingText}` +
-                              `${statsText}`;
+                              `${statsText}` + 
+                              `${cardEffect}`;
         return characterData;
     } catch (error) {
         throw error; // 오류를 호출자로 던짐
