@@ -49,7 +49,10 @@ async function getEquipmentText(characterName: string) {
                     if(tmpElementElixir.length > 0) elixirDataArr.push(`${tmp.Type} ${tmpElementElixir.join(' ')}`);
                 }
             }
-            engravingArr.push(`${tmp.Grade} ${tmp.Type} ${tmp.Name.replace('+', ' ')} : ${quality}`);
+            const equipmentSetName = tmp.Name.replace('+', ' ');
+            const lastIndex = equipmentSetName.lastIndexOf(' ');
+            const visiblePart = equipmentSetName.substring(0, lastIndex + 1); // 마지막 공백까지의 부분 추출
+            engravingArr.push(`${tmp.Grade} ${tmp.Type} ${visiblePart}: ${quality}`);
             qualityValue += parseInt(quality);
             i++;
         }
