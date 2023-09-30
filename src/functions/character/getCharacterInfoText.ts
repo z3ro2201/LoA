@@ -16,10 +16,6 @@ async function getCharacterInfoText(characterName: string) {
         });
 
         const profile = response.data.ArmoryProfile;
-        const equipment = response.data.ArmoryEquipment;
-        const avatars = response.data.ArmoryAvatars;
-        const skills = response.data.ArmorySkills;
-        //const collect = response.data.Collectibles;
         const engraving = response.data.ArmoryEngraving;
 
         // 스탯정보
@@ -42,7 +38,10 @@ async function getCharacterInfoText(characterName: string) {
         if(engraving.Engravings !== null) {
             const engravingSlots = [];
             for(let tmp of engraving.Engravings) {
-                engravingSlots.push(tmp.Name);
+                // 장착각인 활성포인트를 위해 tooltip 파싱
+                const toolTips = JSON.parse(tmp.Tooltip);
+                const activatedLevel = toolTips.Element_001.value.leftText.replace(/[가-힣]/g, '').replace(global.regex.htmlEntity, '').trim();
+                engravingSlots.push(`${tmp.Name} ${activatedLevel}`);
             }
             if(engravingSlots.length > 0) {
                 engravingText = `[장착 각인] ${engravingSlots.join(', ')}\n`;
