@@ -43,11 +43,12 @@ async function getAccessoryText(characterName: string) {
                         if (element && element.value && element.type && element.type.indexOf('IndentStringGroup') !== -1) {
                             const indentContentStr = element.value.Element_000.contentStr; // Element_006의 contentStr
                             if (indentContentStr) {
+                                toolTipText = "\n[각인효과]";
                                 Object.keys(indentContentStr).forEach(keyName => {
                                     const key = indentContentStr[keyName];
                                     if (key && key.contentStr) {
                                         const toolTipSplit = key.contentStr.replace(/(<BR>|\\)/g, '<BR>').split('<BR>');
-                                        toolTipText += `\n[각인효과]\n${toolTipSplit.join('').replace(/\\n/g, '').replace(global.regex.htmlEntity, '')}`
+                                        toolTipText += `\n${toolTipSplit.join('').replace(/\\n/g, '').replace(global.regex.htmlEntity, '')}`
                                     }
                                 });
                             }
