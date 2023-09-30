@@ -52,7 +52,7 @@ async function getEquipmentText(characterName: string) {
             i++;
         }
         if(elixirTotalArr.length > 0) elixirDataArr.push(elixirTotalArr[elixirTotalArr.length - 1]);
-        const Lw = '　'.repeat(500);
+        const Lw = ' '.repeat(500);
         const elixirMessage = (elixirDataArr.length > 0) ? `\n&nbsp;\n[엘릭서 확인은 전체보기]\n${Lw}\n${elixirDataArr.join('\n')}` : '';
         const characterData = `${engravingArr.join('\n')}\n\n아이템레벨: ${profile.ItemMaxLevel}\n평균품질: ${qualityValue/6}${elixirMessage}`;
         return characterData;
