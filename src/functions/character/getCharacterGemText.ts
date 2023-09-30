@@ -24,11 +24,12 @@ async function getCharacterGemText(characterName: string) {
                 if(tooltipObject.hasOwnProperty(tmpData)) {
                     const element = tooltipObject[tmpData];
                     if(element && element.value && element.value.Element_000 && element.value.Element_000 === '효과') {
-                        toolTipText = `${element.value.Element_001.replace(/^\[[^\]]+\] /, '')}`;
+                        //toolTipText = `${element.value.Element_001.replace(/^\[[^\]]+\] /, '')}`;
+                        toolTipText = `${element.value.Element_001.split(' ')[1]}`;
                     }
                 }
             }
-            const tmpData = `${tmp.Name.replace(global.regex.htmlEntity, '').replace(/(\d+)레벨 (.+)의 보석/, 'Lv.$1 $2')}\n${toolTipText}\n`;
+            const tmpData = `${tmp.Name.replace(global.regex.htmlEntity, '').replace(/(\d+)레벨 (.+)의 보석/, 'Lv.$1 $2')} [${toolTipText}]\n`;
             gemsArr.push(tmpData);
             i++;
         }
