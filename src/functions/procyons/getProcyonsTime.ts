@@ -29,21 +29,40 @@ async function getProcyonsTime(procyonCategoryName: string) {
         });
         
         const data = response.data;
-        const procyonTimetable = [];
+        const tempTimeTable = [];
         
         for(const tmp of data) {
             if(tmp.CategoryName === categoryName) {
-                const startTime = tmp.StartTimes.filter((time) => {
-                    const datetime = new Date(time);
-                    const timeStamp = datetime.getTime();
-                    if(nowTimeStamp < timeStamp){
-                        console.log(tmp.ContentsName)
-                    }
+                const startTime = tmp.StartTimes.map((time) => new Date(time))
+                .filter((datetime) => {
+                    return nowTimeStamp < datetime.getTime()
                 })
+                tempTimeTable.push({time: startTime[0], ContentsName: tmp.ContentsName, Location: tmp.Location});
             }
         }
+        tempTimeTable.sort((a,b) => a.time.getTime() - b.time.getTime());
 
-        const characterData = `[${categoryName}] `;
+        const timeTable = [];
+        tempTimeTable.map((item) => {
+            if(tempTimeTable[0].time.getTime() === item.time.getTime()) {
+                const scheduleDate = new Date(item.time);
+                const nowDate = new Date();
+                nowDate.setHours(0,0,0,0);
+                scheduleDate.setHours(0,0,0,0);
+                if(nowDate.getTime() === scheduleDate.getTime()) {
+                    const time = item.time;
+                    const contentsName = (categoryName === "항해") ? item.ContentsName.split(' : ')[1] : item.ContentsName;
+                    const location = (categoryName === "항해") ? item.Location.replace('[대항해] ', '') : item.Location;
+                    timeTable.push({ time: `${time.getHours()}:${time.getMinutes()}`, ContentsName: contentsName, Location: location})
+                }
+            }
+        })
+        let alramText = "";
+        for(const tmp of timeTable) {
+            const locationText = (tmp.Location !== null) ? ` : ${tmp.Location}` : '';
+            alramText += `\n${tmp.ContentsName}${locationText}`;
+        }
+        const characterData = (timeTable.length > 0) ? `[${timeTable[0].time} ${categoryName}]${alramText}` : `오늘의 ${categoryName} 일정이 없습니다.`
         return characterData;
     } catch (error) {
         throw error; // 오류를 호출자로 던짐
