@@ -17,7 +17,7 @@ const raidAuction: any = (ta:number, gold:number) => {
     const BEP = Math.floor(SCV * PD); // 손익분기점 (금액 - 판매수수료) * 플레이어 분배
     const BP = Math.floor(BEP / 1.1); // 입찰적정가 (손익분기점 / 1.1)
     const JG = Math.floor(BP / 1.1); // 바로구매 (입찰적정가 / 1.1)
-    return `경매 입찰 최적가 [🪙 ${gold}]\n• 손익분기점 [🪙 ${BEP}]\n• 입찰적정가 [🪙 ${BP}]\n• 즉시구매가 [🪙 ${JG}]`
+    return `경매 입찰 최적가 [🪙 ${gold}]\n• 손익분기점 [🪙 ${BEP}]\n• 입찰적정가 [🪙 ${BP}]`
 };
 
 export default raidAuction;
