@@ -3,6 +3,8 @@ import characterRouter from './routes/characterRoutes'
 import checkRouter from './routes/checkRoutes'
 import raidRouter from './routes/raidRoutes'
 import helpRouter from './routes/helpRoutes'
+import procyonTimeRouter from './routes/procyonRoutes'
+import utilRouter from './routes/utilRoutes'
 import path from 'path';
 
 const app: Application = express();
@@ -19,6 +21,8 @@ app.use((req, res, next) => {
 app.use('/character', characterRouter);
 app.use('/check', checkRouter);
 app.use('/reward', raidRouter);
+app.use('/procyons', procyonTimeRouter);
+app.use('/util', utilRouter);
 app.use('/help', helpRouter);
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
 
