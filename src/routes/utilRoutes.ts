@@ -1,12 +1,34 @@
 import express, { Router, Request, Response } from 'express';
-import raidAuction from '../functions/utils/raidAuction';
+import {raidAuction, raidAuctionIncludePlayer} from '../functions/utils/raidAuction';
 
 const utilRouter: Router = express.Router();
+
 // 레이드 경매
-utilRouter.get('/raidAuction/:players/:gold', (req: Request, res: Response) => {
+utilRouter.get('/raidAuction/:gold', (req: Request, res: Response) => {
+    const gold:number = req.params.gold;
+    if(isNaN(gold) === true) {
+        return res.status(400).json({
+            code: 400,
+            message: '숫자값만 입력이 가능합니다'
+        })
+    }
+    else if(gold === undefined) {
+        return res.status(400).json({
+            code: 400,
+            message: '경매 입찰가를 적어주십시요.'
+        })
+    }
+    const raidRewardMessage = raidAuction(gold);
+    res.status(200).json({
+        code: 200,
+        message: raidRewardMessage
+    });
+});
+
+// 레이드 경매
+utilRouter.get('/raidAuction/:gold/:players', (req: Request, res: Response) => {
     const players:number = req.params.players;
     const gold:number = req.params.gold;
-    console.log(isNaN(players))
     if(isNaN(players) === true || isNaN(gold) === true) {
         return res.status(400).json({
             code: 400,
@@ -25,7 +47,7 @@ utilRouter.get('/raidAuction/:players/:gold', (req: Request, res: Response) => {
             message: '경매 입찰가를 적어주십시요.'
         })
     }
-    const raidRewardMessage = raidAuction(players, gold);
+    const raidRewardMessage = raidAuctionIncludePlayer(gold, players);
     res.status(200).json({
         code: 200,
         message: raidRewardMessage
