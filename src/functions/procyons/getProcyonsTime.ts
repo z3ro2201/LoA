@@ -53,7 +53,7 @@ async function getProcyonsTime(procyonCategoryName: string) {
                     const time = item.time;
                     const contentsName = (categoryName === "항해") ? item.ContentsName.split(' : ')[1] : item.ContentsName;
                     const location = (categoryName === "항해") ? item.Location.replace('[대항해] ', '') : item.Location;
-                    timeTable.push({ time: `${time.getHours()}:${time.getMinutes()}`, ContentsName: contentsName, Location: location})
+                    timeTable.push({ time: `${time.getHours().toString().padStart(2, '0')}:${time.getMinutes().toString().padStart(2, '0')}`, ContentsName: contentsName, Location: location})
                 }
             }
         })
