@@ -39,7 +39,7 @@ async function getAccessoryText(characterName: string) {
                                     const key = indentContentStr[keyName];
                                     if (key && key.contentStr) {
                                         const toolTipSplit = key.contentStr.replace(/(<BR>|\\)/g, '<BR>').split('<BR>');
-                                        gakin += `${toolTipSplit.join(',').replace(/\\n/g, '').replace(global.regex.htmlEntity, '').replace(/[]/g, '').replace('활성도 ', '')}`
+                                        gakin += `${toolTipSplit.join(',').replace(/\\n/g, '').replace(global.regex.htmlEntity, '').replace(/\[([^\]]*)\]\s*([^+]*)\s*\+/, '$1 $2')}`
                                     }
                                 });
                             }
