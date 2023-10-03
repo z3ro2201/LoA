@@ -28,7 +28,7 @@ async function getAccessoryText(characterName: string) {
                 for(const tmpData in tooltipObject) {
                     if(tooltipObject.hasOwnProperty(tmpData)) {
                         const element = tooltipObject[tmpData];
-                        if(element && element.value && element.type && element.type.indexOf('ItemPartBox') !== -1) {
+                        if(i == 12 && element && element.value && element.type && element.type.indexOf('ItemPartBox') !== -1) {
                             const toolTip_bracelet = element.value.Element_001.split('<BR>');
                             toolTipText = `\n${toolTip_bracelet.join(', ').replace(global.regex.htmlEntity,'')}`;
                         }
