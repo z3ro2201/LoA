@@ -24,6 +24,7 @@ async function getAccessoryText(characterName: string) {
                 const cleanedToolTipString = tmp.Tooltip;
                 const tooltipObject = JSON.parse(cleanedToolTipString);
                 let toolTipText = '';
+                let gakin = '';
                 for(const tmpData in tooltipObject) {
                     if(tooltipObject.hasOwnProperty(tmpData)) {
                         const element = tooltipObject[tmpData];
@@ -38,14 +39,15 @@ async function getAccessoryText(characterName: string) {
                                     const key = indentContentStr[keyName];
                                     if (key && key.contentStr) {
                                         const toolTipSplit = key.contentStr.replace(/(<BR>|\\)/g, '<BR>').split('<BR>');
-                                        toolTipText += `${toolTipSplit.join('').replace(/\\n/g, '').replace(global.regex.htmlEntity, '')}`
+                                        gakin += `${toolTipSplit.join('').replace(/\\n/g, '').replace(global.regex.htmlEntity, '')}`
                                     }
                                 });
                             }
                         }
                     }
                 }
-                engravingArr.push(`${tmp.Grade}  ${tmp.Type}    ${tmp.Name} ${qualityText}${toolTipText}\n`);
+                const gakinMsg = (gakin !== '') ? '\n' + gakin : '';
+                engravingArr.push(`${tmp.Grade}  ${tmp.Type}    ${tmp.Name} ${qualityText}${toolTipText}${gakinMsg}\n`);
             }
             i++;
         }
