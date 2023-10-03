@@ -34,28 +34,28 @@ async function getCharacterInfoText(characterName: string) {
         const guildName = (profile.GuildName === null) ? '미가입' : profile.GuildName;
         let engravingText = '';
         let statsText = (statsArr.length > 0) ? `[특성정보]\n${statsArr.join(', ')}` : '';
-        if(engraving.Engravings !== null) {
-            const engravingSlots = [];
-            for(let tmp of engraving.Engravings) {
-                // 장착각인 활성포인트를 위해 tooltip 파싱
-                const toolTips = JSON.parse(tmp.Tooltip);
-                const activatedLevel = toolTips.Element_001.value.leftText.replace(/[가-힣]/g, '').replace(global.regex.htmlEntity, '').trim();
-                engravingSlots.push(`${tmp.Name} ${activatedLevel}`);
-            }
-            if(engravingSlots.length > 0) {
-                engravingText = `[장착 각인] ${engravingSlots.join(', ')}\n`;
-            }
-        }
+        // if(engraving.Engravings !== null) {
+        //     const engravingSlots = [];
+        //     for(let tmp of engraving.Engravings) {
+        //         // 장착각인 활성포인트를 위해 tooltip 파싱
+        //         const toolTips = JSON.parse(tmp.Tooltip);
+        //         const activatedLevel = toolTips.Element_001.value.leftText.replace(/[가-힣]/g, '').replace(global.regex.htmlEntity, '').trim();
+        //         engravingSlots.push(`${tmp.Name} ${activatedLevel}`);
+        //     }
+        //     if(engravingSlots.length > 0) {
+        //         engravingText = `[장착 각인] ${engravingSlots.join(', ')}\n`;
+        //     }
+        // }
         if(engraving.Effects !== null) {
             const engravingEffect = [];
             for(let tmp of engraving.Effects) {
                 engravingEffect.push(tmp.Name.replace(' Lv.', ''));
             }
             if(engravingEffect.length > 0) {
-                engravingText += `${engravingEffect.join(', ')}\n`;
+                engravingText += `[활성된 각인] ${engravingEffect.join(', ')}\n`;
             }
         }
-        engravingText = (engravingText !== '') ? `[각인정보]\n` : '';
+        engravingText = (engravingText !== '') ? `[각인정보]\n${engravingText}\n` : '';
 
         // 활성화된 세트효과
         const cardEffectArr = [];
@@ -65,7 +65,7 @@ async function getCharacterInfoText(characterName: string) {
 
         const cardEffect = (cardEffectArr.length > 0) ? `\n\n[카드세트효과]\n${cardEffectArr[cardEffectArr.length - 1]}` : '';
 
-        const characterData = `[${profile.CharacterClassName}] ${characterTitle}${profile.CharacterName}\n\n` +
+        const characterData = `[${profile.CharacterClassName}]\n${characterTitle}${profile.CharacterName}\n\n` +
                               `[캐릭터 기본정보]\n` +
                               `템/전/원      ${profile.ItemAvgLevel}/${profile.CharacterLevel}/${profile.ExpeditionLevel}\n` +
                               `서버/길드     ${profile.ServerName}/${guildName}\n` +
