@@ -20,7 +20,7 @@ async function getAccessoryText(characterName: string) {
             if(i > 5 && i < 13) {
                 const toolTips = tmp.Tooltip.replace(global.regex.htmlEntity, '');
                 const quality = (i < 11) ? JSON.parse(toolTips).Element_001.value.qualityValue : 0;
-                const qualityText = (i < 11) ? `(품질: ${quality})` : '';
+                const qualityText = (i < 11) ? `: ${quality}` : '';
                 const cleanedToolTipString = tmp.Tooltip;
                 const tooltipObject = JSON.parse(cleanedToolTipString);
                 let toolTipText = '';
