@@ -39,7 +39,7 @@ async function getAccessoryText(characterName: string) {
                                     const key = indentContentStr[keyName];
                                     if (key && key.contentStr) {
                                         const toolTipSplit = key.contentStr.replace(/(<BR>|\\)/g, '<BR>').split('<BR>');
-                                        gakin += `${toolTipSplit.join(',').replace(/\\n/g, '').replace(global.regex.htmlEntity, '').replace(/\[([^\]]*)\]\s*([^+]*)\s*\+(\d+)/, '$1 +$3')}`
+                                        gakin += `${toolTipSplit.slice(0, -1).join(',' ).replace(/\\n/g, '').replace(global.regex.htmlEntity, '').replace(/\[([^\]]*)\]\s*([^+]*)\s*\+(\d+)/, '$1 +$3')}`
                                     }
                                 });
                             }
