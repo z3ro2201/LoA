@@ -29,12 +29,12 @@ async function getAccessoryText(characterName: string) {
                         const element = tooltipObject[tmpData];
                         if(element && element.value && element.type && element.type.indexOf('ItemPartBox') !== -1) {
                             const toolTip_bracelet = element.value.Element_001.split('<BR>');
-                            toolTipText = `\n(추가효과)\n${toolTip_bracelet.join('\n').replace(global.regex.htmlEntity,'')}`;
+                            toolTipText = `\n${toolTip_bracelet.join(', ').replace(global.regex.htmlEntity,'')}`;
                         }
                         if (element && element.value && element.type && element.type.indexOf('IndentStringGroup') !== -1) {
                             const indentContentStr = element.value.Element_000.contentStr; // Element_006의 contentStr
                             if (indentContentStr) {
-                                toolTipText += "\n(각인효과)";
+                                toolTipText += "\n)";
                                 Object.keys(indentContentStr).forEach(keyName => {
                                     const key = indentContentStr[keyName];
                                     if (key && key.contentStr) {
