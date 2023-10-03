@@ -39,14 +39,14 @@ async function getAccessoryText(characterName: string) {
                                     const key = indentContentStr[keyName];
                                     if (key && key.contentStr) {
                                         const toolTipSplit = key.contentStr.replace(/(<BR>|\\)/g, '<BR>').split('<BR>');
-                                        gakin += `${toolTipSplit.join(', ').replace(/\\n/g, '').replace(global.regex.htmlEntity, '').replace(/\[([^\]]*)\]\s*([^+]*)\s*\+(\d+)/, (match, group1, group2, group3) => `${group1.split(' ').join('')} ${group2} +${group3}`)}`
+                                        gakin += `${toolTipSplit.join(', ').replace(/\\n/g, '').replace(global.regex.htmlEntity, '').replace(/\[([^\]]*)\]\s*([^+]*)\s*\+(\d+)/, (match, group1, group2, group3) => `${group1.split(' ').join('')}+${group3}`)}`
                                     }
                                 });
                             }
                         }
                     }
                 }
-                const gakinMsg = (gakin !== '') ? '\n' + gakin : '';
+                const gakinMsg = (gakin !== '') ? '\n' + gakin.slice(0, -1) : '';
                 engravingArr.push(`${tmp.Grade}  ${tmp.Type}    ${tmp.Name} ${qualityText}${toolTipText}${gakinMsg}\n`);
             }
             i++;
