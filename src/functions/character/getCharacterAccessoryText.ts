@@ -49,7 +49,7 @@ async function getAccessoryText(characterName: string) {
                 const gakinMsg = (gakin !== '') ? '\n' + gakin.slice(0, -1) : '';
                 const lastIndex = tmp.Name.lastIndexOf(' ');
                 const visiblePart = tmp.Name.substring(0, lastIndex + 1); // 마지막 공백까지의 부분 추출
-                engravingArr.push(`${tmp.Grade}  ${tmp.Type}    ${visiblePart} ${qualityText}${toolTipText}${gakinMsg}\n`);
+                engravingArr.push(`${tmp.Grade}  ${tmp.Type}    ${visiblePart.replace('의', '')} ${qualityText}${toolTipText}${gakinMsg}\n`);
             }
             i++;
         }
