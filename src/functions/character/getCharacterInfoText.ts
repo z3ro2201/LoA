@@ -52,7 +52,7 @@ async function getCharacterInfoText(characterName: string) {
                 engravingEffect.push(tmp.Name.replace(' Lv.', ''));
             }
             if(engravingEffect.length > 0) {
-                engravingText += `[활성된 각인] ${engravingEffect.join(', ')}\n`;
+                engravingText += `${engravingEffect.join(', ')}\n`;
             }
         }
         engravingText = (engravingText !== '') ? `[각인정보]\n${engravingText}\n` : '';
