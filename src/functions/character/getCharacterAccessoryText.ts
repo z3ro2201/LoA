@@ -54,7 +54,7 @@ async function getAccessoryText(characterName: string) {
             i++;
         }
 
-        const characterData = `[${profile.ServerName}] ${profile.CharacterName}\n\n${engravingArr.join('\n')}\n아이템레벨: ${profile.ItemMaxLevel}`;
+        const characterData = `${engravingArr.join('\n')}\n아이템레벨: ${profile.ItemMaxLevel}`;
         return characterData;
     } catch (error) {
         throw error; // 오류를 호출자로 던짐
