@@ -65,7 +65,7 @@ async function getCharacterInfoText(characterName: string) {
 
         const cardEffect = (cardEffectArr.length > 0) ? `\n\n[카드세트효과]\n${cardEffectArr[cardEffectArr.length - 1]}` : '';
 
-        const characterData = `[${profile.CharacterClassName}]\n${characterTitle}${profile.CharacterName}\n\n` +
+        const characterData = `[${profile.CharacterClassName}] ${characterTitle}${profile.CharacterName}\n\n` +
                               `[캐릭터 기본정보]\n` +
                               `템/전/원      ${profile.ItemAvgLevel}/${profile.CharacterLevel}/${profile.ExpeditionLevel}\n` +
                               `서버/길드     ${profile.ServerName}/${guildName}\n` +
