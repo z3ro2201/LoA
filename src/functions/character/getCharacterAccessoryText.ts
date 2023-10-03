@@ -24,7 +24,7 @@ async function getAccessoryText(characterName: string) {
                 const cleanedToolTipString = tmp.Tooltip;
                 const tooltipObject = JSON.parse(cleanedToolTipString);
                 let toolTipText = '';
-                let gakin = '';
+                let gakin = [];
                 for(const tmpData in tooltipObject) {
                     if(tooltipObject.hasOwnProperty(tmpData)) {
                         const element = tooltipObject[tmpData];
@@ -39,14 +39,14 @@ async function getAccessoryText(characterName: string) {
                                     const key = indentContentStr[keyName];
                                     if (key && key.contentStr) {
                                         const toolTipSplit = key.contentStr.replace(/(<BR>|\\)/g, '<BR>').split('<BR>');
-                                        gakin += `${toolTipSplit.join(', ').replace(/\\n/g, '').replace(global.regex.htmlEntity, '').replace(/\[([^\]]*)\]\s*([^+]*)\s*\+(\d+)/, (match, group1, group2, group3) => `${group1.split(' ').join('')}+${group3}`)}`
+                                        gakin.push(`${toolTipSplit.join('').replace(/\\n/g, '').replace(global.regex.htmlEntity, '').replace(/\[([^\]]*)\]\s*([^+]*)\s*\+(\d+)/, (match, group1, group2, group3) => `${group1.split(' ').join('')}+${group3}`)}`)
                                     }
                                 });
                             }
                         }
                     }
                 }
-                const gakinMsg = (gakin !== '') ? '\n' + gakin.slice(0, -1) : '';
+                const gakinMsg = (gakin.length > 0) ? '\n' + gakin.join(', ') : '';
                 const lastIndex = tmp.Name.lastIndexOf(' ');
                 const visiblePart = tmp.Name.substring(0, lastIndex + 1); // 마지막 공백까지의 부분 추출
                 engravingArr.push(`${tmp.Grade}  ${tmp.Type}    ${visiblePart.replace('의', '')} ${qualityText}${toolTipText}${gakinMsg}\n`);
