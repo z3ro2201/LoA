@@ -30,7 +30,7 @@ async function getAccessoryText(characterName: string) {
                         const element = tooltipObject[tmpData];
                         if(i == 12 && element && element.value && element.type && element.type.indexOf('ItemPartBox') !== -1) {
                             const toolTip_bracelet = element.value.Element_001.split('<BR>');
-                            toolTipText = `\n${toolTip_bracelet.join(', ').replace(global.regex.htmlEntity,'')}`;
+                            toolTipText = `\n${toolTip_bracelet.join('\n').replace(global.regex.htmlEntity,'')}`;
                         }
                         if (element && element.value && element.type && element.type.indexOf('IndentStringGroup') !== -1) {
                             const indentContentStr = element.value.Element_000.contentStr; // Element_006의 contentStr

@@ -24,7 +24,7 @@ async function getCharacterInfoText(characterName: string) {
         let i:number = 0;
         for(var tmp of profile.Stats) {
             if(i > 5) break;
-            const tmpData = `${tmp.Type}: ${tmp.Value}`;
+            const tmpData = `${tmp.Type.replace(/(.)./g, '$1')}+${tmp.Value}`;
             statsArr.push(tmpData);
             i++;
         }
