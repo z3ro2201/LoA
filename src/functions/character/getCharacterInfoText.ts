@@ -93,7 +93,7 @@ async function getCharacterInfoText(characterName: string) {
             })
             .then(updateRes => {
                 const data = updateRes[0];
-                characterData = `${data.mokoko_sponser !== null ? '[🌱 후원자] ':''}[${data.characterClassName}]\n${(data.characterTitle !== '' && data.characterTitle !== null) ? data.characterTitle + ' ' : ''}${data.characterName}\n\n` +
+                characterData = `${data.mokoko_sponser === 1 ? '[🌱 후원자] ':''}[${data.characterClassName}]\n${(data.characterTitle !== '' && data.characterTitle !== null) ? data.characterTitle + ' ' : ''}${data.characterName}\n\n` +
                             `[캐릭터 기본정보]\n` +
                             `템/전/원      ${data.itemLevel}/${data.characterLevel}/${data.expeditionLevel}\n` +
                             `서버/길드     ${data.serverName}/${(data.guildName !== '' && data.guildName !== null) ? data.guildName : '미가입'}\n` +
@@ -119,7 +119,7 @@ async function getCharacterInfoText(characterName: string) {
                 return '[안내] 데이터를 가져올 수 없습니다. (이유: 서비스 점검시간, 보관된 데이터가 없음)';
             } else {
                 const data = res[0];
-                const characterData = `${data.mokoko_sponser !== null ? '[캐싱된 데이터] [🌱 후원자] ':''}[${data.characterClassName}]\n${(data.characterTitle !== '' && data.characterTitle !== null) ? data.characterTitle + ' ' : ''}${data.characterName}\n\n` +
+                const characterData = `[캐싱된 데이터] ${data.mokoko_sponser === 1 ? '[🌱 후원자] ':''}[${data.characterClassName}]\n${(data.characterTitle !== '' && data.characterTitle !== null) ? data.characterTitle + ' ' : ''}${data.characterName}\n\n` +
                             `[캐릭터 기본정보]\n` +
                             `템/전/원      ${data.itemLevel}/${data.characterLevel}/${data.expeditionLevel}\n` +
                             `서버/길드     ${data.serverName}/${(data.guildName !== '' && data.guildName !== null) ? data.guildName : '미가입'}\n` +
