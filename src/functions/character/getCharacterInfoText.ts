@@ -13,6 +13,7 @@ async function getCharacterInfoText(characterName: string) {
     const apiUrl = `${global.apiUrl.lostark}armories/characters/${characterName}`;
     const apiStatus = await apiCheck();
     if(apiStatus === true) {
+        console.log('a')
 
         try {
             const response = await axios.get(apiUrl, {
@@ -38,18 +39,7 @@ async function getCharacterInfoText(characterName: string) {
             const guildName = (profile.GuildName === null) ? '미가입' : profile.GuildName;
             let engravingText = '';
             let statsText = (statsArr.length > 0) ? `[특성정보]\n${statsArr.join(', ')}` : '';
-            // if(engraving.Engravings !== null) {
-            //     const engravingSlots = [];
-            //     for(let tmp of engraving.Engravings) {
-            //         // 장착각인 활성포인트를 위해 tooltip 파싱
-            //         const toolTips = JSON.parse(tmp.Tooltip);
-            //         const activatedLevel = toolTips.Element_001.value.leftText.replace(/[가-힣]/g, '').replace(global.regex.htmlEntity, '').trim();
-            //         engravingSlots.push(`${tmp.Name} ${activatedLevel}`);
-            //     }
-            //     if(engravingSlots.length > 0) {
-            //         engravingText = `[장착 각인] ${engravingSlots.join(', ')}\n`;
-            //     }
-            // }
+            
             const engravingEffect = [];
             if(engraving.Effects !== null) {
                 for(let tmp of engraving.Effects) {
@@ -113,14 +103,17 @@ async function getCharacterInfoText(characterName: string) {
             throw error; // 오류를 호출자로 던짐
         }
     } else {
+        console.log('b')
         // 로스트아크 점검중일때
+        let characterData = '';
         const characterResult = await characterSearch(characterName)
         .then(res => {
             if(Array.isArray(res) && res.length === 0) {
-                return '[안내] 데이터를 가져올 수 없습니다. (이유: 서비스 점검시간, 보관된 데이터가 없음)';
+                console.log('a1')
+                characterData = '[안내] 데이터를 가져올 수 없습니다. (이유: 서비스 점검시간, 보관된 데이터가 없음)';
             } else {
                 const data = res[0];
-                const characterData = `[캐싱된 데이터] ${data.mokoko_sponsor === 1 ? '[🌱 후원자] ':''}[${data.characterClassName}]\n${(data.characterTitle !== '' && data.characterTitle !== null) ? data.characterTitle + ' ' : ''}${data.characterName}\n\n` +
+                characterData = `[캐싱된 데이터] ${data.mokoko_sponsor === 1 ? '[🌱 후원자] ':''}[${data.characterClassName}]\n${(data.characterTitle !== '' && data.characterTitle !== null) ? data.characterTitle + ' ' : ''}${data.characterName}\n\n` +
                             `[캐릭터 기본정보]\n` +
                             `템/전/원      ${data.itemLevel}/${data.characterLevel}/${data.expeditionLevel}\n` +
                             `서버/길드     ${data.serverName}/${(data.guildName !== '' && data.guildName !== null) ? data.guildName : '미가입'}\n` +
@@ -129,12 +122,12 @@ async function getCharacterInfoText(characterName: string) {
                             `${(data.statsInfo !== '') ? '[특성정보]\n'+data.statsInfo + '\n\n' : ''}` +
                             `${(data.engravingInfo !== '') ? '[각인정보]\n' + data.engravingInfo + '\n\n' : ''}` + 
                             `${(data.cardEffectInfo !== '') ? '[카드세트효과]\n' + data.cardEffectInfo : ''}`;
-                return characterData;
             }
         })
         .catch(e => {
             throw e;
         });
+        return characterData;
     }
 }
 
