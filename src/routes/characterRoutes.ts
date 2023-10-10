@@ -14,6 +14,7 @@ import getCharacterGemText from '../functions/character/getCharacterGemText'
 import getCharacterSkillText from '../functions/character/getCharacterSkills'
 import getCharacterCardText from '../functions/character/getCharacterCardText'
 import getCharacterCollectText from '../functions/character/getCharacterCollect'
+import weeklySupplyGold from '../functions/character/getWeeklySupplyGold'
 
 const characterRouter: Router = express.Router();
 
@@ -239,6 +240,27 @@ characterRouter.get('/:characterName/collects', async (req: Request, res: Respon
     const characterName = req.params.characterName;
     try {
         const characterData = await getCharacterCollectText(characterName);
+        res.status(200).send({
+            code: 200,
+            message: '정상적으로 처리되었습니다.',
+            characterData: characterData
+        })
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            error: {
+                message: "처리과정에 문제가 발생하였습니다."
+            }
+        })
+    }
+});
+
+
+// 주간골드수급정보
+characterRouter.get('/:characterName/weeklyGold', async (req: Request, res: Response) => {
+    const characterName = req.params.characterName;
+    try {
+        const characterData = await weeklySupplyGold(characterName);
         res.status(200).send({
             code: 200,
             message: '정상적으로 처리되었습니다.',

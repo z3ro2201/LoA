@@ -3,9 +3,10 @@
 node_modules/
 dist/
 
-src/config/mysql
+src/config/mysql.ts
 src/config/config.ts
 src/functions/check/getLostarkServerStatus.ts
+src/functions/utils/apiCheck.ts
 
 .env
 .env.local

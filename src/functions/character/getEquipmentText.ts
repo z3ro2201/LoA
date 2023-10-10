@@ -17,6 +17,7 @@ async function getEquipmentText(characterName: string) {
         const engravingArr = [];
         const elixirDataArr = [];
         const elixirTotalArr = [];
+        let equipmentGrade = '';
         let i: number = 0;
         let qualityValue: number = 0;
         for(let tmp of equipment) {
@@ -45,6 +46,10 @@ async function getEquipmentText(characterName: string) {
                                 }
                             });
                         }
+                        if(element.value.Element_000.topStr.indexOf('초월') !== -1) {
+                            const tmp_grade = element.value.Element_000.topStr.replace(global.regex.htmlEntity, '').match(/(\[초월\]) ([1-3]단계) ([0-9])/);
+                            equipmentGrade = ` [초월 ${tmp_grade[2].replace('단계', '')}]`;
+                        }
                     }
                     if(tmpElementElixir.length > 0) elixirDataArr.push(`${tmp.Type} ${tmpElementElixir.join(' ')}`);
                 }
@@ -52,7 +57,7 @@ async function getEquipmentText(characterName: string) {
             const equipmentSetName = tmp.Name.replace('+', ' ');
             const lastIndex = equipmentSetName.lastIndexOf(' ');
             const visiblePart = equipmentSetName.substring(0, lastIndex + 1); // 마지막 공백까지의 부분 추출
-            engravingArr.push(`${tmp.Grade} ${tmp.Type} ${visiblePart}: ${quality}`);
+            engravingArr.push(`${tmp.Grade}${equipmentGrade} ${tmp.Type} ${visiblePart}: ${quality}`);
             qualityValue += parseInt(quality);
             i++;
         }
