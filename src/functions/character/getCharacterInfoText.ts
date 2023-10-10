@@ -13,8 +13,6 @@ async function getCharacterInfoText(characterName: string) {
     const apiUrl = `${global.apiUrl.lostark}armories/characters/${characterName}`;
     const apiStatus = await apiCheck();
     if(apiStatus === true) {
-        console.log('a')
-
         try {
             const response = await axios.get(apiUrl, {
                 headers: global.token.lostarkHeader
@@ -103,13 +101,11 @@ async function getCharacterInfoText(characterName: string) {
             throw error; // 오류를 호출자로 던짐
         }
     } else {
-        console.log('b')
         // 로스트아크 점검중일때
         let characterData = '';
         const characterResult = await characterSearch(characterName)
         .then(res => {
             if(Array.isArray(res) && res.length === 0) {
-                console.log('a1')
                 characterData = '[안내] 데이터를 가져올 수 없습니다. (이유: 서비스 점검시간, 보관된 데이터가 없음)';
             } else {
                 const data = res[0];
