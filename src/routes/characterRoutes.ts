@@ -15,6 +15,7 @@ import getCharacterSkillText from '../functions/character/getCharacterSkills'
 import getCharacterCardText from '../functions/character/getCharacterCardText'
 import getCharacterCollectText from '../functions/character/getCharacterCollect'
 import weeklySupplyGold from '../functions/character/getWeeklySupplyGold'
+import { getCharacterSuspendAccount } from '../functions/character/getCharacterSuspendAccount';
 
 const characterRouter: Router = express.Router();
 
@@ -276,5 +277,24 @@ characterRouter.get('/:characterName/weeklyGold', async (req: Request, res: Resp
     }
 });
 
+// 부캐 정보 가져오기
+characterRouter.get('/:characterName/suspend', async (req: Request, res: Response) => {
+    const characterName = req.params.characterName;
+    try {
+        const characterData = await getCharacterSuspendAccount(characterName);
+        console.log(characterData)
+        res.status(200).send({
+            code: characterData,
+            message: (characterData === 200) ? '정지된 계정입니다.' : (characterData === 404) ? '생성되지 않았거나 삭제된 계정입니다.' : '정상 계정입니다.'
+        })
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            error: {
+                message: "처리과정에 문제가 발생하였습니다."
+            }
+        })
+    }
+});
 
 export default characterRouter
