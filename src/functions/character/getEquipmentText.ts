@@ -59,7 +59,7 @@ async function getEquipmentText(characterName: string) {
                             }
                             if(element.value.Element_000.topStr.indexOf('초월') !== -1) {
                                 const tmp_grade = element.value.Element_000.topStr.replace(global.regex.htmlEntity, '').match(/(\[초월\]) ([1-3]단계) ([0-9])/);
-                                equipmentGrade = ` [초월 ${tmp_grade[2].replace('단계', '')}]`;
+                                equipmentGrade = tmp_grade;//` [초월 ${tmp_grade[2].replace('단계', '')}]`;
                             }
                         }
                         if(tmpElementElixir.length > 0) elixirDataArr.push(`${tmp.Type} ${tmpElementElixir.join(' ')}`);
