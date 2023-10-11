@@ -19,10 +19,11 @@ async function getEquipmentText(characterName: string) {
             // 서버 응답을 파싱하여 캐릭터 정보를 추출
             const engravingArr = [];
             const elixirDataArr = [];
-            const elixirTotalArr = [];
+            // const elixirTotalArr = [];
             let equipmentGrade = '';
             let i: number = 0;
             let qualityValue: number = 0;
+            let elixirTot = 0;
             for(let tmp of equipment) {
                 if(i > 5) break;
                 const toolTips = tmp.Tooltip.replace(global.regex.htmlEntity, '');
@@ -40,13 +41,20 @@ async function getEquipmentText(characterName: string) {
                                     const key = indentContentStr[keyName].contentStr;
                                     const topStr = element.value.Element_000.topStr;
                                     if(topStr.includes('엘릭서 효과')) {
-                                        if(!key.includes('재사용 대기시간') && !key.includes('레벨 합'))
+                                        if(!key.includes('재사용 대기시간') && !key.includes('레벨 합')) {
+                                            const tmpLv = key.toUpperCase().split('<BR>')[0].replace(global.regex.htmlEntity, '');
+                                            const regex = /\d+/g;
+                                            const numbers = tmpLv.match(regex).map(Number);
+                                            elixirTot += parseInt(numbers[0]);
                                             tmpElementElixir.push(key.toUpperCase().split('<BR>')[0].replace(global.regex.htmlEntity, ''));
-                                    } else {
-                                        if(key.includes('레벨 합')) {
-                                            elixirTotalArr.push(key.toUpperCase().split('<BR>')[0].replace(global.regex.htmlEntity, '').replace(/\d단계 : /, ''));
                                         }
                                     }
+                                    //  else {
+                                    //     if(key.includes('레벨 합')) {
+                                    //         elixirTotalArr.push(key.toUpperCase().split('<BR>')[0].replace(global.regex.htmlEntity, '').replace(/\d단계 : /, ''));
+                                    //         console.log(key.toUpperCase().split('<BR>')[0].replace(global.regex.htmlEntity, ''))
+                                    //     }
+                                    // }
                                 });
                             }
                             if(element.value.Element_000.topStr.indexOf('초월') !== -1) {
@@ -64,7 +72,8 @@ async function getEquipmentText(characterName: string) {
                 qualityValue += parseInt(quality);
                 i++;
             }
-            if(elixirTotalArr.length > 0) elixirDataArr.push(elixirTotalArr[elixirTotalArr.length - 1]);
+            // if(elixirTotalArr.length > 0) elixirDataArr.push(elixirTotalArr[elixirTotalArr.length - 1]);
+            if(elixirTot > 0) elixirDataArr.push(`지혜의 엘릭서 레벨 합: ${elixirTot}`);
             const elixirMessage = (elixirDataArr.length > 0) ? `\n&nbsp;\n[엘릭서 확인은 전체보기]\n${elixirDataArr.join('\n')}` : '';
             const characterData = `${engravingArr.join('\n')}\n\n아이템레벨: ${profile.ItemMaxLevel}\n평균품질: ${(qualityValue/6).toFixed(3)}${elixirMessage}`;
             return characterData;
