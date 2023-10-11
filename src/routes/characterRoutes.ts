@@ -102,11 +102,11 @@ characterRouter.get('/:characterName/avatar', async (req: Request, res: Response
     const characterName = req.params.characterName;
     try {
         const characterData = await getCharacterAvatarText(characterName);
-        res.status(200).send({
-            code: 200,
-            message: '정상적으로 처리되었습니다.',
-            characterData: characterData
-        })
+        const htmlTag = `<!doctype html><html lang="ko"><head>
+        <meta property="og:type" content="website"><meta property="og:url" content="https://loaapi.2er0.io/character/${characterName}/avatar"><meta property="og:title" content="${characterName}님의 아바타">
+        <meta property="og:image" content="${characterData[0].AvataUrl}"><meta property="og:description" content="${characterName}님의 아바타"><meta property="og:image:width" content="568">
+        <meta property="og:image:height" content="658"><meta charset="utf-8"><title>${characterName}님의 아바타 정보 입니다.</title></head><body><img src="${characterData[0].AvataUrl}"></body></html>`;
+        res.status(200).send(htmlTag)
     } catch (error) {
         console.error(error);
         res.status(500).json({

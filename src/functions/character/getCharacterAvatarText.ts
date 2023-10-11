@@ -17,7 +17,7 @@ async function getCharacterAvatarText(characterName: string) {
 
         const profile = response.data.ArmoryProfile;
 
-        const characterData = `[${profile.ServerName}] ${characterName}\n아바타 링크: ${profile.CharacterImage}`;
+        const characterData = [{ ServerName: profile.ServerName, CharacterName: characterName, AvataUrl: profile.CharacterImage}];
         return characterData;
     } catch (error) {
         throw error; // 오류를 호출자로 던짐
