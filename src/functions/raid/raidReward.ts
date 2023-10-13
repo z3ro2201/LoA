@@ -135,7 +135,7 @@ const changeRaidName = (str: string) => {
         case "ㅎㅋ":
         case "ㅇㅀㄷ":
         case "ㅇㄹㅎㄷ":
-            return { name: '일리아크', diff: '하드' };
+            return { name: '일리아칸', diff: '하드' };
         case "카양겔노말":
         case "카양노말":
         case "ㅋㅇㄱㄴㅁ":
