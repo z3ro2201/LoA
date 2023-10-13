@@ -1,348 +1,179 @@
 import axios from 'axios'
 import global from '../../config/config'
+import { init as initDb, connect as connectDb, query as queryDb } from '../../config/mysqlConf'
 
 const command: Record<string, string>= {
-    command: global.prefix + '보상',
-    help: '[오레하|아르고스|발탄노말|발탄하드|비아노말|비아하드|쿠크|아브노말|아브하드|일리노말|일리하드|카양겔노말|카양겔하드|상아탑노말|상아탑하드|카멘노말|카멘하드]\n(골드만 보려면 뒤에 "골드" 추가하세요.)',
+    command: global.prefix + '보상(ㅂㅅ)',
+    help: '[오레하|아르고스|발탄노말|발탄하드|비아노말|비아하드|쿠크|아브노말|아브하드|일리노말|일리하드|카양겔노말|카양겔하드|상아탑노말|상아탑하드|카멘노말|카멘하드]\n(골드만 보려면 뒤에 "골드" 추가하세요. 초성가능. 발비, 발하, 상하탑, 상노탑 가능)',
     description: '레이드 보상을 볼 수 있습니다.'
 }
 
-export const raidRewardOreha = () => {
-    const reward = {
-        level : '1,325',
-        checkpoint_1: '500 골드',
-        checkpoint_2: '700 골드',
-        total: '1,200 골드'
-    };
-    return `[오레하 보상]\n입장가능 아이템 레벨: ${reward.level}\n골드획득 불가 레벨 1,415\n\n노말: ${reward.checkpoint_1}\n하드 ${reward.checkpoint_2}\n\nhttps://loaapi.2er0.io/assets/images/Oreha/Oreha.png`
-}
-
-export const raidRewardAreugoseu = () => {
-    const reward = {
-        level: '1,385',
-        checkpoint_1: '300 골드',
-        checkpoint_2: '300 골드',
-        checkpoint_3: '400 골드',
-        total: '1,000 골드'
-    };
-    return `[아르고스 보상]\n입장가능 레벨: ${reward.level}\n골드획득 불가 레벨: 1,475\n\n1페이즈: ${reward.checkpoint_1}, 2페이즈: ${reward.checkpoint_2}, 3페이즈: ${reward.checkpoint_3}\n\nhttps://loaapi.2er0.io/assets/images/Areugoseu/Areugoseu.png`
-}
-
-export const raidRewardBaltanNormal:any = (isGold: string) => {
-    const reward = {
-        level: '1,415',
-        checkpoint_1: '500 골드',
-        checkpoint_2: '700 골드',
-        total: '1,200 골드'
-    };
-    let message = `[발탄(노말) 보상]\n입장가능 레벨: ${reward.level}`;
-    if(isGold === "true") {
-        for (var i = 1; i <= 2; i++) {
-            const checkpoint = 'checkpoint_' + i;
-            const checkpoint_key = reward[checkpoint];
-            message += `\n[${i}관문]\n 획득가능 골드: ${checkpoint_key}\n`;
+export const raidName = async (str: string, goldOptions: string) => {
+    const rewardRaidName = changeRaidName(str);
+    if (rewardRaidName !== 0) {
+        const rewards = await queryRaids(rewardRaidName);
+        const title = `[${rewardRaidName.name}${rewardRaidName.diff ? `(${rewardRaidName.diff})` : ''} 보상]\n`;
+        const rewardArr = [];
+        const rewardLength = rewards.length;
+        let totalGold:number = 0;
+        let bonusGold:number = 0;
+        if (parseInt(goldOptions) === 1) {
+            console.log(goldOptions);
+            for (const reward of rewards) {
+                const diffTitle = (rewardLength > 1) ? `[${reward.raid_phase}관문] 입장레벨: ${reward.raid_minItemLevel}${reward.raid_maxItemLevel ? `, 골드획득불가: ${reward.raid_maxItemLevel}\n` : '\n'}` : '';
+                rewardArr.push(`${diffTitle}획득가능 골드: ${reward.raid_rewardGold}G\n`);
+                totalGold += parseInt(reward.raid_rewardGold);
+            }
+        } else {
+            for (const reward of rewards) {
+                const diffTitle = (rewardLength > 1) ? `[${reward.raid_phase}관문] 입장레벨: ${reward.raid_minItemLevel}${reward.raid_maxItemLevel ? `, 골드획득불가: ${reward.raid_maxItemLevel}\n` : '\n'}` : '';
+                rewardArr.push(`${diffTitle}골드: ${reward.raid_rewardGold}G${reward.raid_rewardItem?`\n재료: ${reward.raid_rewardItem}`:''}${reward.raid_bouns_amountGold?`, 더보기: ${reward.raid_bouns_amountGold}`:''}${reward.raid_bonus_amount?` (필요: ${reward.raid_bonus_amount} 골드)`:''}\n`);
+                totalGold += parseInt(reward.raid_rewardGold);
+                if(reward.raid_bonus_amount !== undefined && !isNaN(reward.raid_bonus_amount))
+                    bonusGold += parseInt(reward.raid_bonus_amount);
+            }
         }
+        return `${title}\n${rewardArr.join('\n')}\n획득골드: ${totalGold}G${bonusGold !== 0 && !isNaN(bonusGold) ? ` / 더보기: ${bonusGold}G` : ''}\n이미지로 보기: https://loaapi.2er0.io/assets/images/${rewards[0].imageUrl}`;
+    } else {
+        return `${command.command} ${command.help}`;
     }
-    else message += `\n[1관문]\n골드: ${reward.checkpoint_1}\n재료: 마수의뼈x1, 마수의 힘줄x3\n더보기: 마수의뼈x1, 마수의 힘줄x3(필요골드 300골드)\n\n[2관문]\n골드: ${reward.checkpoint_2}골드\n재료: 마수의뼈x2, 마수의 힘줄x3\n더보기: 마수의뼈x1, 마수의 힘줄x3(필요골드 400골드)\n\nhttps://loaapi.2er0.io/assets/iamges/Baltan/normal.png`
-    return `${message}`;
-}
-
-export const raidRewardBaltanHard = (isGold: string) => {
-    const reward = {
-        level: '1,445',
-        checkpoint_1: '700 골드',
-        checkpoint_2: '1,100 골드',
-        total: '1,800 골드'
-    };
-    let message = `[발탄(노말) 보상]\n입장가능 레벨: ${reward.level}`;
-    if(isGold === "true") {
-        for (var i = 1; i <= 2; i++) {
-            const checkpoint = 'checkpoint_' + i;
-            const checkpoint_key = reward[checkpoint];
-            message += `\n[${i}관문]\n 획득가능 골드: ${checkpoint_key}\n`;
-        }
-    }
-    else message += `\n[1관문]\n골드: ${reward.checkpoint_1}\n재료: 마수의뼈x3\n더보기 재료: 마수의뼈x3 (필요골드: 450골드)\n\n[2관문]\n골드: ${reward.checkpoint_2}골드\n재료: 마수의뼈x3\n더보기 재료: 마수의뼈x3 (필요골드: 600골드)\n\nhttps://loaapi.2er0.io/assets/images/Baltan/hard.png`
-    return message;
-}
-
-export const raidRewardBiackissNormal = (isGold: string) => {
-    const reward = {
-        level: '1,430',
-        checkpoint_1: '600 골드',
-        checkpoint_2: '1,000 골드',
-        total: '1,600 골드'
-    };
-    let message = `[비아키스(노말) 보상]\n입장가능 레벨: ${reward.level}`;
-    if(isGold === "true") {
-        for (var i = 1; i <= 2; i++) {
-            const checkpoint = 'checkpoint_' + i;
-            const checkpoint_key = reward[checkpoint];
-            message += `\n[${i}관문]\n 획득가능 골드: ${checkpoint_key}\n`;
-        }
-    }
-    else message = `\n[1관문]\n골드: ${reward.checkpoint_1}\n재료: 욕망의날개x1, 욕망의송곳니x2\n더보기 재료: 욕망의날개x1, 욕망의송곳니x2 (필요 골드: 300골드)\n\n[2관문]\n골드: ${reward.checkpoint_2}\n재료: 욕망의날개x2, 욕망의송곳니x4\n더보기 재료: 욕망의날개x2, 욕망의송곳니x4 (필요 골드: 450 골드)\n\nhttps://loaapi.2er0.io/assets/images/Biackiss/normal.png`
-    return message;
-}
-
-export const raidRewardBiackissHard = (isGold: string) => {
-    const reward = {
-        level: '1,460',
-        checkpoint_1: '900 골드',
-        checkpoint_2: '1,500 골드',
-        total: '2,400 골드'
-    };
-    let message = `[비아키스(하드) 보상]\n입장가능 레벨: ${reward.level}`;
-    if(isGold === "true") {
-        for (var i = 1; i <= 2; i++) {
-            const checkpoint = 'checkpoint_' + i;
-            const checkpoint_key = reward[checkpoint];
-            message += `\n[${i}관문]\n 획득가능 골드: ${checkpoint_key}\n`;
-        }
-    }
-    else message += `\n[1관문]\n골드: ${reward.checkpoint_1}\n재료: 욕망의날개x3\n더보기 재료: 욕망의날개x3 (필요 골드: 500골드)\n\n[2관문]\n골드: ${reward.checkpoint_2}}\n재료: 욕망의날개x3\n더보기 재료: 욕망의날개x3 (필요 골드: 650골드)\n\nhttps://loaapi.2er0.io/assets/images/Biackiss/hard.png`
-    return message;
-}
-
-export const raidRewardKoukuSaton = (isGold: string) => {
-    const reward = {
-        level: '1,475',
-        checkpoint_1: '600 골드',
-        checkpoint_2: '900 골드',
-        checkpoint_3: '1,500골드',
-        total: '3,000 골드'
-    };
-    let message = `[쿠크세이튼 보상]\n입장가능 레벨: ${reward.level}`;
-    if(isGold === "true") {
-        for (var i = 1; i <= 3; i++) {
-            const level = 'level_' + i;
-            const level_key = reward[level];
-            const checkpoint = 'checkpoint_' + i;
-            const checkpoint_key = reward[checkpoint];
-            message += `\n[${i}관문]}\n획득가능 골드: ${checkpoint_key}\n`;
-        }
-    }
-    else message += `\n[1관문]\n골드: ${reward.checkpoint_1}\n재료: 광기의나팔x1\n더보기 재료: 광기의나팔x1 (필요 골드: 300골드)\n\n[2관문]\n골드: ${reward.checkpoint_2}\n재료: 광기의나팔x2\n더보기 재료: 광기의나팔x2 (필요 골드: 500골드)\n\n[3관문]\n골드: ${reward.checkpoint_3}\n재료: 광기의나팔x2\n더보기 재료: 광기의나팔x2 (필요 골드: 700골드)\\nnhttps://loaapi.2er0.io/assets/images/Kouku-Saton/Kouku-Saton.png`
-    return message
-}
-
-export const raidRewardAbrelshudNormal = (isGold: string) => {
-    const reward = {
-        level_1: '1,490',
-        level_2: '1,500',
-        level_3: '1,500',
-        level_4: '1,520',
-        checkpoint_1: '1,500 골드',
-        checkpoint_2: '1,500 골드',
-        checkpoint_3: '1,500 골드',
-        checkpoint_4: '2,500 골드',
-        total: '7,000 골드'
-    };
-    let message = `[아브렐슈드(노말) 보상]`;
-    if(isGold === "true") {
-        for (var i = 1; i <= 4; i++) {
-            const level = 'level_' + i;
-            const level_key = reward[level];
-            const checkpoint = 'checkpoint_' + i;
-            const checkpoint_key = reward[checkpoint];
-            message += `\n[${i}관문]\n 입장가능레벨: ${level_key}\n획득가능 골드: ${checkpoint_key}\n`;
-        }
-    }
-    else message += `\n[1관문]\n입장가능 레벨: ${reward.level_1}\n골드:${reward.checkpoint_1}\n재료: 몽환의사념x4\n더보기 재료: 몽환의사념x4 (필요 골드: 400골드)\n\n[2관문]\n입장가능 레벨: ${reward.level_2}\n골드: ${reward.checkpoint_2}\n재료: 몽환의사념x4\n더보기 재료: 몽환의사념x4 (필요 골드: 600골드)\n\n[3관문]\n입장가능 레벨: ${reward.level_3}\n골드: ${reward.checkpoint_3}\n재료: 몽환의사념x5\n더보기 재료: 몽환의사념x5 (필요 골드: 800골드)\n\n[4관문]\n입장가능 레벨: ${reward.level_4}\n골드: ${reward.checkpoint_4}\n재료: 몽환의사념x7\n더보기 재료: 몽환의사념x7 (필요 골드: 1,50골드)\nhttps://loaapi.2er0.io/assets/images/Abrelshud/normal.png`
-    return message;
-}
-
-export const raidRewardAbrelshudHard = (isGold: string) => {
-    const reward = {
-        level_1: '1,540',
-        level_2: '1,540',
-        level_3: '1,550',
-        level_4: '1,560',
-        checkpoint_1: '2,000 골드',
-        checkpoint_2: '2,000 골드',
-        checkpoint_3: '2,000 골드',
-        checkpoint_4: '3,000 골드',
-        total: '9,000 골드'
-    };
-    let message = `[쿠크세이튼 보상]`;
-    if(isGold === "true") {
-        for (var i = 1; i <= 4; i++) {
-            const level = 'level_' + i;
-            const level_key = reward[level];
-            const checkpoint = 'checkpoint_' + i;
-            const checkpoint_key = reward[checkpoint];
-            message += `\n[${i}관문]\n 입장가능레벨: ${level_key}\n획득가능 골드: ${checkpoint_key}\n`;
-        }
-    }
-    else message += `\n[1관문]\n입장가능 레벨: ${reward.level_1}\n골드: ${reward.checkpoint_1}\n재료: 몽환의사념x6\n더보기 재료: 몽환의사념x6 (필요 골드: 700골드)\n\n[2관문]\n입장가능 레벨: ${reward.level_2}\n골드: ${reward.checkpoint_2}\n재료: 몽환의사념x6\n더보기 재료: 몽환의사념x6 (필요 골드: 900골드)\n\n[3관문]\n입장가능 레벨: ${reward.level_3}\n골드: ${reward.checkpoint_3}\n재료: 몽환의사념x7\n더보기 재료: 몽환의사념x7 (필요 골드: 1,100골드)\n\n[4관문]\n입장가능 레벨: ${reward.level_4}\n골드: ${reward.checkpoint_4}\n재료: 몽환의사념x10\n더보기 재료: 몽환의사념x10 (필요 골드: 1,800골드)\n\nhttps://loaapi.2er0.io/assets/images/Abrelshud/hard.png`
-    return message;
-}
-
-export const raidRewardIlliakanNormal = (isGold: string) => {
-    const reward = {
-        level: '1,580',
-        checkpoint_1: '1,500 골드',
-        checkpoint_2: '2,000 골드',
-        checkpoint_3: '3,000 골드',
-        total: '6,500 골드'
-    };
-    let message = `[일리야칸(노말) 보상]\n\n입장가능 레벨: ${reward.level}`;
-    if(isGold === "true") {
-        for (var i = 1; i <= 3; i++) {
-            const checkpoint = 'checkpoint_' + i;
-            const checkpoint_key = reward[checkpoint];
-            message += `\n[${i}관문]\n 획득가능 골드: ${checkpoint_key}\n`;
-        }
-    }
-    else message += `\n[1관문]\n골드: ${reward.checkpoint_1}\n재료: 쇠락의눈동자x3\n더보기 재료: 쇠락의눈동자x3 (필요 골드: 900골드)\n\n[2관문]\n골드: ${reward.checkpoint_2}\n재료: 쇠락의눈동자x3\n더보기 재료: 쇠락의눈동자x3 (필요 골드: 1,100골드)\n\n[3관문]\n골드: ${reward.checkpoint_3}\n재료: 쇠락의눈동자x5\n더보기 재료: 쇠락의눈동자x5 (필요 골드: 1,500골드)\n\nhttps://loaapi.2er0.io/assets/images/Illiakan/normal.png`
-    return message;
-}
-
-export const raidRewardIlliakanHard = (isGold: string) => {
-    const reward = {
-        level: '1,600',
-        checkpoint_1: '1,750 골드',
-        checkpoint_2: '2,500 골드',
-        checkpoint_3: '5,750 골드',
-        total: '10,000 골드'
-    };
-    let message = `[일리야칸(하드) 보상]\n\n입장가능 레벨: ${reward.level}`;
-    if(isGold === "true") {
-        for (var i = 1; i <= 3; i++) {
-            const checkpoint = 'checkpoint_' + i;
-            const checkpoint_key = reward[checkpoint];
-            message += `\n\n[${i}관문]\n 획득가능 골드: ${checkpoint_key}\n`;
-        }
-    }
-    else message += `\n[1관문]\n골드:${reward.checkpoint_1}\n재료: 쇠락의눈동자x7\n더보기 재료: 쇠락의눈동자x7 (필요 골드: 1,200골드)\n\n[2관문]\n골드: ${reward.checkpoint_2}\n재료: 쇠락의눈동자x7\n더보기 재료: 쇠락의눈동자x7 (필요 골드: 1,400골드)\n\n[3관문]\n골드: ${reward.checkpoint_3}\n재료: 쇠락의눈동자x8\n더보기 재료: 쇠락의눈동자x8 (필요 골드: 1,900골드)\n\nhttps://loaapi.2er0.io/assets/images/Illiakan/hard.png`
-    return message;
-}
-
-export const raidRewardKayanggelNormal = (isGold: string) => {
-    const reward = {
-        level: '1,540',
-        checkpoint_1: '1,000 골드',
-        checkpoint_2: '1,500 골드',
-        checkpoint_3: '2,000 골드',
-        total: '4,500 골드'
-    };
-    let message = `[카양겔(노말) 보상]\n\n입장가능 레벨: ${reward.level}`;
-    if(isGold === "true") {
-        for (var i = 1; i <= 3; i++) {
-            const checkpoint = 'checkpoint_' + i;
-            const checkpoint_key = reward[checkpoint];
-            message += `\n\n[${i}관문]\n 획득가능 골드: ${checkpoint_key}\n`;
-        }
-    }
-    else message += `\n[1관문]\n골드: ${reward.checkpoint_1}\n재료: 시련의빛x11\n더보기 재료: 시련의빛x11 (필요 골드: 600골드)\n\n[2관문]\n골드: ${reward.checkpoint_2}\n재료: 시련의빛x12,관조의빛x1\n더보기 재료: 시련의빛x12,관조의빛x1 (필요 골드: 800골드)\n[3관문]\n골드: ${reward.checkpoint_3}\n재료: 시련의빛x17,관조의빛x2\n더보기 재료: 시련의빛x17,관조의빛x2 (필요 골드: 1,000골드)\n\n[합계] 보상골드: ${reward.total}, 더보기 필요 골드: 2,400골드, 재료: 시련의빛x40, 관조의빛x3, 더보기 재료: 시련의빛x40, 관조의빛x3\n\nhttps://loaapi.2er0.io/assets/images/Kayanggel/normal.png`
-    return message;
-}
-
-export const raidRewardKayanggelHard = (isGold: string) => {
-    const reward = {
-        level: '1,580',
-        checkpoint_1: '1,500 골드',
-        checkpoint_2: '2,000 골드',
-        checkpoint_3: '3,000 골드',
-        total: '6,500 골드'
-    };
-    let message = `[카양겔(하드) 보상]\n입장가능 레벨: ${reward.level}`;
-    if(isGold === "true") {
-        for (var i = 1; i <= 3; i++) {
-            const checkpoint = 'checkpoint_' + i;
-            const checkpoint_key = reward[checkpoint];
-            message += `\n[${i}관문]\n 획득가능 골드: ${checkpoint_key}\n`;
-        }
-    }
-    else message += `\n[1관문]\n골드: ${reward.checkpoint_1}\n재료: 시련의빛x14, 관조의빛x1\n더보기 재료: 시련의빛x14, 관조의빛x1 (필요 골드: 700골드)\n\n[2관문]\n골드: ${reward.checkpoint_2}\n재료: 시련의빛x16,관조의빛x1\n더보기 재료: 시련의빛x16,관조의빛x1 (필요 골드: 900골드)\n[3관문]\n골드: ${reward.checkpoint_3}\n재료: 시련의빛x20,관조의빛x3\n더보기 재료: 시련의빛x20,관조의빛x3 (필요 골드: 1,100골드)\n\n[합계] 보상골드: ${reward.total}, 더보기 필요 골드: 2,600골드, 재료: 시련의빛x50, 관조의빛x5, 더보기 재료: 시련의빛x50, 관조의빛x5\n\nhttps://loaapi.2er0.io/assets/images/Kayanggel/hard.png`
-    return message;
-}
-
-export const raidRewardSangatapNormal = (isGold: string) => {
-    const reward = {
-        level: '1,600',
-        checkpoint_1: '1,500 골드',
-        checkpoint_2: '1,750 골드',
-        checkpoint_3: '2,500 골드',
-        checkpoint_4: '3,250 골드',
-        total: '9,000 골드'
-    };
-    let message = `[상아탑(노말) 보상]\n입장가능 레벨: ${reward.level}`;
-    if(isGold === "true") {
-        for (var i = 1; i <= 4; i++) {
-            const checkpoint = 'checkpoint_' + i;
-            const checkpoint_key = reward[checkpoint];
-            message += `\n[${i}관문]\n 획득가능 골드: ${checkpoint_key}\n`;
-        }
-    }
-    else message += `\n[1관문] 골드: ${reward.checkpoint_1}\n재료: 지혜의기운x2\n더보기 재료: 지혜의기운x2 (필요 골드: 700골드)\n\n[2관문] 골드: ${reward.checkpoint_2}\n재료: 지혜의기운x2\n더보기 재료: 지혜의기운x2 (필요 골드: 800골드)\n\n[3관문] 골드: ${reward.checkpoint_3}\n재료: 지혜의기운x3\n더보기 재료: 지혜의기운x3 (필요 골드: 900골드)\n\n[4관문] 골드: ${reward.checkpoint_4}\n재료: 지혜의기운x1, 엘릭서x1\n더보기 재료: 지혜의기운x1, 엘릭서x1 (필요 골드: 1,100골드)\n\n[합계] 골드: ${reward.total}, 더보기 필요 골드: 3,500골드, 재료: 지혜의기운x8, 엘릭서x1, 더보기 재료: 지혜의기운x8, 엘릭서x1\n\nhttps://loaapi.2er0.io/assets/images/Sangatap/normal.png`
-    return message;
-}
-
-export const raidRewardSangatapHard = (isGold: string) => {
-    const reward = {
-        level: '1,620',
-        checkpoint_1: '2,000 골드',
-        checkpoint_2: '2,500 골드',
-        checkpoint_3: '4,000 골드',
-        checkpoint_4: '6,000 골드',
-        total: '14,500 골드'
-    };
-    let message = `[상아탑(하드) 보상]\n입장가능 레벨: ${reward.level}`;
-    if(isGold === "true") {
-        for (var i = 1; i <= 4; i++) {
-            const checkpoint = 'checkpoint_' + i;
-            const checkpoint_key = reward[checkpoint];
-            message += `\n[${i}관문]\n 획득가능 골드: ${checkpoint_key}\n`;
-        }
-    }
-    else message += `\n[1관문] 골드: ${reward.checkpoint_1}\n재료: 지혜의기운x2\n더보기 재료: 지혜의기운x2 (필요 골드: 1,000골드)\n\n[2관문] 골드: ${reward.checkpoint_2}\n재료: 지혜의기운x2\n더보기 재료: 지혜의기운x2 (필요 골드: 1,000골드)\n\n[3관문] 골드: ${reward.checkpoint_3}\n재료: 지혜의기운x3\n더보기 재료: 지혜의기운x3 (필요 골드: 1,500골드)\n\n[4관문] 골드: ${reward.checkpoint_4}\n재료: 지혜의기운x1, 엘릭서x1\n더보기 재료: 지혜의기운x1, 엘릭서x1 (필요 골드: 2,000골드)\n\n[합계] 골드: ${reward.total}, 더보기 필요 골드: 5,500골드, 재료: 지혜의기운x8, 엘릭서x1, 더보기 재료: 지혜의기운x8, 엘릭서x1\n\nhttps://loaapi.2er0.io/assets/images/Sangatap/hard.png`
-    return message;
 }
 
 
-export const raidRewardKarmenNormal = (isGold: string) => {
-    const reward = {
-        level: '1,610',
-        checkpoint_1: '3,500 골드',
-        checkpoint_2: '4,000 골드',
-        checkpoint_3: '5,500 골드',
-        total: '13,000 골드'
-    };
-    let message = `[카멘(노말) 보상]\n입장가능 레벨: ${reward.level}`;
-    if(isGold === "true") {
-        for (var i = 1; i <= 4; i++) {
-            const checkpoint = 'checkpoint_' + i;
-            const checkpoint_key = reward[checkpoint];
-            message += `\n[${i}관문]\n 획득가능 골드: ${checkpoint_key}\n`;
-        }
+const queryRaids = async (data) => {
+    const conn = initDb();
+    await connectDb(conn);
+    try {
+        const raidValue1:string = data && data.name ? data.name : '';
+        const raidValue2:string = data && data.diff ? data.diff : '';
+        const selectQuery = 'SELECT raid.*, img.raid_reward_imageUrl as imageUrl FROM loa.LOA_CONF_RAID raid INNER JOIN loa.LOA_CONF_RAIDIMAGE img ON raid.raid_category = img.raid_category AND (img.raid_difficulty = raid.raid_difficulty OR img.raid_difficulty IS NULL) WHERE raid.raid_name = ? AND raid.raid_ko_difficulty = ?';
+        const selectValues = [raidValue1, raidValue2];
+        const result = await queryDb(conn, selectQuery, selectValues);
+        return result;
+    } catch (error) {
+        console.error('Query execution failed:', error);
+        throw error;
+        return null;
+    } finally {
+        conn.end();
     }
-    else message += `\n[1관문] 골드: ${reward.checkpoint_1}\n재료: 어둠의 볼x3, 마력의 샘물x2\n더보기 재료: 어둠의 볼x3, 마력의 샘물x2 (필요 골드: 1,500 골드)\n\n[2관문] 골드: ${reward.checkpoint_2}\n재료: 어둠의 볼x4, 마력의 샘물x3\n더보기 재료: 어둠의 볼x4, 마력의 샘물x3 (필요 골드: 1,800 골드)\n\n[3관문] 골드: ${reward.checkpoint_3}\n재료: 어둠의 볼x6, 마력의 샘물x4, 농축 돌파석x5, 야금술(또는 재봉술) 특화x1, 혼돈의 돌x5\n더보기 재료: 어둠의 볼x6, 마력의 샘물x4, 농축 돌파석x3 (필요 골드: 2,500 골드)\n\n[합계] 골드: ${reward.total}, 더보기 필요 골드: 5,800골드, 재료: 어둠의 볼x13, 마력의 샘물x9, 농축 돌파석x5, 야금술(또는 재봉술) 특화x1, 혼돈의 돌x5, 더보기 재료: 어둠의 볼x13, 마력의 샘물x9, 농축 돌파석x3\n\nhttps://loaapi.2er0.io/assets/images/Karmen/normal.png`
-    return message;
 }
 
-export const raidRewardKarmenHard = (isGold: string) => {
-    const reward = {
-        level: '1,630',
-        checkpoint_1: '5,000 골드',
-        checkpoint_2: '6,000 골드',
-        checkpoint_3: '9,000 골드',
-        checkpoint_4: '21,000 골드',
-        total: '41,000 (20,000) 골드'
-    };
-    let message = `[카멘(하드) 보상]\n입장가능 레벨: ${reward.level}`;
-    if(isGold === "true") {
-        for (var i = 1; i <= 4; i++) {
-            const checkpoint = 'checkpoint_' + i;
-            const checkpoint_key = reward[checkpoint];
-            message += `\n[${i}관문]\n 획득가능 골드: ${checkpoint_key}\n`;
-        }
+const changeRaidName = (str: string) => {
+    switch(str) {
+        case "오레하":
+        case "ㅇㅀ":
+        case "ㅇㄹㅎ":
+            return { name: '오레하' };
+        case "아르고스":
+        case "ㅇㄺㅅ":
+        case "ㅇㄹㄱㅅ":
+            return { name: '아르고스' };
+        case "발탄노말":
+        case "발노":
+        case "ㅂㅌㄴㅁ":
+        case "ㅂㄴ":
+            return { name: '발탄', diff: '노말'};
+        case "발탄하드":
+        case "발하":
+        case "ㅂㅌㅎㄷ":
+        case "ㅂㅎ":
+            return { name: '발탄', diff: '하드'};
+        case "비아키스노말":
+        case "비아노말":
+        case "비노":
+        case "ㅂㅇㅋㅅㄴㅁ":
+        case "ㅂㅇㄴㅁ":
+        case "ㅂㄴ":
+            return { name: '비아키스', diff: '노말' };
+        case "비아키스하드":
+        case "비아하드":
+        case "비하":
+        case "ㅂㅇㅋㅅㅎㄷ":
+        case "ㅂㅇㅎㄷ":
+        case "ㅂㅎ":
+            return { name: '비아키스', diff: '하드'};
+        case "쿠크세이튼":
+        case "쿠크":
+        case "ㅋㅋㅅㅇㅌ":
+        case "ㅋㅋ":
+            return { name: '쿠크세이튼' };
+        case "아브렐슈드노말":
+        case "아브노말":
+        case "노브":
+        case "ㅇㅂㄽㄷㄴㅁ":
+        case "ㅇㅂㄹㅅㄷㄴㅁ":
+        case "ㅇㅂㄴㅁ":
+        case "ㄴㅂ":
+            return { name: '아브렐슈드', diff: '노말'};
+        case "아브렐슈드하드":
+        case "아브하드":
+        case "하브":
+        case "하브렐슈드":
+        case "ㅇㅂㄽㄷㅎㄷ":
+        case "ㅇㅂㄹㅅㄷㅎㄷ":
+        case "ㅇㅂㅎㄷ":
+        case "ㅎㅂㄽㄷ":
+        case "ㅎㅂㄹㅅㄷ":
+        case "ㅎㅂ":
+            return { name: '아브렐슈드', diff: '하드'};
+        case "일리아크노말":
+        case "일노":
+        case "노칸":
+        case "일리노말":
+        case "ㅇㄹㅇㅋㄴㅁ":
+        case "ㅇㄴ":
+        case "ㄴㅋ":
+        case "ㅇㄹㄴㅁ":
+            return { name: '일리아칸', diff: '노말' };
+        case "일리아크하드":
+        case "일하":
+        case "하칸":
+        case "일리하드":
+        case "ㅇㄹㅇㅋㅎㄷ":
+        case "ㅇㅎ":
+        case "ㅎㅋ":
+        case "ㅇㅀㄷ":
+        case "ㅇㄹㅎㄷ":
+            return { name: '일리아크', diff: '하드' };
+        case "카양겔노말":
+        case "카양노말":
+        case "ㅋㅇㄱㄴㅁ":
+        case "ㅋㅇㄴㅁ":
+            return { name: '카양겔', diff: '노말'};
+        case "카양겔하드":
+        case "카양하드":
+        case "ㅋㅇㄱㅎㄷ":
+        case "ㅋㅇㅎㄷ":
+            return { name: '카양겔', diff: '하드'};
+        case "상아탑노말":
+        case "상노탑":
+        case "상노":
+        case "ㅅㅇㅌㄴㅁ":
+        case "ㅅㄴㅌ":
+        case "ㅅㄴ":
+            return { name: '상아탑', diff: '노말'};
+        case "상아탑하드":
+        case "상하탑":
+        case "상하":
+        case "ㅅㅇㅌㅎㄷ":
+        case "ㅅㅎㅌ":
+        case "ㅅㅎ":
+            return { name: '상아탑', diff: '하드' };
+        case "카멘노말":
+        case "카노":
+        case "ㅋㅁㄴㅁ":
+        case "ㅋㄴ":
+            return { name: '카멘', diff: '노말' };
+        case "카멘하드":
+        case "카하":
+        case "ㅋㅁㅎㄷ":
+        case "ㅋㅎ":
+            return { name: '카멘', diff: '하드' };
+        default: return 0;
     }
-    else {
-        message += `\n[1관문] 골드: ${reward.checkpoint_1}\n재료: 어둠의 볼x6, 마력의 샘물x6\n더보기 재료: 어둠의 볼x6, 마력의 샘물x6 (필요 골드: 2,000 골드)\n\n[2관문] 골드: ${reward.checkpoint_2}\n재료: 어둠의 볼x8, 마력의 샘물x9\n더보기 재료: 어둠의 볼x8, 마력의 샘물x9 (필요 골드: 2,400 골드)\n\n[3관문] 골드: ${reward.checkpoint_3}\n재료: 어둠의 볼x12, 마력의 샘물x12, 농축 돌파석x9,야금술(또는 재봉술)x1, 혼돈의돌x7\n더보기 재료: 어둠의 볼x12, 마력의 샘물x12, 농축 돌파석x5 (필요 골드: 2,800 골드)\n\n[4관문] 골드: ${reward.checkpoint_4}\n재료: 어둠의 볼x12, 마력의 샘물x12, 농축 돌파석x12, 야금술(또는 재봉술) 복합x1, 혼돈의 돌x10\n더보기 재료: 어둠의 볼x12, 마력의 샘물x12, 농축 돌파석x7 (필요 골드: 3,600 골드)\n\n[합계] 골드: ${reward.total}, 더보기 필요 골드: 10,800골드, 재료: 어둠의 볼x38, 마력의 샘물x39, 야금술(또는 재봉술) 특화x1, 혼돈의돌x17 더보기재료: 어둠의 볼x38, 마력의 샘물x39, 농축 돌파석x12\n\nhttps://loaapi.2er0.io/assets/images/Karmen/hard.png`
-    }
-    return message;
 }
+
 
 const raidReward: any = () => {
     return `${command.command} ${command.description}\n(${command.command} ${command.help})`
