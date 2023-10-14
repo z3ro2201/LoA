@@ -27,7 +27,7 @@ export const raidName = async (str: string, goldOptions: string) => {
         } else {
             for (const reward of rewards) {
                 const diffTitle = (rewardLength > 1) ? `[${reward.raid_phase}관문] 입장레벨: ${reward.raid_minItemLevel}${reward.raid_maxItemLevel ? `, 골드획득불가: ${reward.raid_maxItemLevel}\n` : '\n'}` : '';
-                rewardArr.push(`${diffTitle}골드: ${reward.raid_rewardGold}G${reward.raid_rewardItem?`\n재료: ${reward.raid_rewardItem}`:''}${reward.raid_bouns_amountGold?`, 더보기: ${reward.raid_bouns_amount}`:''}${reward.raid_bonus_amountGold?` (필요: ${reward.raid_bonus_amountGold} 골드)`:''}\n`);
+                rewardArr.push(`${diffTitle}골드: ${reward.raid_rewardGold}G${reward.raid_rewardItem?`\n재료: ${reward.raid_rewardItem}`:''}${reward.raid_bouns_amountGold?`, 더보기: ${reward.raid_bonus_amount}`:''}${reward.raid_bonus_amountGold?` (필요: ${reward.raid_bonus_amountGold} 골드)`:''}\n`);
                 totalGold += parseInt(reward.raid_rewardGold);
                 if(reward.raid_bonus_amountGold !== undefined && !isNaN(reward.raid_bonus_amountGold))
                     bonusGold += parseInt(reward.raid_bonus_amountGold);
