@@ -5,71 +5,68 @@ import { init as initDb, connect as connectDb, query as queryDb } from '../../co
 
 async function getCharacterData(characterName: string) {
     const apiUrl = `${global.apiUrl.lostark}armories/characters/${characterName}`;
-    const apiStatus = await apiCheck();
-    if(apiStatus === true) {
-        try {
-            const response = await axios.get(apiUrl, {
-                headers: global.token.lostarkHeader
-            });
-            const profile = response.data.ArmoryProfile;
-            const engraving = response.data.ArmoryEngraving;
-            const card = response.data.ArmoryCard;
+    try {
+        const response = await axios.get(apiUrl, {
+            headers: global.token.lostarkHeader
+        });
+        const profile = response.data.ArmoryProfile;
+        const engraving = response.data.ArmoryEngraving;
+        const card = response.data.ArmoryCard;
 
-            // 스탯정보
-            const statsArr = [];
-            let i:number = 0;
-            if(profile.Stats) {
-                for(var tmp of profile.Stats) {
-                    if(i > 5) break;
-                    const tmpData = `${tmp.Type.replace(/(.)./g, '$1')}+${tmp.Value}`;
-                    statsArr.push(tmpData);
-                    i++;
-                }
+        // 스탯정보
+        const statsArr = [];
+        let i:number = 0;
+        if(profile.Stats) {
+            for(var tmp of profile.Stats) {
+                if(i > 5) break;
+                const tmpData = `${tmp.Type.replace(/(.)./g, '$1')}+${tmp.Value}`;
+                statsArr.push(tmpData);
+                i++;
             }
+        }
             
-            let engravingText = '';
-            const engravingEffect = [];
-            if(engraving && engraving.Effects) {
-                for(let tmp of engraving.Effects) {
-                    engravingEffect.push(tmp.Name.replace(' Lv.', ''));
-                }
-                if(engravingEffect.length > 0) {
-                    engravingText += `${engravingEffect.join(', ')}\n`;
-                }
+        let engravingText = '';
+        const engravingEffect = [];
+        if(engraving && engraving.Effects) {
+            for(let tmp of engraving.Effects) {
+                engravingEffect.push(tmp.Name.replace(' Lv.', ''));
             }
+            if(engravingEffect.length > 0) {
+                engravingText += `${engravingEffect.join(', ')}\n`;
+            }
+        }
 
             
-            // 활성화된 세트효과
-            const cardEffectArr = [];
-            if(card && card.Effects) {
-                for(const tmp of card.Effects[0].Items) {
-                    cardEffectArr.push(`${tmp.Name}`);
-                }
+        // 활성화된 세트효과
+        const cardEffectArr = [];
+        if(card && card.Effects) {
+            for(const tmp of card.Effects[0].Items) {
+                cardEffectArr.push(`${tmp.Name}`);
             }
+        }
 
-            const characterResult = await characterSearch(characterName)
-            .then(res => {
-                if(Array.isArray(res) && res.length === 0) {
+        const characterResult = await characterSearch(characterName)
+        .then(res => {
+            if(Array.isArray(res) && res.length === 0) {
+                const engravingData = (engravingEffect.length > 0) ? engravingEffect.join(', ') : '';
+                const statsData = (statsArr.length > 0) ? statsArr.join(', ') : '';
+                const cardEffect = (cardEffectArr.length > 0) ? cardEffectArr[cardEffectArr.length - 1] : '';
+                characterInsert(profile, engravingData, statsData, cardEffect);
+            } else {
+                const now: Date = new Date();
+                const updateTime: Date = new Date(res[0].updateTime);
+                const timeDifference = now.getTime() - updateTime.getTime();
+                const minutesDifference = timeDifference / (1000 * 60);
+                if (Array.isArray(res) && res.length > 0 && minutesDifference >= 3) { // 데이터는 존재하나 3분 이상이 지난경우
                     const engravingData = (engravingEffect.length > 0) ? engravingEffect.join(', ') : '';
                     const statsData = (statsArr.length > 0) ? statsArr.join(', ') : '';
                     const cardEffect = (cardEffectArr.length > 0) ? cardEffectArr[cardEffectArr.length - 1] : '';
-                    characterInsert(profile, engravingData, statsData, cardEffect);
-                } else {
-                    const now: Date = new Date();
-                    const updateTime: Date = new Date(res[0].updateTime);
-                    const timeDifference = now.getTime() - updateTime.getTime();
-                    const minutesDifference = timeDifference / (1000 * 60);
-                    if (Array.isArray(res) && res.length > 0 && minutesDifference >= 3) { // 데이터는 존재하나 3분 이상이 지난경우
-                        const engravingData = (engravingEffect.length > 0) ? engravingEffect.join(', ') : '';
-                        const statsData = (statsArr.length > 0) ? statsArr.join(', ') : '';
-                        const cardEffect = (cardEffectArr.length > 0) ? cardEffectArr[cardEffectArr.length - 1] : '';
-                        characterUpdate(profile, engravingData, statsData, cardEffect);
-                    }
+                    characterUpdate(profile, engravingData, statsData, cardEffect);
                 }
-            })
-        } catch (e) {
-            throw e;
-        }
+            }
+        })
+    } catch (e) {
+        throw e;
     }
 }
 
