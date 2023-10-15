@@ -1,6 +1,5 @@
 import axios from 'axios'
 import global from '../../config/config'
-import {apiCheck} from '../utils/apiCheck'
 import { init as initDb, connect as connectDb, query as queryDb } from '../../config/mysqlConf'
 
 async function getCharacterData(characterName: string) {
