@@ -258,7 +258,7 @@ characterRouter.get('/:characterName/collects', async (req: Request, res: Respon
 
 
 // 주간골드수급정보
-characterRouter.get('/:characterName/weeklyGold', async (req: Request, res: Response) => {
+characterRouter.get('/:characterName/rice', async (req: Request, res: Response) => {
     const characterName = req.params.characterName;
     try {
         const characterData = await weeklySupplyGold(characterName);
@@ -277,7 +277,7 @@ characterRouter.get('/:characterName/weeklyGold', async (req: Request, res: Resp
     }
 });
 
-// 부캐 정보 가져오기
+// 정지캐릭터 정보 가져오기
 characterRouter.get('/:characterName/suspend', async (req: Request, res: Response) => {
     const characterName = req.params.characterName;
     try {
