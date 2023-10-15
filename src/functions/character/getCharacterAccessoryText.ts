@@ -2,6 +2,7 @@ import axios from 'axios'
 import global from '../../config/config'
 import {apiCheck} from '../utils/apiCheck'
 import { getCharacterSuspendAccount } from './getCharacterSuspendAccount';
+import getCharacterData from './getCharacterData';
 
 async function getAccessoryText(characterName: string) {
     const apiUrl = `${global.apiUrl.lostark}armories/characters/${characterName}?filters=profiles%2Bequipment`;
@@ -10,6 +11,7 @@ async function getAccessoryText(characterName: string) {
     if(apiStatus === true) {
         const suspendAccountCheck = await getCharacterSuspendAccount(characterName);
         if(suspendAccountCheck === 204) {
+            const updateData = await getCharacterData(characterName);
             try {
                 const response = await axios.get(apiUrl, {
                     headers: global.token.lostarkHeader

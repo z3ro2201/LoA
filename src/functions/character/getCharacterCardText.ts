@@ -2,6 +2,7 @@ import axios from 'axios'
 import global from '../../config/config'
 import {apiCheck} from '../utils/apiCheck'
 import { getCharacterSuspendAccount } from './getCharacterSuspendAccount';
+import getCharacterData from './getCharacterData';
 
 export const command: Record<string, string>= {
     command: global.prefix + '캐릭카드',
@@ -16,6 +17,7 @@ async function getCharacterCardText(characterName: string) {
     if(apiStatus === true) {
         const suspendAccountCheck = await getCharacterSuspendAccount(characterName);
         if(suspendAccountCheck === 204) {
+            const updateData = await getCharacterData(characterName);
             try {
                 const response = await axios.get(apiUrl, {
                     headers: global.token.lostarkHeader

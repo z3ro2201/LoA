@@ -2,6 +2,7 @@ import axios from 'axios'
 import global from '../../config/config'
 import {apiCheck} from '../utils/apiCheck'
 import { getCharacterSuspendAccount } from './getCharacterSuspendAccount';
+import getCharacterData from './getCharacterData';
 
 interface gems {
     level: number
@@ -14,6 +15,7 @@ async function getCharacterGemText(characterName: string) {
     const apiStatus = await apiCheck();
     if(apiStatus === true) {
         if(suspendAccountCheck === 204) {
+            const updateData = await getCharacterData(characterName);
             try {
                 const response = await axios.get(apiUrl, {
                     headers: global.token.lostarkHeader

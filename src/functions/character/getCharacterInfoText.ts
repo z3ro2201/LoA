@@ -15,7 +15,6 @@ async function getCharacterInfoText(characterName: string) {
     const apiStatus = await apiCheck();
     if(apiStatus === true) {
         const suspendAccountCheck = await getCharacterSuspendAccount(characterName);
-        console.log(suspendAccountCheck)
         if(suspendAccountCheck === 204) {
             try {
                 const response = await axios.get(apiUrl, {
@@ -89,7 +88,6 @@ async function getCharacterInfoText(characterName: string) {
                 })
                 .then(updateRes => {
                     const data = updateRes[0];
-                    console.log(data.mokoko_sponsor);
                     characterData = `${data.mokoko_sponsor === 1 ? '🌱 후원자 ':''}[${data.characterClassName}]\n${(data.characterTitle !== '' && data.characterTitle !== null) ? data.characterTitle + ' ' : ''}${data.characterName}\n\n` +
                                 `[캐릭터 기본정보]\n` +
                                 `템/전/원      ${data.itemLevel}/${data.characterLevel}/${data.expeditionLevel}\n` +
@@ -137,7 +135,7 @@ async function getCharacterInfoText(characterName: string) {
             throw e;
         });
         return characterData;
-    } 
+    }
 
 }
 
