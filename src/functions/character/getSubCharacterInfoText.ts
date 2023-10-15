@@ -28,7 +28,7 @@ async function getSubCharacterInfoText(characterName: string) {
                 const characterListArr = [];
                 for(const tmp of data) {
                     if(characterServer[0].ServerName === tmp.ServerName) {
-                        const updateData = await getCharacterData(characterName);
+                        const updateData = await getCharacterData(tmp.CharacterName);
                         characterListArr.push({combatLevel: tmp.CharacterLevel, itemLevel: parseFloat(tmp.ItemAvgLevel.replace(',', '')), textStr: `${tmp.CharacterLevel.toString().padStart(2, '0')} ${tmp.CharacterClassName}  ${tmp.CharacterName}  (${tmp.ItemAvgLevel})`})
                     }
                 }

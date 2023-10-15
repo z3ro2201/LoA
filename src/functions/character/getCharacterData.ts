@@ -54,7 +54,6 @@ async function getCharacterData(characterName: string) {
                     const statsData = (statsArr.length > 0) ? statsArr.join(', ') : '';
                     const cardEffect = (cardEffectArr.length > 0) ? cardEffectArr[cardEffectArr.length - 1] : '';
                     characterInsert(profile, engravingData, statsData, cardEffect);
-                    return characterSearch(characterName);
                 } else {
                     const now: Date = new Date();
                     const updateTime: Date = new Date(res[0].updateTime);
@@ -65,7 +64,7 @@ async function getCharacterData(characterName: string) {
                         const statsData = (statsArr.length > 0) ? statsArr.join(', ') : '';
                         const cardEffect = (cardEffectArr.length > 0) ? cardEffectArr[cardEffectArr.length - 1] : '';
                         characterUpdate(profile, engravingData, statsData, cardEffect);
-                    } return characterSearch(characterName);
+                    }
                 }
             })
         } catch (e) {
