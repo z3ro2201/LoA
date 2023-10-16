@@ -1,7 +1,12 @@
 import axios from 'axios';
 import global from '../../config/config';
 import { init as initDb, connect as connectDb, query as queryDb } from '../../config/mysqlConf'
-
+/**
+ * 맨 위에 4관은 빼고 계산함.
+※ 하드 아브렐슈드 (4관) - 3000골
+※ 하드 카멘 (4관) - 21000골
+ * 
+ */
 interface SubCharacter {
   itemLevel: number;
   combatLevel: number;
@@ -72,13 +77,13 @@ async function weeklySupplyGold(characterName: string) {
               const diffName = key !== 'null' ? ` [${key}]` : '';
               const phase = values.length > 1 ? ` 1~${values.length}관문` : '';
               const riceName = riceDataArray[0].riceName;
-              tmpCharacterRiceData.push({riceName: `${riceName}${diffName}${phase}`, riceGold: total});
+              tmpCharacterRiceData.push({riceName: `${riceName}${diffName}${phase}`, riceDiff: diffName, riceGold: total});
             });
           }
         });
         tmpCharacterRiceData.sort((a, b) => b.riceGold - a.riceGold);
-        console.log(tmpCharacterRiceData);
         const riceGoldSortingData = tmpCharacterRiceData.slice(0, 3);
+        console.log(riceGoldSortingData);
         const tmpSortingData = [];
         let groupGoldTot = 0;
         riceGoldSortingData.map((sortData) => {
@@ -145,7 +150,6 @@ const checkRaidList = async (characterData) => {
         const difficulty = raidData.raid_ko_difficulty ? raidData.raid_ko_difficulty : null;
         const phaseInfo = raidData.raid_phase > 0 ? parseInt(raidData.raid_phase) : null;
         const riceWeeks = raidData.raid_weeks !== null ? raidData.raid_weeks : 0;
-        // const riceWeeks = parseInt(raidData.raid_weeks) !== NaN ? raidData.raid_weeks : 0;
 
         const raidInfo = {
           riceName: raidData.raid_name,
@@ -161,11 +165,11 @@ const checkRaidList = async (characterData) => {
     }
 
     // 상위 3개 던전만 출력하도록 바꿈
-    // const top3Categories = Object.keys(tmpCharacterRaidData.categoryRiceData).slice(0, 3);
-    // tmpCharacterRaidData.categoryRiceData = top3Categories.reduce((result, category) => {
-    //   result[category] = tmpCharacterRaidData.categoryRiceData[category];
-    //   return result;
-    // }, {});
+    const top3Categories = Object.keys(tmpCharacterRaidData.categoryRiceData).slice(0, 3);
+    tmpCharacterRaidData.categoryRiceData = top3Categories.reduce((result, category) => {
+      result[category] = tmpCharacterRaidData.categoryRiceData[category];
+      return result;
+    }, {});
 
     const categoryRiceDataSize = Object.keys(tmpCharacterRaidData.categoryRiceData).length;
     if (categoryRiceDataSize > 0) {
