@@ -5,6 +5,9 @@ import { init as initDb, connect as connectDb, query as queryDb } from '../../co
  * 맨 위에 4관은 빼고 계산함.
 ※ 하드 아브렐슈드 (4관) - 3000골
 ※ 하드 카멘 (4관) - 21000골
+
+노말 아브렐이 1관문 1490 2관문 1490 3관문 1500 4관문 1520인가 그렇고
+하드 아브렐이 1관문 1540 2관문 1540 3관문 1550 4관문 1560이라
  * 
  */
 interface SubCharacter {
