@@ -4,6 +4,7 @@ import { init as initDb, connect as connectDb, query as queryDb } from '../../co
 
 interface SubCharacter {
   itemLevel: number;
+  combatLevel: number;
   characterName: string;
   characterClass: string;
   raidName?: string; // 레이드 정보를 담을 수 있도록 수정
@@ -29,6 +30,7 @@ async function weeklySupplyGold(characterName: string) {
       if (characterServer[0].ServerName === tmp.ServerName)
         characterListArr.push({
           itemLevel: parseFloat(tmp.ItemAvgLevel.replace(',', '')),
+          combatLevel: parseInt(tmp.CharacterLevel),
           characterName: tmp.CharacterName,
           characterClass: tmp.CharacterClassName,
         });
@@ -42,20 +44,55 @@ async function weeklySupplyGold(characterName: string) {
     // 레벨 순 정렬 후 최대 6캐릭터만 나오게 한다
     if (characterListArr.length > 6) characterListArr.length = 6;
 
-    // 레이드 데이터를 가져온다
-    const raidList = await queryRaids();
-    for(const character of characterListArr){
-      const tmpData = checkRaidLevel(character, raidList);
-      console.log(tmpData)
+    // raidListData
+    const raidListData = await checkRaidList(characterListArr);
+    if(raidListData !== 0) {
+      let goldTotal = 0;
+      const characterRiceList = [];
+      raidListData.forEach((characterRiceData) => {
+        const tmpCharacterRiceData = [];
+        const riceCategory = Object.values(characterRiceData.categoryRiceData);
+        riceCategory.forEach((riceDataArray) => {
+          const diffData = {};
+          if (Array.isArray(riceDataArray)) {
+            const diffName = riceDataArray[0].diff;
+            riceDataArray.forEach((riceData) => {
+              if(riceData.riceWeek === 0) {
+              const { diff, riceGold } = riceData;
+              if (!diffData[diff]) {
+                diffData[diff] = [];
+              }
+              diffData[diff].push(riceGold);
+            }
+            });
+            const keys = Object.keys(diffData);
+            keys.forEach((key) => {
+              const values = diffData[key];
+              const total = values.reduce((sum, value) => sum + value, 0);
+              const diffName = key !== 'null' ? ` [${key}]` : '';
+              const phase = values.length > 1 ? ` 1~${values.length}관문` : '';
+              const riceName = riceDataArray[0].riceName;
+              tmpCharacterRiceData.push({riceName: `${riceName}${diffName}${phase}`, riceGold: total});
+            });
+          }
+        });
+        tmpCharacterRiceData.sort((a, b) => b.riceGold - a.riceGold);
+        console.log(tmpCharacterRiceData);
+        const riceGoldSortingData = tmpCharacterRiceData.slice(0, 3);
+        const tmpSortingData = [];
+        let groupGoldTot = 0;
+        riceGoldSortingData.map((sortData) => {
+          tmpSortingData.push(`${sortData.riceName}: ${sortData.riceGold}`)
+          goldTotal += sortData.riceGold;
+          groupGoldTot += sortData.riceGold;
+        });
+        characterRiceList.push(`[${characterRiceData.characterClassName}]\n ${characterRiceData.characterItemLevel} ${characterRiceData.characterName} \n- ${tmpSortingData.join('\n- ')}\n ㄴ 수급가능: ${groupGoldTot}\n`);
+
+      })
+      return `${characterRiceList.join('\n')}\n총 수급가능한 골드: ${goldTotal}`;
+    } else {
+      return `요청하신 캐릭터는 주급(주간골드수급)데이터를 생성할 수 없습니다.`;
     }
-    // 레이드 데이터를 카테고리별로 구분
-    // const raidDataByCategory: { [key: string]: SubCharacter[] } = {};
-    // for (const character of characterListArr) {
-    // }
-
-    let characterData = `[${characterServer[0].ServerName} 서버]`;
-
-    return characterData.trim(); // 문자열 앞뒤의 공백 제거
   } catch (error) {
     throw error; // 오류를 호출자로 던짐
   }
@@ -63,61 +100,80 @@ async function weeklySupplyGold(characterName: string) {
 
 const queryRaids = async () => {
   const conn = initDb();
-  await connectDb(conn);
   try {
-      const selectQuery = 'SELECT raid_category, raid_ko_difficulty, raid_name, raid_phase, raid_minItemLevel, raid_maxItemLevel, raid_rewardGold FROM loa.LOA_CONF_RAID ORDER BY raid_minItemLevel DESC';
-      const result = await queryDb(conn, selectQuery);
-      return result;
+    const selectQuery = 'SELECT raid_category, raid_ko_difficulty, raid_name, raid_phase, raid_minItemLevel, raid_maxItemLevel, raid_rewardGold, raid_weeks FROM loa.LOA_CONF_RAID ORDER BY raid_minItemLevel DESC';
+    const result = await queryDb(conn, selectQuery);
+    return result;
   } catch (error) {
-      console.error('Query execution failed:', error);
-      throw error;
+    console.error('Query execution failed:', error);
+    throw error;
   } finally {
-      conn.end();
+    conn.end();
   }
 }
 
-const checkRaidLevel = (character: SubCharacter, raidData) => {
-  const characterRaidList = [];
+const checkRaidList = async (characterData) => {
+  // 레이드 목록을 가져와서 배열로 저장한다
+  const raidList = await queryRaids();
+  const riceList = [];
 
-  for (const raidInfo of raidData) {
-    if (
-      raidInfo.raid_minItemLevel <= character.itemLevel &&
-      (raidInfo.raidItemMaxLevel === 0 ||
-        character.itemLevel <= raidInfo.raidItemMaxLevel)
-    ) {
-      // 일치하는 경우 레이드 정보를 추가
-      characterRaidList.push({
-        raidName: raidInfo.raidName,
-        raidGold: raidInfo.raidGold,
-        raidCategory: raidInfo.raidCategory,
-      });
+  // 캐릭터 데이터를 기준으로 레이드 목록을 조회
+  for(const character of characterData) {
+    let riceTotal = 0;
+    const tmpCharacterRaidData = {
+      characterClassName: character.characterClass,
+      characterName: character.characterName,
+      characterLevel: character.combatLevel,
+      characterItemLevel: character.itemLevel,
+      categoryRiceData: {},
+      riceTotal: 0
+    };
+
+    for (const raidData of raidList) {
+      const characterLevel = parseFloat(character.itemLevel);
+      const minLevel = parseInt(raidData.raid_minItemLevel) || 0;
+      const maxLevel = parseInt(raidData.raid_maxItemLevel) || 0;
+      
+      if (characterLevel >= minLevel && (maxLevel === 0 || (maxLevel !== 0 && characterLevel <= maxLevel))) {
+        const raidName = raidData.raid_name;
+        const category = raidData.raid_category;
+        
+        if (!tmpCharacterRaidData.categoryRiceData[category]) {
+          tmpCharacterRaidData.categoryRiceData[category] = [];
+        }
+
+        const difficulty = raidData.raid_ko_difficulty ? raidData.raid_ko_difficulty : null;
+        const phaseInfo = raidData.raid_phase > 0 ? parseInt(raidData.raid_phase) : null;
+        const riceWeeks = raidData.raid_weeks !== null ? raidData.raid_weeks : 0;
+        // const riceWeeks = parseInt(raidData.raid_weeks) !== NaN ? raidData.raid_weeks : 0;
+
+        const raidInfo = {
+          riceName: raidData.raid_name,
+          diff: difficulty,
+          phase: phaseInfo,
+          riceGold: parseFloat(raidData.raid_rewardGold),
+          riceWeek: riceWeeks
+        };
+
+        tmpCharacterRaidData.categoryRiceData[category].push(raidInfo);
+        riceTotal += parseFloat(raidData.raid_rewardGold);
+      }
+    }
+
+    // 상위 3개 던전만 출력하도록 바꿈
+    // const top3Categories = Object.keys(tmpCharacterRaidData.categoryRiceData).slice(0, 3);
+    // tmpCharacterRaidData.categoryRiceData = top3Categories.reduce((result, category) => {
+    //   result[category] = tmpCharacterRaidData.categoryRiceData[category];
+    //   return result;
+    // }, {});
+
+    const categoryRiceDataSize = Object.keys(tmpCharacterRaidData.categoryRiceData).length;
+    if (categoryRiceDataSize > 0) {
+      tmpCharacterRaidData.riceTotal = riceTotal;
+      riceList.push(tmpCharacterRaidData);
     }
   }
-
-  // 레이드 정보를 카테고리로 그룹화
-  const groupedRaidList = characterRaidList.reduce((result, raid) => {
-    const category = raid.raidCategory;
-
-    if (!result[category]) {
-      result[category] = [];
-    }
-
-    result[category].push(raid);
-
-    return result;
-  }, {});
-
-  // 카테고리가 3개인 경우에만 리턴
-  const selectedCategories = Object.keys(groupedRaidList).slice(0, 3);
-
-  const result = selectedCategories.map(category => {
-    return {
-      raidCategory: category,
-      raids: groupedRaidList[category],
-    };
-  });
-
-  return result;
-};
-
+  const riceDataSize = Object.keys(riceList).length;
+  return riceDataSize > 0 ? riceList : 0;
+}
 export default weeklySupplyGold;
