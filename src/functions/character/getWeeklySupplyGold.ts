@@ -86,10 +86,10 @@ async function weeklySupplyGold(characterName: string) {
           goldTotal += sortData.riceGold;
           groupGoldTot += sortData.riceGold;
         });
-        characterRiceList.push(`[${characterRiceData.characterClassName}]\n ${characterRiceData.characterItemLevel} ${characterRiceData.characterName} \n- ${tmpSortingData.join('\n- ')}\n ㄴ 수급가능: ${groupGoldTot}\n`);
+        characterRiceList.push(`${characterRiceData.characterLevel} ${characterRiceData.characterClassName} ${characterRiceData.characterItemLevel} ${characterRiceData.characterName} \n- ${tmpSortingData.join('\n- ')}\n ㄴ 수급가능: ${groupGoldTot}\n`);
 
       })
-      return `${characterRiceList.join('\n')}\n총 수급가능한 골드: ${goldTotal}`;
+      return `[주급(테스트)]\n<>\n${characterRiceList.join('\n')}\n총 수급가능한 골드: ${goldTotal}`;
     } else {
       return `요청하신 캐릭터는 주급(주간골드수급)데이터를 생성할 수 없습니다.`;
     }
