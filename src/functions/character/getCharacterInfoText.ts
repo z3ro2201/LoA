@@ -12,7 +12,8 @@ export const command: Record<string, string>= {
 
 async function getCharacterInfoText(characterName: string) {
     const apiUrl = `${global.apiUrl.lostark}armories/characters/${characterName}`;
-
+    const apiStatus = await apiCheck();
+    if(apiStatus === true) {
         const suspendAccountCheck = await getCharacterSuspendAccount(characterName);
         if(suspendAccountCheck === 204) {
             try {
@@ -110,6 +111,31 @@ async function getCharacterInfoText(characterName: string) {
         } else {
             return '해당 계정은 없는 계정입니다.';
         }
+    } else {
+        // 로스트아크 점검중일때
+        let characterData = '';
+        const characterResult = await characterSearch(characterName)
+        .then(res => {
+            if(Array.isArray(res) && res.length === 0) {
+                characterData = '[안내] 데이터를 가져올 수 없습니다. (이유: 서비스 점검시간, 보관된 데이터가 없음)';
+            } else {
+                const data = res[0];
+                characterData = `[캐싱된 데이터] ${data.mokoko_sponsor === 1 ? '🌱 후원자 ':''}[${data.characterClassName}]\n${(data.characterTitle !== '' && data.characterTitle !== null) ? data.characterTitle + ' ' : ''}${data.characterName}\n\n` +
+                            `[캐릭터 기본정보]\n` +
+                            `템/전/원      ${data.itemLevel}/${data.characterLevel}/${data.expeditionLevel}\n` +
+                            `서버/길드     ${data.serverName}/${(data.guildName !== '' && data.guildName !== null) ? data.guildName : '미가입'}\n` +
+                            `체력/공격력    ${data.statsHealthPoints}/${data.statsAttactPower}\n` +
+                            `스킬포인트     ${data.characterSkillPoint}/${data.characterSkillPoint_total}\n\n` +
+                            `${(data.statsInfo !== '') ? '[특성정보]\n'+data.statsInfo + '\n\n' : ''}` +
+                            `${(data.engravingInfo !== '') ? '[각인정보]\n' + data.engravingInfo + '\n\n' : ''}` + 
+                            `${(data.cardEffectInfo !== '') ? '[카드세트효과]\n' + data.cardEffectInfo : ''}`;
+            }
+        })
+        .catch(e => {
+            throw e;
+        });
+        return characterData;
+    }
 
 }
 
