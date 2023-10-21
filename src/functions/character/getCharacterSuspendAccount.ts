@@ -6,7 +6,8 @@ import {apiCheck} from '../utils/apiCheck'
 
 export const getCharacterSuspendAccount = async (characterName : string) => {
     const apiUrl = `${global.apiUrl.lostark}armories/characters/${characterName}`;
-    const lostarkHomeUrl = `https://lostark.game.onstove.com/Profile/Character/${characterName}`;
+    // const lostarkHomeUrl = `https://lostark.game.onstove.com/Profile/Character/${characterName}`;
+    const lostarkHomeUrl = `https://m-lostark.game.onstove.com/Profile/Character/${characterName}`;
 
     const localSuspendResult = await characterSearch(characterName);
     if(localSuspendResult.length === 0) {
@@ -37,6 +38,8 @@ export const getCharacterSuspendAccount = async (characterName : string) => {
             } catch (e) {
                 throw e;
             }
+        } else {
+            return 202;
         }
     } else {
         return 200;
