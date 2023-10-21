@@ -1,9 +1,10 @@
 import express, { Router, Request, Response } from 'express';
 import {raidAuction, raidAuctionIncludePlayer} from '../functions/utils/raidAuction';
+import {getEmoticon} from '../functions/utils/loaEmoticon';
 
 const utilRouter: Router = express.Router();
 
-// 레이드 경매
+// 레이드 경매 입찰가 계산
 utilRouter.get('/raidAuction/:gold', (req: Request, res: Response) => {
     const gold:number = req.params.gold;
     if(isNaN(gold) === true) {
@@ -53,5 +54,28 @@ utilRouter.get('/raidAuction/:gold/:players', (req: Request, res: Response) => {
         message: raidRewardMessage
     });
 });
+
+
+// 로아콘
+utilRouter.get('/emoticon/:loaconName', async (req: Request, res: Response) => {
+    const loaconName:string = req.params.loaconName;
+    try {
+        const emoticonData = await getEmoticon(loaconName);
+        const htmlTag = `<!doctype html><html lang="ko"><head>
+        <meta property="og:type" content="website"><meta property="og:url" content="https://loaapi.2er0.io/character/${characterName}/avatar"><meta property="og:title" content="${characterName}님의 아바타">
+        <meta property="og:image" content="${emoticonData[0].EMO_URL}"><meta property="og:description" content="[${loaconName}]"><meta property="og:image:width" content="568">
+        <meta property="og:image:height" content="658"><meta charset="utf-8"><title>${loaconName} 로아콘</title></head><body><img src="${emoticonData[0].EMO_URL}"></body></html>`;
+        res.status(200).send(htmlTag);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            code: 500,
+            error: {
+                message: "처리과정에 문제가 발생하였습니다."
+            }
+        })
+    }
+});
+
 
 export default utilRouter;
