@@ -61,11 +61,21 @@ utilRouter.get('/emoticon/:loaconName', async (req: Request, res: Response) => {
     const loaconName:string = req.params.loaconName;
     try {
         const emoticonData = await getEmoticon(loaconName);
-        const htmlTag = `<!doctype html><html lang="ko"><head>
-        <meta property="og:type" content="website"><meta property="og:url" content="https://loaapi.2er0.io/character/${characterName}/avatar"><meta property="og:title" content="${characterName}님의 아바타">
-        <meta property="og:image" content="${emoticonData[0].EMO_URL}"><meta property="og:description" content="[${loaconName}]"><meta property="og:image:width" content="568">
-        <meta property="og:image:height" content="658"><meta charset="utf-8"><title>${loaconName} 로아콘</title></head><body><img src="${emoticonData[0].EMO_URL}"></body></html>`;
-        res.status(200).send(htmlTag);
+        console.log(emoticonData);
+        if(emoticonData === 204) {
+            res.status(404).json({
+                code: 204,
+                error: {
+                    message: "없는 이모티콘 입니다."
+                }
+            })
+        } else {
+            const htmlTag = `<!doctype html><html lang="ko"><head>
+            <meta property="og:type" content="website"><meta property="og:url" content="https://loaapi.2er0.io/util/emoticon/${loaconName}"><meta property="og:title" content="[${loaconName}]">
+            <meta property="og:image" content="${emoticonData.EMO_URL}"><meta property="og:description" content="[${loaconName} 로아콘]"><meta property="og:image:width" content="568">
+            <meta property="og:image:height" content="658"><meta charset="utf-8"><title>${loaconName} 로아콘</title></head><body><img src="${emoticonData.EMO_URL}"></body></html>`;
+            res.status(200).send(htmlTag);
+        }
     } catch (error) {
         console.error(error);
         res.status(500).json({

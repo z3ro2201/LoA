@@ -10,9 +10,9 @@ export const command: Record<string, string>= {
 export const getEmoticon = async (emoticonName : string) => {
     const loaconResult = await loaconSearch(emoticonName);
     if(loaconResult.length === 0) {
-        return loaconResult[0];
-    } else {
         return 204;
+    } else {
+        return loaconResult[0];
     }        
 }
 
@@ -21,7 +21,7 @@ const loaconSearch = async (emoticonName: string) => {
     const conn = initDb();
     await connectDb(conn);
     try {
-        const selectQuery = 'SELECT * FROM LOA_EMOTICON WHERE loaconName LIKE ?';
+        const selectQuery = 'SELECT * FROM LOA_EMOTICON WHERE EMO_NAME LIKE ?';
         const selectValues = [`%${emoticonName}%`];
         const result = await queryDb(conn, selectQuery, selectValues);
         return result;
