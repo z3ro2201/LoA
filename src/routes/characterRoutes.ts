@@ -281,7 +281,7 @@ characterRouter.get('/:characterName/rice', async (req: Request, res: Response) 
 characterRouter.get('/:characterName/suspend', async (req: Request, res: Response) => {
     const characterName = req.params.characterName;
     try {
-        const characterData = await getCharacterSuspendAccount(characterName);
+        const characterData = await getCharacterSuspendAccount(characterName, 1);
         console.log(characterData)
         res.status(200).send({
             code: characterData,

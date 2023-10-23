@@ -19,86 +19,89 @@ async function getCharacterInfoText(characterName: string) {
                 headers: global.token.lostarkHeader
             });
 
-            const profile = response.data.ArmoryProfile;
-            const engraving = response.data.ArmoryEngraving;
-            const card = response.data.ArmoryCard;
+            if(response.data !== null) {
+                const profile = response.data.ArmoryProfile;
+                const engraving = response.data.ArmoryEngraving;
+                const card = response.data.ArmoryCard;
 
-            // 스탯정보
-            const statsArr = [];
-            let i:number = 0;
-            if(profile.Stats) {
-                for(var tmp of profile.Stats) {
-                    if(i > 5) break;
-                    const tmpData = `${tmp.Type.replace(/(.)./g, '$1')}+${tmp.Value}`;
-                    statsArr.push(tmpData);
-                    i++;
+                // 스탯정보
+                const statsArr = [];
+                let i:number = 0;
+                if(profile.Stats) {
+                    for(var tmp of profile.Stats) {
+                        if(i > 5) break;
+                        const tmpData = `${tmp.Type.replace(/(.)./g, '$1')}+${tmp.Value}`;
+                        statsArr.push(tmpData);
+                        i++;
+                    }
                 }
-            }
 
-            // 서버 응답을 파싱하여 캐릭터 정보를 추출
-            const characterTitle = (profile.Title === null) ? '' : `${profile.Title} `;
-            const guildName = (profile.GuildName === null) ? '미가입' : profile.GuildName;
-            let engravingText = '';
-            let statsText = (statsArr.length > 0) ? `[특성정보]\n${statsArr.join(', ')}` : '';
-                
-            const engravingEffect = [];
-            if(engraving && engraving.Effects) {
-                for(let tmp of engraving.Effects) {
-                    engravingEffect.push(tmp.Name.replace(' Lv.', ''));
+                // 서버 응답을 파싱하여 캐릭터 정보를 추출
+                const characterTitle = (profile.Title === null) ? '' : `${profile.Title} `;
+                const guildName = (profile.GuildName === null) ? '미가입' : profile.GuildName;
+                let engravingText = '';
+                let statsText = (statsArr.length > 0) ? `[특성정보]\n${statsArr.join(', ')}` : '';
+                    
+                const engravingEffect = [];
+                if(engraving && engraving.Effects) {
+                    for(let tmp of engraving.Effects) {
+                        engravingEffect.push(tmp.Name.replace(' Lv.', ''));
+                    }
+                    if(engravingEffect.length > 0) {
+                        engravingText += `${engravingEffect.join(', ')}\n`;
+                    }
                 }
-                if(engravingEffect.length > 0) {
-                    engravingText += `${engravingEffect.join(', ')}\n`;
+
+                // 활성화된 세트효과
+                const cardEffectArr = [];
+                if(card && card.Effects) {
+                    for(const tmp of card.Effects[0].Items) {
+                        cardEffectArr.push(`${tmp.Name}`);
+                    }
                 }
-            }
 
-            // 활성화된 세트효과
-            const cardEffectArr = [];
-            if(card && card.Effects) {
-                for(const tmp of card.Effects[0].Items) {
-                    cardEffectArr.push(`${tmp.Name}`);
-                }
-            }
-
-            // 데이터를 리턴할 변수
-            let characterData = '';
-            // 데이터 삽입 및 데이터 업데이트
-            const characterResult = await characterSearch(characterName)
-            .then(res => {
-                if(Array.isArray(res) && res.length === 0) {
-                    const engravingData = (engravingEffect.length > 0) ? engravingEffect.join(', ') : '';
-                    const statsData = (statsArr.length > 0) ? statsArr.join(', ') : '';
-                    const cardEffect = (cardEffectArr.length > 0) ? cardEffectArr[cardEffectArr.length - 1] : '';
-                    characterInsert(profile, engravingData, statsData, cardEffect);
-                    return characterSearch(characterName);
-                } else {
-                    const now: Date = new Date();
-                    const updateTime: Date = new Date(res[0].updateTime);
-                    const timeDifference = now.getTime() - updateTime.getTime();
-                    const minutesDifference = timeDifference / (1000 * 60);
-
-                    if (Array.isArray(res) && res.length > 0 && minutesDifference >= 3) { // 데이터는 존재하나 3분 이상이 지난경우
+                // 데이터를 리턴할 변수
+                let characterData = '';
+                // 데이터 삽입 및 데이터 업데이트
+                const characterResult = await characterSearch(characterName)
+                .then(res => {
+                    if(Array.isArray(res) && res.length === 0) {
                         const engravingData = (engravingEffect.length > 0) ? engravingEffect.join(', ') : '';
                         const statsData = (statsArr.length > 0) ? statsArr.join(', ') : '';
                         const cardEffect = (cardEffectArr.length > 0) ? cardEffectArr[cardEffectArr.length - 1] : '';
-                        characterUpdate(profile, engravingData, statsData, cardEffect);
-                    } return characterSearch(characterName);
-                }
-            })
-            .then(updateRes => {
-                const data = updateRes[0];
-                characterData = `${data.mokoko_sponsor === 1 ? '🌱 후원자 ':''}[${data.characterClassName}]\n${(data.characterTitle !== '' && data.characterTitle !== null) ? data.characterTitle + ' ' : ''}${data.characterName}\n\n` +
-                            `[캐릭터 기본정보]\n` +
-                            `템/전/원      ${data.itemLevel}/${data.characterLevel}/${data.expeditionLevel}\n` +
-                            `서버/길드     ${data.serverName}/${(data.guildName !== '' && data.guildName !== null) ? data.guildName : '미가입'}\n` +
-                            `체력/공격력    ${data.statsHealthPoints}/${data.statsAttactPower}\n` +
-                            `스킬포인트     ${data.characterSkillPoint}/${data.characterSkillPoint_total}\n\n` +
-                            `${(data.statsInfo !== '') ? '[특성정보]\n'+data.statsInfo + '\n\n' : ''}` +
-                            `${(data.engravingInfo !== '') ? '[각인정보]\n' + data.engravingInfo + '\n\n' : ''}` + 
-                            `${(data.cardEffectInfo !== '') ? '[카드세트효과]\n' + data.cardEffectInfo : ''}`;
-            })
-            .catch(error => console.error(error));
-            return characterData;
+                        characterInsert(profile, engravingData, statsData, cardEffect);
+                        return characterSearch(characterName);
+                    } else {
+                        const now: Date = new Date();
+                        const updateTime: Date = new Date(res[0].updateTime);
+                        const timeDifference = now.getTime() - updateTime.getTime();
+                        const minutesDifference = timeDifference / (1000 * 60);
 
+                        if (Array.isArray(res) && res.length > 0 && minutesDifference >= 3) { // 데이터는 존재하나 3분 이상이 지난경우
+                            const engravingData = (engravingEffect.length > 0) ? engravingEffect.join(', ') : '';
+                            const statsData = (statsArr.length > 0) ? statsArr.join(', ') : '';
+                            const cardEffect = (cardEffectArr.length > 0) ? cardEffectArr[cardEffectArr.length - 1] : '';
+                            characterUpdate(profile, engravingData, statsData, cardEffect);
+                        } return characterSearch(characterName);
+                    }
+                })
+                .then(updateRes => {
+                    const data = updateRes[0];
+                    characterData = `${data.mokoko_sponsor === 1 ? '🌱 후원자 ':''}[${data.characterClassName}]\n${(data.characterTitle !== '' && data.characterTitle !== null) ? data.characterTitle + ' ' : ''}${data.characterName}\n\n` +
+                                `[캐릭터 기본정보]\n` +
+                                `템/전/원      ${data.itemLevel}/${data.characterLevel}/${data.expeditionLevel}\n` +
+                                `서버/길드     ${data.serverName}/${(data.guildName !== '' && data.guildName !== null) ? data.guildName : '미가입'}\n` +
+                                `체력/공격력    ${data.statsHealthPoints}/${data.statsAttactPower}\n` +
+                                `스킬포인트     ${data.characterSkillPoint}/${data.characterSkillPoint_total}\n\n` +
+                                `${(data.statsInfo !== '') ? '[특성정보]\n'+data.statsInfo + '\n\n' : ''}` +
+                                `${(data.engravingInfo !== '') ? '[각인정보]\n' + data.engravingInfo + '\n\n' : ''}` + 
+                                `${(data.cardEffectInfo !== '') ? '[카드세트효과]\n' + data.cardEffectInfo : ''}`;
+                })
+                .catch(error => console.error(error));
+                return characterData;
+            } else {
+                return '존재하지 않는 계정입니다.';
+            }
         } catch (error) {
             throw error; // 오류를 호출자로 던짐
         }

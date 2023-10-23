@@ -4,13 +4,13 @@ import global from '../../config/config'
 import { init as initDb, connect as connectDb, query as queryDb } from '../../config/mysqlConf'
 import {apiCheck} from '../utils/apiCheck'
 
-export const getCharacterSuspendAccount = async (characterName : string) => {
+export const getCharacterSuspendAccount = async (characterName : string, mode: number = 0) => {
     const apiUrl = `${global.apiUrl.lostark}armories/characters/${characterName}`;
     // const lostarkHomeUrl = `https://lostark.game.onstove.com/Profile/Character/${characterName}`;
     const lostarkHomeUrl = `https://m-lostark.game.onstove.com/Profile/Character/${characterName}`;
 
     const localSuspendResult = await characterSearch(characterName);
-    if(localSuspendResult.length === 0) {
+    if(mode === 1 && localSuspendResult.length === 0) {
         const apiStatus = await apiCheck();
         if(apiStatus === true) {
             try {
@@ -41,6 +41,8 @@ export const getCharacterSuspendAccount = async (characterName : string) => {
         } else {
             return 202;
         }
+    } else if(mode === 0 && localSuspendResult.length === 0) {
+        return 204;
     } else {
         return 200;
     }
