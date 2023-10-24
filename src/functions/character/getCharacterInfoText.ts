@@ -145,6 +145,7 @@ async function getCharacterInfoText(characterName: string) {
                             `${(data.engravingInfo !== '') ? '[각인정보]\n' + data.engravingInfo + '\n\n' : ''}` + 
                             `${(data.cardEffectInfo !== '') ? '[카드세트효과]\n' + data.cardEffectInfo : ''}`;
             }
+            return characterData;
         })
         .catch(e => {
             throw e;
