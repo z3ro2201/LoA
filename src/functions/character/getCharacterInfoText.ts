@@ -123,6 +123,7 @@ async function getCharacterInfoText(characterName: string) {
                             `${(data.engravingInfo !== '') ? '[각인정보]\n' + data.engravingInfo + '\n\n' : ''}` + 
                             `${(data.cardEffectInfo !== '') ? '[카드세트효과]\n' + data.cardEffectInfo : ''}`;
             }
+            return characterData;
         }
     } else if (suspendAccountCheck === 200) {
         return '해당 계정은 정지된 계정입니다.';
@@ -145,7 +146,6 @@ async function getCharacterInfoText(characterName: string) {
                             `${(data.engravingInfo !== '') ? '[각인정보]\n' + data.engravingInfo + '\n\n' : ''}` + 
                             `${(data.cardEffectInfo !== '') ? '[카드세트효과]\n' + data.cardEffectInfo : ''}`;
             }
-            return characterData;
         })
         .catch(e => {
             throw e;
