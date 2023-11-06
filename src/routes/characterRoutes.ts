@@ -256,6 +256,25 @@ characterRouter.get('/:characterName/collects', async (req: Request, res: Respon
         })
     }
 });
+characterRouter.get('/:characterName/collects/:collectType', async (req: Request, res: Response) => {
+    const characterName = req.params.characterName;
+    const collectType = req.params.collectType;
+    try {
+        const characterData = await getCharacterCollectText(characterName, collectType);
+        res.status(200).send({
+            code: 200,
+            message: '정상적으로 처리되었습니다.',
+            characterData: characterData
+        })
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            error: {
+                message: "처리과정에 문제가 발생하였습니다."
+            }
+        })
+    }
+});
 
 // 주간골드수급정보
 characterRouter.get('/:characterName/rice', async (req: Request, res: Response) => {

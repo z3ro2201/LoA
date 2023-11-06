@@ -156,8 +156,6 @@ async function getCharacterInfoText(characterName: string) {
     }
 }
 
-
-
 // 캐릭터명 조회, 만약 없는경우 return 0
 const characterSearch = async (characterName: string) => {
     const conn = initDb();
