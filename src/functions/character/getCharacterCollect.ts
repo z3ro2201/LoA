@@ -287,7 +287,7 @@ async function getCharacterCollectText(characterName, content = null) {
         }
         console.log(collectsTotal)
 
-        return `${commandTitle}\n\n[획득정보]\n${collectsNow}/${collectsTotal}\n\n[상세내용]${characterData.join('\n')}`;
+        return `${commandTitle}\n---상세정보는 더보기---\n[획득정보]\n${collectsNow}/${collectsTotal}\n\n[상세내용]\n${characterData.join('\n')}`;
     } else {
         const characterResult = await characterSearch(characterName);
 
