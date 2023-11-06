@@ -98,7 +98,6 @@ async function getCharacterCollect(characterName: string) {
                         // 모코코 씨앗
                         const seedsNowCount = Number($('#lui-tab1-2 .collection-list ul li span em span').text());
                         const seedsMaxCount = Number($('#lui-tab1-2 .collection-list ul li span em span').text());
-                        console.log(seedsNowCount);
                         const seedsComplete = (seedsNowCount === seedsMaxCount) ? 1 : 0;
                         const seedsData = [];
                         $('#lui-tab1-2 .collection-list ul.list li').each((i, e) => {
@@ -246,16 +245,14 @@ async function getCharacterCollectText(characterName, content = null) {
 
         if (examCommand === null) {
             return `${commandTitle}${apiData.collect_text}`;
-        } else if (examCommand === "HEARTOFGIANT" || examCommand === "ISLAND" || examCommand === "MOKOKOSEEDS") {
+        } else if (examCommand !== null) {
             const db = await collectData(examCommand);
             const collectDataKey = `collect_${examCommand.toLowerCase()}_count`;
             if (apiData && typeof apiData === 'object') {                
                 if (collectDataKey in apiData) {
                     
                     const collectDataArray = apiData[collectDataKey].split('|');
-                    let i = 0;
-                    console.log(db);
-            
+                    let i = 0;            
                     for (const collectItem of db) {
                         if(examCommand !== "MOKOKOSEEDS") {
                             const isCollected = collectDataArray[i] === '0' ? '미획득' : '획득';
@@ -285,9 +282,8 @@ async function getCharacterCollectText(characterName, content = null) {
             //     i++;
             // }
         }
-        console.log(collectsTotal)
 
-        return `${commandTitle}\n---상세정보는 더보기---\n[획득정보]\n${collectsNow}/${collectsTotal}\n\n[상세내용]\n${characterData.join('\n')}`;
+        return `${commandTitle}\n[획득정보]\n${collectsNow}/${collectsTotal}\n---상세정보는 전체보기---\n\n[상세내용]\n${characterData.join('\n')}`;
     } else {
         const characterResult = await characterSearch(characterName);
 
