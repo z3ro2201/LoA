@@ -29,7 +29,8 @@ async function getCharacterInfoText(characterName: string) {
                     const card = response.data.ArmoryCard;
                     const equipment = response.data.ArmoryEquipment;
                     let elixirTot = 0;
-                    let extraEffect = null;
+                    let tmpExtraEffect = null;
+                    let chowol = null;
 
                     // 스탯정보
                     const statsArr = [];
@@ -74,8 +75,8 @@ async function getCharacterInfoText(characterName: string) {
                                                 }
                                             }
                                             else if (topStr.includes('연성 추가 효과')) {
-                                                const tmpExtraEffect = topStr.toUpperCase().split('<BR>');
-                                                extraEffect = tmpExtraEffect[1].replace(global.regex.htmlEntity, '');
+                                                const tmp = topStr.toUpperCase().split('<BR>');
+                                                tmpExtraEffect = tmp[1].replace(global.regex.htmlEntity, '');
                                             }
                                             //  else {
                                             //     if(key.includes('레벨 합')) {
@@ -87,13 +88,15 @@ async function getCharacterInfoText(characterName: string) {
                                     }
                                     if(element.value.Element_000.topStr.indexOf('초월') !== -1) {
                                         const tmp_grade = element.value.Element_000.topStr.replace(global.regex.htmlEntity, '').match(/(\[초월\]) ([1-3]단계) ([0-9])/);
-                                        //equipmentGrade = (tmp_grade !== null) ? `[초월 ${tmp_grade[2].replace('단계', '')}]` : element.value.Element_000.topStr.replace(global.regex.htmlEntity, '');
+                                        chowol = (tmp_grade !== null) ? `초월 ${tmp_grade[2]}` : element.value.Element_000.topStr.replace(global.regex.htmlEntity, '');
                                     }
                                 }
                                 //if(tmpElementElixir.length > 0) elixirDataArr.push(`${tmp.Type} ${tmpElementElixir.join(' ')}`);
                             }
                         }
                     }
+                    // 엘릭서 내용 병합
+                    let extraEffect = (chowol !== null) ? `${tmpExtraEffect !== null ? tmpExtraEffect : ''}${elixirTot}+${chowol}` : `${tmpExtraEffect !== null ? tmpExtraEffect : ''}+${elixirTot}`;
 
                     // 서버 응답을 파싱하여 캐릭터 정보를 추출
                     const characterTitle = (profile.Title === null) ? '' : `${profile.Title} `;
@@ -151,7 +154,7 @@ async function getCharacterInfoText(characterName: string) {
                                     `서버/길드     ${data.serverName}/${(data.guildName !== '' && data.guildName !== null) ? data.guildName : '미가입'}\n` +
                                     `체력/공격력    ${data.statsHealthPoints}/${data.statsAttactPower}\n` +
                                     `스킬포인트     ${data.characterSkillPoint}/${data.characterSkillPoint_total}\n\n` +
-                                    `${(data.elixrEffect !== '' && data.elixrEffect !== null) ? `엘릭서         ${data.elixrEffect}\n` : ''}` +
+                                    `${(data.elixrEffect !== '' && data.elixrEffect !== null) ? `엘릭서         ${data.elixrEffect}\n\n` : '\n'}` +
                                     `${(data.statsInfo !== '') ? '[특성정보]\n'+data.statsInfo + '\n\n' : ''}` +
                                     `${(data.engravingInfo !== '') ? '[각인정보]\n' + data.engravingInfo + '\n\n' : ''}` + 
                                     `${(data.cardEffectInfo !== '') ? '[카드세트효과]\n' + data.cardEffectInfo : ''}`;
@@ -176,6 +179,7 @@ async function getCharacterInfoText(characterName: string) {
                             `서버/길드     ${data.serverName}/${(data.guildName !== '' && data.guildName !== null) ? data.guildName : '미가입'}\n` +
                             `체력/공격력    ${data.statsHealthPoints}/${data.statsAttactPower}\n` +
                             `스킬포인트     ${data.characterSkillPoint}/${data.characterSkillPoint_total}\n\n` +
+                            `${(data.elixrEffect !== '' && data.elixrEffect !== null) ? `엘릭서         ${data.elixrEffect}\n\n` : '\n'}` +
                             `${(data.statsInfo !== '') ? '[특성정보]\n'+data.statsInfo + '\n\n' : ''}` +
                             `${(data.engravingInfo !== '') ? '[각인정보]\n' + data.engravingInfo + '\n\n' : ''}` + 
                             `${(data.cardEffectInfo !== '') ? '[카드세트효과]\n' + data.cardEffectInfo : ''}`;
@@ -199,6 +203,7 @@ async function getCharacterInfoText(characterName: string) {
                             `서버/길드     ${data.serverName}/${(data.guildName !== '' && data.guildName !== null) ? data.guildName : '미가입'}\n` +
                             `체력/공격력    ${data.statsHealthPoints}/${data.statsAttactPower}\n` +
                             `스킬포인트     ${data.characterSkillPoint}/${data.characterSkillPoint_total}\n\n` +
+                            `${(data.elixrEffect !== '' && data.elixrEffect !== null) ? `엘릭서         ${data.elixrEffect}\n\n` : '\n'}` +
                             `${(data.statsInfo !== '') ? '[특성정보]\n'+data.statsInfo + '\n\n' : ''}` +
                             `${(data.engravingInfo !== '') ? '[각인정보]\n' + data.engravingInfo + '\n\n' : ''}` + 
                             `${(data.cardEffectInfo !== '') ? '[카드세트효과]\n' + data.cardEffectInfo : ''}`;
