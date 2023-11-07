@@ -16,7 +16,7 @@ async function getCharacterEngravingText(characterName: string) {
                 const response = await axios.get(apiUrl, {
                     headers: global.token.lostarkHeader
                 });
-
+0
                 const data = response.data;
                 const profile = data.ArmoryProfile;
                 const equipment = data.ArmoryEquipment;
@@ -142,7 +142,8 @@ async function getCharacterEngravingText(characterName: string) {
                 }
 //◆◇
                 const allowEng = engravings.Engravings;
-                if(allowEng.length > 0) {
+                
+                if(allowEng !== null && allowEng.length > 0) {
                     for(const tmpEng of allowEng) {
                         const engName = tmpEng.Name;
                         const tooltipText = tmpEng.Tooltip.replace(global.regex.htmlEntity, '');
@@ -183,8 +184,7 @@ async function getCharacterEngravingText(characterName: string) {
                         }
                     }
                 }
-                //console.log(engravingData, engravings.Engravings.length);
-                console.log(engravingData)
+                
                 if(engravingData.engName1 === null) {
                     return '장착 또는 활성화된 각인효과가 없습니다.';
                 } else {
