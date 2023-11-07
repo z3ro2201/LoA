@@ -60,8 +60,11 @@ async function getEquipmentText(characterName: string) {
                                     });
                                 }
                                 if(element.value.Element_000.topStr.indexOf('초월') !== -1) {
-                                    const tmp_grade = element.value.Element_000.topStr.replace(global.regex.htmlEntity, '').match(/(\[초월\]) ([1-3]단계) ([0-9])/);
-                                    equipmentGrade = (tmp_grade !== null) ? `[초월 ${tmp_grade[2].replace('단계', '')}]` : element.value.Element_000.topStr.replace(global.regex.htmlEntity, '');
+                                    console.log(element.value.Element_000.topStr);
+                                    // const tmp_grade = element.value.Element_000.topStr.replace(global.regex.htmlEntity, '').match(/(\[초월\]) ([1-3]단계) ([0-9])/);
+                                    // equipmentGrade = (tmp_grade !== null) ? `[초월 ${tmp_grade[2].replace('단계', '')}]` : element.value.Element_000.topStr.replace(global.regex.htmlEntity, '');
+                                    const tmp_grade = element.value.Element_000.topStr.replace(global.regex.htmlEntity, '');
+                                    equipmentGrade = (tmp_grade !== null) ? ` ${tmp_grade}` : '';
                                 }
                             }
                             if(tmpElementElixir.length > 0) elixirDataArr.push(`${tmp.Type} ${tmpElementElixir.join(' ')}`);
