@@ -64,18 +64,13 @@ async function getEquipmentText(characterName: string) {
                                     equipmentGrade = (tmp_grade !== null) ? `[초월 ${tmp_grade[2].replace('단계', '')}]` : element.value.Element_000.topStr.replace(global.regex.htmlEntity, '');
                                 }
                             }
-                            if (element && element.value && element.type && element.type.indexOf('ItemPartBox') !== -1) {
-                                if(element.value && element.value.Element_000 && element.value.Element_000.replace(global.regex.htmlEntity, '').includes("세트 효과 레벨")) {
-                                    equipmentSet = element.value.Element_001.replace(global.regex.htmlEntity, '');
-                                }
-                            }
                             if(tmpElementElixir.length > 0) elixirDataArr.push(`${tmp.Type} ${tmpElementElixir.join(' ')}`);
                         }
                     }
                     const equipmentSetName = tmp.Name.replace('+', ' ');
                     const lastIndex = equipmentSetName.lastIndexOf(' ');
                     const visiblePart = equipmentSetName.substring(0, lastIndex + 1); // 마지막 공백까지의 부분 추출
-                    engravingArr.push(`${tmp.Grade}${equipmentGrade} ${tmp.Type} : ${quality}`);
+                    engravingArr.push(`${tmp.Grade}${equipmentGrade} ${tmp.Type} +${visiblePart.replace(/[^0-9]/g, '')} : ${quality}`);
                     qualityValue += parseInt(quality);
                     i++;
                 }
