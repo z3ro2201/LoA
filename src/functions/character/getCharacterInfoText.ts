@@ -96,7 +96,7 @@ async function getCharacterInfoText(characterName: string) {
                         }
                     }
                     // 엘릭서 내용 병합
-                    let extraEffect = (chowol !== null) ? `${tmpExtraEffect !== null ? tmpExtraEffect : ''}${elixirTot}+${chowol}` : `${tmpExtraEffect !== null ? tmpExtraEffect : ''}+${elixirTot}`;
+                    let extraEffect = (tmpExtraEffect !== null) ? `${tmpExtraEffect !== null ? tmpExtraEffect : ''} (${elixirTot})` : null;
 
                     // 서버 응답을 파싱하여 캐릭터 정보를 추출
                     const characterTitle = (profile.Title === null) ? '' : `${profile.Title} `;
