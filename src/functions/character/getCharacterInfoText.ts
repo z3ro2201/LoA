@@ -153,7 +153,7 @@ async function getCharacterInfoText(characterName: string) {
                                     `템/전/원      ${data.itemLevel}/${data.characterLevel}/${data.expeditionLevel}\n` +
                                     `서버/길드     ${data.serverName}/${(data.guildName !== '' && data.guildName !== null) ? data.guildName : '미가입'}\n` +
                                     `체력/공격력    ${data.statsHealthPoints}/${data.statsAttactPower}\n` +
-                                    `스킬포인트     ${data.characterSkillPoint}/${data.characterSkillPoint_total}\n\n` +
+                                    `스킬포인트     ${data.characterSkillPoint}/${data.characterSkillPoint_total}\n` +
                                     `${(data.elixrEffect !== '' && data.elixrEffect !== null) ? `엘릭서         ${data.elixrEffect}\n\n` : '\n'}` +
                                     `${(data.statsInfo !== '') ? '[특성정보]\n'+data.statsInfo + '\n\n' : ''}` +
                                     `${(data.engravingInfo !== '') ? '[각인정보]\n' + data.engravingInfo + '\n\n' : ''}` + 
@@ -178,7 +178,7 @@ async function getCharacterInfoText(characterName: string) {
                             `템/전/원      ${data.itemLevel}/${data.characterLevel}/${data.expeditionLevel}\n` +
                             `서버/길드     ${data.serverName}/${(data.guildName !== '' && data.guildName !== null) ? data.guildName : '미가입'}\n` +
                             `체력/공격력    ${data.statsHealthPoints}/${data.statsAttactPower}\n` +
-                            `스킬포인트     ${data.characterSkillPoint}/${data.characterSkillPoint_total}\n\n` +
+                            `스킬포인트     ${data.characterSkillPoint}/${data.characterSkillPoint_total}\n` +
                             `${(data.elixrEffect !== '' && data.elixrEffect !== null) ? `엘릭서         ${data.elixrEffect}\n\n` : '\n'}` +
                             `${(data.statsInfo !== '') ? '[특성정보]\n'+data.statsInfo + '\n\n' : ''}` +
                             `${(data.engravingInfo !== '') ? '[각인정보]\n' + data.engravingInfo + '\n\n' : ''}` + 
@@ -202,7 +202,7 @@ async function getCharacterInfoText(characterName: string) {
                             `템/전/원      ${data.itemLevel}/${data.characterLevel}/${data.expeditionLevel}\n` +
                             `서버/길드     ${data.serverName}/${(data.guildName !== '' && data.guildName !== null) ? data.guildName : '미가입'}\n` +
                             `체력/공격력    ${data.statsHealthPoints}/${data.statsAttactPower}\n` +
-                            `스킬포인트     ${data.characterSkillPoint}/${data.characterSkillPoint_total}\n\n` +
+                            `스킬포인트     ${data.characterSkillPoint}/${data.characterSkillPoint_total}\n` +
                             `${(data.elixrEffect !== '' && data.elixrEffect !== null) ? `엘릭서         ${data.elixrEffect}\n\n` : '\n'}` +
                             `${(data.statsInfo !== '') ? '[특성정보]\n'+data.statsInfo + '\n\n' : ''}` +
                             `${(data.engravingInfo !== '') ? '[각인정보]\n' + data.engravingInfo + '\n\n' : ''}` + 
