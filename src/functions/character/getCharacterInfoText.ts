@@ -27,16 +27,71 @@ async function getCharacterInfoText(characterName: string) {
                     const profile = response.data.ArmoryProfile;
                     const engraving = response.data.ArmoryEngraving;
                     const card = response.data.ArmoryCard;
+                    const equipment = response.data.ArmoryEquipment;
+                    let elixirTot = 0;
+                    let extraEffect = null;
 
                     // 스탯정보
                     const statsArr = [];
                     let i:number = 0;
                     if(profile.Stats) {
                         for(var tmp of profile.Stats) {
-                            if(i > 5) break;
-                            const tmpData = `${tmp.Type.replace(/(.)./g, '$1')}+${tmp.Value}`;
+                            if(i > 3) break;
+                            else if(i === 2) {
+                                i++;
+                                continue;
+                            }
+                            const tmpData = `${tmp.Type.replace(/(.)./g, '$1')}: ${tmp.Value}`;
                             statsArr.push(tmpData);
                             i++;
+                        }
+                    }
+
+                    // 장비정보
+                    for(let tmp of equipment) {
+                        if(i > 5) break;
+                        const toolTips = tmp.Tooltip.replace(global.regex.htmlEntity, '');
+                        const quality = JSON.parse(toolTips).Element_001.value.qualityValue;
+                        const cleanedToolTipString = tmp.Tooltip;
+                        const tooltipObject = JSON.parse(cleanedToolTipString);
+                        for(const tmpData in tooltipObject) {
+                            const tmpElementElixir = [];
+                            if(tooltipObject.hasOwnProperty(tmpData)) {
+                                const element = tooltipObject[tmpData];
+                                if (element && element.value && element.type && element.type.indexOf('IndentStringGroup') !== -1) {
+                                    const indentContentStr = element.value.Element_000.contentStr;
+                                    if (indentContentStr) {
+                                        Object.keys(indentContentStr).forEach(keyName => {
+                                            const key = indentContentStr[keyName].contentStr;
+                                            const topStr = element.value.Element_000.topStr;
+                                            if(topStr.includes('엘릭서 효과')) {
+                                                if(!key.includes('재사용 대기시간') && !key.includes('레벨 합')) {
+                                                    const tmpLv = key.toUpperCase().split('<BR>')[0].replace(global.regex.htmlEntity, '');
+                                                    const regex = /\d+/g;
+                                                    const numbers = tmpLv.match(regex).map(Number);
+                                                    elixirTot += parseInt(numbers[0]);
+                                                    tmpElementElixir.push(key.toUpperCase().split('<BR>')[0].replace(global.regex.htmlEntity, ''));
+                                                }
+                                            }
+                                            else if (topStr.includes('연성 추가 효과')) {
+                                                const tmpExtraEffect = topStr.toUpperCase().split('<BR>');
+                                                extraEffect = tmpExtraEffect[1].replace(global.regex.htmlEntity, '');
+                                            }
+                                            //  else {
+                                            //     if(key.includes('레벨 합')) {
+                                            //         elixirTotalArr.push(key.toUpperCase().split('<BR>')[0].replace(global.regex.htmlEntity, '').replace(/\d단계 : /, ''));
+                                            //         console.log(key.toUpperCase().split('<BR>')[0].replace(global.regex.htmlEntity, ''))
+                                            //     }
+                                            // }
+                                        });
+                                    }
+                                    if(element.value.Element_000.topStr.indexOf('초월') !== -1) {
+                                        const tmp_grade = element.value.Element_000.topStr.replace(global.regex.htmlEntity, '').match(/(\[초월\]) ([1-3]단계) ([0-9])/);
+                                        //equipmentGrade = (tmp_grade !== null) ? `[초월 ${tmp_grade[2].replace('단계', '')}]` : element.value.Element_000.topStr.replace(global.regex.htmlEntity, '');
+                                    }
+                                }
+                                //if(tmpElementElixir.length > 0) elixirDataArr.push(`${tmp.Type} ${tmpElementElixir.join(' ')}`);
+                            }
                         }
                     }
 
@@ -71,7 +126,7 @@ async function getCharacterInfoText(characterName: string) {
                             const engravingData = (engravingEffect.length > 0) ? engravingEffect.join(', ') : '';
                             const statsData = (statsArr.length > 0) ? statsArr.join(', ') : '';
                             const cardEffect = (cardEffectArr.length > 0) ? cardEffectArr[cardEffectArr.length - 1] : '';
-                            characterInsert(profile, engravingData, statsData, cardEffect);
+                            characterInsert(profile, engravingData, statsData, cardEffect, extraEffect);
                             return characterSearch(characterName);
                         } else {
                             const now: Date = new Date();
@@ -79,22 +134,24 @@ async function getCharacterInfoText(characterName: string) {
                             const timeDifference = now.getTime() - updateTime.getTime();
                             const minutesDifference = timeDifference / (1000 * 60);
 
-                            if (Array.isArray(res) && res.length > 0 && minutesDifference >= 3) { // 데이터는 존재하나 3분 이상이 지난경우
+                            if (Array.isArray(res) && res.length > 0 && minutesDifference >= 1) { // 데이터는 존재하나 3분 이상이 지난경우
                                 const engravingData = (engravingEffect.length > 0) ? engravingEffect.join(', ') : '';
                                 const statsData = (statsArr.length > 0) ? statsArr.join(', ') : '';
                                 const cardEffect = (cardEffectArr.length > 0) ? cardEffectArr[cardEffectArr.length - 1] : '';
-                                characterUpdate(profile, engravingData, statsData, cardEffect);
+                                characterUpdate(profile, engravingData, statsData, cardEffect, extraEffect);
                             } return characterSearch(characterName);
                         }
                     })
                     .then(updateRes => {
                         const data = updateRes[0];
+                        console.log(data);
                         characterData = `${data.mokoko_sponsor === 1 ? '🌱 후원자 ':''}[${data.characterClassName}]\n${(data.characterTitle !== '' && data.characterTitle !== null) ? data.characterTitle + ' ' : ''}${data.characterName}\n\n` +
                                     `[캐릭터 기본정보]\n` +
                                     `템/전/원      ${data.itemLevel}/${data.characterLevel}/${data.expeditionLevel}\n` +
                                     `서버/길드     ${data.serverName}/${(data.guildName !== '' && data.guildName !== null) ? data.guildName : '미가입'}\n` +
                                     `체력/공격력    ${data.statsHealthPoints}/${data.statsAttactPower}\n` +
                                     `스킬포인트     ${data.characterSkillPoint}/${data.characterSkillPoint_total}\n\n` +
+                                    `${(data.elixrEffect !== '' && data.elixrEffect !== null) ? `엘릭서         ${data.elixrEffect}\n` : ''}` +
                                     `${(data.statsInfo !== '') ? '[특성정보]\n'+data.statsInfo + '\n\n' : ''}` +
                                     `${(data.engravingInfo !== '') ? '[각인정보]\n' + data.engravingInfo + '\n\n' : ''}` + 
                                     `${(data.cardEffectInfo !== '') ? '[카드세트효과]\n' + data.cardEffectInfo : ''}`;
@@ -174,16 +231,17 @@ const characterSearch = async (characterName: string) => {
 }
 
 // 캐릭터명 insert
-const characterInsert = async (data,engraving,statsText,cardEffect) => {
+const characterInsert = async (data,engraving,statsText,cardEffect,elixirEff) => {
     const conn = initDb();
     await connectDb(conn);
     try {
         const statsValue1 = data.Stats && data.Stats[6] ? data.Stats[6].Value : '';
         const statsValue2 = data.Stats && data.Stats[7] ? data.Stats[7].Value : '';
-        const insertColumns = '(characterName, characterClassName, characterTitle, serverName, characterLevel, itemLevel, expeditionLevel, characterSkillPoint, characterSkillPoint_total, guildName, statsHealthPoints, statsAttactPower, statsInfo, cardEffectInfo, engravingInfo, regdateTime, updateTime, characterImage)'
-        const insertQuery = 'INSERT INTO LOA_CHARACTER_DEFINFO ' + insertColumns + ' VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,NOW(),NOW(),?)';
-        const insertValues = [data.CharacterName, data.CharacterClassName, data.Title, data.ServerName, data.CharacterLevel, data.ItemAvgLevel, data.ExpeditionLevel, data.UsingSkillPoint, data.TotalSkillPoint, data.GuildName, statsValue1, statsValue2, statsText, cardEffect, engraving, data.CharacterImage];
+        const insertColumns = '(characterName, characterClassName, characterTitle, serverName, characterLevel, itemLevel, expeditionLevel, characterSkillPoint, characterSkillPoint_total, guildName, statsHealthPoints, statsAttactPower, statsInfo, cardEffectInfo, engravingInfo, elixrEffect, regdateTime, updateTime, characterImage)'
+        const insertQuery = 'INSERT INTO LOA_CHARACTER_DEFINFO ' + insertColumns + ' VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,NOW(),NOW(),?)';
+        const insertValues = [data.CharacterName, data.CharacterClassName, data.Title, data.ServerName, data.CharacterLevel, data.ItemAvgLevel, data.ExpeditionLevel, data.UsingSkillPoint, data.TotalSkillPoint, data.GuildName, statsValue1, statsValue2, statsText, cardEffect, engraving, elixirEff, data.CharacterImage];
         const result = await queryDb(conn, insertQuery, insertValues);
+        console.log(elixirEff)
         return result;
     } catch (error) {
         console.error('Query execution failed:', error);
@@ -194,16 +252,17 @@ const characterInsert = async (data,engraving,statsText,cardEffect) => {
 }
 
 // 캐릭터명 update
-const characterUpdate = async (data,engraving,statsText,cardEffect) => {
+const characterUpdate = async (data,engraving,statsText,cardEffect,elixirEff) => {
     const conn = initDb();
     await connectDb(conn);
     try {
         const statsValue1 = data.Stats && data.Stats[6] ? data.Stats[6].Value : '';
         const statsValue2 = data.Stats && data.Stats[7] ? data.Stats[7].Value : '';
         const updateQuery = 'UPDATE LOA_CHARACTER_DEFINFO SET characterTitle = ?, characterLevel = ?, itemLevel = ?, expeditionLevel = ?, characterSkillPoint = ?, characterSkillPoint_total = ?, guildName = ?, statsHealthPoints = ?,' +
-                            'statsAttactPower = ?, statsInfo = ?, cardEffectInfo = ?, engravingInfo = ?, updateTime = NOW(), characterImage = ? WHERE characterName = ? AND serverName = ?';
-        const updateValues = [data.Title, data.CharacterLevel, data.ItemAvgLevel, data.ExpeditionLevel, data.UsingSkillPoint, data.TotalSkillPoint, data.GuildName, statsValue1, statsValue2, statsText, cardEffect, engraving, data.CharacterImage, data.CharacterName, data.ServerName];
+                            'statsAttactPower = ?, statsInfo = ?, cardEffectInfo = ?, engravingInfo = ?, updateTime = NOW(), characterImage = ?, elixrEffect = ? WHERE characterName = ? AND serverName = ?';
+        const updateValues = [data.Title, data.CharacterLevel, data.ItemAvgLevel, data.ExpeditionLevel, data.UsingSkillPoint, data.TotalSkillPoint, data.GuildName, statsValue1, statsValue2, statsText, cardEffect, engraving, data.CharacterImage, elixirEff, data.CharacterName, data.ServerName];
         const result = await queryDb(conn, updateQuery, updateValues);
+        console.log(elixirEff)
         return result;
     } catch (error) {
         console.error('Query execution failed:', error);
