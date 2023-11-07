@@ -15,6 +15,7 @@ async function getEquipmentText(characterName: string) {
             
             const profile = data.ArmoryProfile;
             const equipment = data.ArmoryEquipment;
+            let equipmentSet = null;
 
             if (data?.ArmoryProfile) {
                 // 서버 응답을 파싱하여 캐릭터 정보를 추출
@@ -63,20 +64,25 @@ async function getEquipmentText(characterName: string) {
                                     equipmentGrade = (tmp_grade !== null) ? `[초월 ${tmp_grade[2].replace('단계', '')}]` : element.value.Element_000.topStr.replace(global.regex.htmlEntity, '');
                                 }
                             }
+                            if (element && element.value && element.type && element.type.indexOf('ItemPartBox') !== -1) {
+                                if(element.value && element.value.Element_000 && element.value.Element_000.replace(global.regex.htmlEntity, '').includes("세트 효과 레벨")) {
+                                    equipmentSet = element.value.Element_001.replace(global.regex.htmlEntity, '');
+                                }
+                            }
                             if(tmpElementElixir.length > 0) elixirDataArr.push(`${tmp.Type} ${tmpElementElixir.join(' ')}`);
                         }
                     }
                     const equipmentSetName = tmp.Name.replace('+', ' ');
                     const lastIndex = equipmentSetName.lastIndexOf(' ');
                     const visiblePart = equipmentSetName.substring(0, lastIndex + 1); // 마지막 공백까지의 부분 추출
-                    engravingArr.push(`${tmp.Grade}${equipmentGrade} ${tmp.Type} ${visiblePart}: ${quality}`);
+                    engravingArr.push(`${tmp.Grade}${equipmentGrade} ${tmp.Type} : ${quality}`);
                     qualityValue += parseInt(quality);
                     i++;
                 }
                 // if(elixirTotalArr.length > 0) elixirDataArr.push(elixirTotalArr[elixirTotalArr.length - 1]);
                 if(elixirTot > 0) elixirDataArr.push(`지혜의 엘릭서 레벨 합: ${elixirTot}`);
                 const elixirMessage = (elixirDataArr.length > 0) ? `\n&nbsp;\n[엘릭서 확인은 전체보기]\n${elixirDataArr.join('\n')}` : '';
-                const characterData = `${engravingArr.join('\n')}\n\n아이템레벨: ${profile.ItemMaxLevel}\n평균품질: ${(qualityValue/6).toFixed(3)}${elixirMessage}`;
+                const characterData = `${engravingArr.join('\n')}\n${equipmentSet !== null ? `세트효과: ${equipmentSet}\n`:'\n'}\n아이템레벨: ${profile.ItemMaxLevel}\n평균품질: ${(qualityValue/6).toFixed(3)}${elixirMessage}`;
                 return characterData;
             } else {
                 return '없는 계정입니다.'
