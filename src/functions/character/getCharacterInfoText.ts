@@ -13,12 +13,23 @@ export const command: Record<string, string>= {
 async function getCharacterInfoText(characterName: string) {
     const apiUrl = `${global.apiUrl.lostark}armories/characters/${characterName}`;
     const suspendAccountCheck = await getCharacterSuspendAccount(characterName);
+    
     if(suspendAccountCheck === 204) {
         // 데이터를 리턴할 변수
         let characterData = '';
         const apiStatus = await apiCheck();
         if(apiStatus === true) {
             try {
+                const characterApi = `${global.apiUrl.lostark}characters/${characterName}/siblings`;
+                const characterInfo = await axios.get(characterApi, {
+                    headers: global.token.lostarkHeader
+                })
+                .then(res => {
+                    const response = res.data;
+                    return response.find(characterData => characterData.CharacterName.includes(characterName));
+                })
+                .catch(e => {throw e});
+
                 const response = await axios.get(apiUrl, {
                     headers: global.token.lostarkHeader
                 });
@@ -33,7 +44,7 @@ async function getCharacterInfoText(characterName: string) {
                     let chowol = null;
                     let mokoko_sponsor = null;
                     let equipmentSet = null;
-                    
+
                     // 스탯정보
                     const statsArr = [];
                     let i:number = 0;
@@ -132,7 +143,7 @@ async function getCharacterInfoText(characterName: string) {
                             engravingData = (engravingEffect.length > 0) ? engravingEffect.join(', ') : '';
                             statsData = (statsArr.length > 0) ? statsArr.join(', ') : '';
                             cardEffect = (cardEffectArr.length > 0) ? cardEffectArr[cardEffectArr.length - 1] : '';
-                            characterInsert(profile, engravingData, statsData, cardEffect, extraEffect,equipmentSet);
+                            characterInsert(characterInfo, profile, engravingData, statsData, cardEffect, extraEffect,equipmentSet);
                         } else {
                             const now: Date = new Date();
                             const updateTime: Date = new Date(res[0].updateTime);
@@ -146,7 +157,7 @@ async function getCharacterInfoText(characterName: string) {
                                 engravingData = (engravingEffect.length > 0) ? engravingEffect.join(', ') : '';
                                 statsData = (statsArr.length > 0) ? statsArr.join(', ') : '';
                                 cardEffect = (cardEffectArr.length > 0) ? cardEffectArr[cardEffectArr.length - 1] : '';
-                                characterUpdate(profile, engravingData, statsData, cardEffect, extraEffect,equipmentSet);
+                                characterUpdate(characterInfo, profile, engravingData, statsData, cardEffect, extraEffect,equipmentSet);
                             }
                         }
                     })
@@ -158,7 +169,7 @@ async function getCharacterInfoText(characterName: string) {
                     characterData = `${mokoko_sponsor === 1 ? '🌱 후원자 ':''}[${profile.CharacterClassName}]\n${(profile.Title !== '' && profile.Title !== null) ? profile.Title + ' ' : ''}${profile.CharacterName}\n\n` +
                                     `[캐릭터 기본정보]\n` +
                                     `템/전/원      ${profile.ItemAvgLevel}/${profile.CharacterLevel}/${profile.ExpeditionLevel}\n` +
-                                    `서버/길드     ${profile.ServerName}/${(profile.GuildName !== '' && profile.GuildName !== null) ? profile.GuildName : '미가입'}\n` +
+                                    `서버/길드     ${characterInfo.ServerName}/${(profile.GuildName !== '' && profile.GuildName !== null) ? profile.GuildName : '미가입'}\n` +
                                     `체력/공격력    ${profile.Stats[6].Value}/${profile.Stats[7].Value}\n` +
                                     `스킬포인트     ${profile.UsingSkillPoint}/${profile.TotalSkillPoint}\n` +
                                     `${equipmentSet !== null ? `장비세트효과   ${equipmentSet}\n`:'\n'}` + 
@@ -244,7 +255,7 @@ const characterSearch = async (characterName: string) => {
 }
 
 // 캐릭터명 insert
-const characterInsert = async (data,engraving,statsText,cardEffect,elixirEff,equipmentSet) => {
+const characterInsert = async (info, data,engraving,statsText,cardEffect,elixirEff,equipmentSet) => {
     const conn = initDb();
     await connectDb(conn);
     try {
@@ -252,7 +263,7 @@ const characterInsert = async (data,engraving,statsText,cardEffect,elixirEff,equ
         const statsValue2 = data.Stats && data.Stats[7] ? data.Stats[7].Value : '';
         const insertColumns = '(characterName, characterClassName, characterTitle, serverName, characterLevel, itemLevel, expeditionLevel, characterSkillPoint, characterSkillPoint_total, guildName, statsHealthPoints, statsAttactPower, statsInfo, cardEffectInfo, engravingInfo, equipmentSet, elixrEffect, regdateTime, updateTime, characterImage)'
         const insertQuery = 'INSERT INTO LOA_CHARACTER_DEFINFO ' + insertColumns + ' VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,NOW(),NOW(),?)';
-        const insertValues = [data.CharacterName, data.CharacterClassName, data.Title, data.ServerName, data.CharacterLevel, data.ItemAvgLevel, data.ExpeditionLevel, data.UsingSkillPoint, data.TotalSkillPoint, data.GuildName, statsValue1, statsValue2, statsText, cardEffect, engraving, equipmentSet, elixirEff, data.CharacterImage];
+        const insertValues = [info.CharacterName, data.CharacterClassName, data.Title, info.ServerName, data.CharacterLevel, data.ItemAvgLevel, data.ExpeditionLevel, data.UsingSkillPoint, data.TotalSkillPoint, data.GuildName, statsValue1, statsValue2, statsText, cardEffect, engraving, equipmentSet, elixirEff, data.CharacterImage];
         const result = await queryDb(conn, insertQuery, insertValues);
         return result;
     } catch (error) {
@@ -264,7 +275,7 @@ const characterInsert = async (data,engraving,statsText,cardEffect,elixirEff,equ
 }
 
 // 캐릭터명 update
-const characterUpdate = async (data,engraving,statsText,cardEffect,elixirEff,equipmentSet) => {
+const characterUpdate = async (info,data,engraving,statsText,cardEffect,elixirEff,equipmentSet) => {
     const conn = initDb();
     await connectDb(conn);
     try {
@@ -272,7 +283,7 @@ const characterUpdate = async (data,engraving,statsText,cardEffect,elixirEff,equ
         const statsValue2 = data.Stats && data.Stats[7] ? data.Stats[7].Value : '';
         const updateQuery = 'UPDATE LOA_CHARACTER_DEFINFO SET characterTitle = ?, characterLevel = ?, itemLevel = ?, expeditionLevel = ?, characterSkillPoint = ?, characterSkillPoint_total = ?, guildName = ?, statsHealthPoints = ?,' +
                             'statsAttactPower = ?, statsInfo = ?, cardEffectInfo = ?, engravingInfo = ?, updateTime = NOW(), characterImage = ?, elixrEffect = ?, equipmentSet = ? WHERE characterName = ? AND serverName = ?';
-        const updateValues = [data.Title, data.CharacterLevel, data.ItemAvgLevel, data.ExpeditionLevel, data.UsingSkillPoint, data.TotalSkillPoint, data.GuildName, statsValue1, statsValue2, statsText, cardEffect, engraving, data.CharacterImage, elixirEff, equipmentSet, data.CharacterName, data.ServerName];
+        const updateValues = [data.Title, data.CharacterLevel, data.ItemAvgLevel, data.ExpeditionLevel, data.UsingSkillPoint, data.TotalSkillPoint, data.GuildName, statsValue1, statsValue2, statsText, cardEffect, engraving, data.CharacterImage, elixirEff, equipmentSet, data.CharacterName, info.ServerName];
         const result = await queryDb(conn, updateQuery, updateValues);
         return result;
     } catch (error) {

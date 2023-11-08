@@ -4,6 +4,7 @@ import global from '../../config/config'
 interface CharacterInfo {
     Name: string;
     Level: number;
+    ServerName: string;
     CharacterImage: string;
     Title: string;
     GuildName: string;
@@ -24,6 +25,16 @@ async function getCharacterInfoJson(characterName: string): Promise<CharacterInf
     const apiUrl = `${global.apiUrl.lostark}armories/characters/${characterName}`;
 
     try {
+        const characterApi = `${global.apiUrl.lostark}characters/${characterName}/siblings`;
+        const characterInfo = await axios.get(characterApi, {
+            headers: global.token.lostarkHeader
+        })
+        .then(res => {
+            const response = res.data;
+            return response.find(characterData => characterData.CharacterName.includes(characterName));
+        })
+        .catch(e => {throw e});
+
         const response = await axios.get(apiUrl, {
             headers: global.token.lostarkHeader
         });
@@ -163,8 +174,9 @@ async function getCharacterInfoJson(characterName: string): Promise<CharacterInf
         // 서버 응답을 파싱하여 캐릭터 정보를 추출
         const characterData: CharacterInfo = {
             CharacterImage: response.data.ArmoryProfile.CharacterImage,
+            ServerName: characterInfo.ServerName,
             Title: (profile.Title === null) ? '없음' : profile.Title,
-            Name: profile.CharacterName,
+            Name: characterInfo.CharacterName,
             Level: profile.CharacterLevel,
             GuildName: profile.GuildName,
             GuildMemberGrade: profile.GuildMemberGrade,

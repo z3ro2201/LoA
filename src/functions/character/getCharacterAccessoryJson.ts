@@ -13,6 +13,16 @@ async function getCharacterAccessoryJson(characterName: string): Promise<Equipme
     const apiUrl = `${global.apiUrl.lostark}armories/characters/${characterName}?filters=profiles%2Bequipment`;
 
     try {
+        const characterApi = `${global.apiUrl.lostark}characters/${characterName}/siblings`;
+        const characterInfo = await axios.get(characterApi, {
+            headers: global.token.lostarkHeader
+        })
+        .then(res => {
+            const response = res.data;
+            return response.find(characterData => characterData.CharacterName.includes(characterName));
+        })
+        .catch(e => {throw e});
+
         const response = await axios.get(apiUrl, {
             headers: global.token.lostarkHeader
         });
@@ -41,8 +51,8 @@ async function getCharacterAccessoryJson(characterName: string): Promise<Equipme
 
         // 서버 응답을 파싱하여 캐릭터 정보를 추출
         const characterData: EquipmentInfo = {
-            Name: profile.CharacterName,
-            Server: profile.ServerName,
+            Name: characterInfo.CharacterName,
+            Server: characterInfo.ServerName,
             ItemAvgLevel: profile.ItemAvgLevel,
             ItemMaxLevel: profile.ItemMaxLevel,
             Equipment: equipmentArr
