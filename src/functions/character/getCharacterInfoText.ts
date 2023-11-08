@@ -39,6 +39,9 @@ async function getCharacterInfoText(characterName: string) {
                     const engraving = response.data.ArmoryEngraving;
                     const card = response.data.ArmoryCard;
                     const equipment = response.data.ArmoryEquipment;
+                    if(equipment === null) {
+                        return '장비를 장착하지 않은 캐릭터는 정보를 가져올 수 없습니다.';
+                    }
                     let elixirTot = 0;
                     let tmpExtraEffect = null;
                     let chowol = null;
