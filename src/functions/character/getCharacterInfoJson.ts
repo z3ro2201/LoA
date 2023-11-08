@@ -33,7 +33,10 @@ async function getCharacterInfoJson(characterName: string): Promise<CharacterInf
             const response = res.data;
             return response.find(characterData => characterData.CharacterName.includes(characterName));
         })
-        .catch(e => {throw e});
+        .catch(e => {
+            return '생성되지 않았거나 삭제된 캐릭터 입니다.';
+        });
+
 
         const response = await axios.get(apiUrl, {
             headers: global.token.lostarkHeader
