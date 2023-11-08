@@ -76,7 +76,7 @@ async function getCharacterCollect(characterName: string) {
                         const heartMaxCount = Number($('#lui-tab1-0 .collection-list p span.max-count').text());
                         const heartComplete = (heartMaxCount === heartNowCount) ? 1 : 0;
                         const heartData = [];
-                        $('#lui-tab1-1 .collection-list ul.list li').each((i, e) => {
+                        $('#lui-tab1-0 .collection-list ul.list li').each((i, e) => {
                             const hasCompleteClass = $(e).hasClass('complete');
                             
                             if(hasCompleteClass) heartData.push('1');
