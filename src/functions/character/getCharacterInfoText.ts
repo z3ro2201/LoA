@@ -31,8 +31,9 @@ async function getCharacterInfoText(characterName: string) {
                     let elixirTot = 0;
                     let tmpExtraEffect = null;
                     let chowol = null;
-                    let equipmentGrade = null;
+                    let mokoko_sponsor = null;
                     let equipmentSet = null;
+                    console.log(profile)
 
                     // 스탯정보
                     const statsArr = [];
@@ -98,7 +99,6 @@ async function getCharacterInfoText(characterName: string) {
                                         equipmentSet = element.value.Element_001.replace(global.regex.htmlEntity, '').replace('Lv.', '');
                                     }
                                 }
-                                //if(tmpElementElixir.length > 0) elixirDataArr.push(`${tmp.Type} ${tmpElementElixir.join(' ')}`);
                             }
                         }
                     }
@@ -130,44 +130,49 @@ async function getCharacterInfoText(characterName: string) {
                     }
 
                     // 데이터 삽입 및 데이터 업데이트
+                    let engravingData = null;
+                    let statsData = null;
+                    let cardEffect = null;
                     const characterResult = await characterSearch(characterName)
                     .then(res => {
                         if(Array.isArray(res) && res.length === 0) {
-                            const engravingData = (engravingEffect.length > 0) ? engravingEffect.join(', ') : '';
-                            const statsData = (statsArr.length > 0) ? statsArr.join(', ') : '';
-                            const cardEffect = (cardEffectArr.length > 0) ? cardEffectArr[cardEffectArr.length - 1] : '';
+                            engravingData = (engravingEffect.length > 0) ? engravingEffect.join(', ') : '';
+                            statsData = (statsArr.length > 0) ? statsArr.join(', ') : '';
+                            cardEffect = (cardEffectArr.length > 0) ? cardEffectArr[cardEffectArr.length - 1] : '';
                             characterInsert(profile, engravingData, statsData, cardEffect, extraEffect,equipmentSet);
-                            return characterSearch(characterName);
                         } else {
                             const now: Date = new Date();
                             const updateTime: Date = new Date(res[0].updateTime);
                             const timeDifference = now.getTime() - updateTime.getTime();
                             const minutesDifference = timeDifference / (1000 * 60);
 
+                            if(Array.isArray(res) && res.length > 0) {
+                                mokoko_sponsor = res[0].mokoko_sponsor;
+                            }
                             if (Array.isArray(res) && res.length > 0 && minutesDifference >= 1) { // 데이터는 존재하나 3분 이상이 지난경우
-                                const engravingData = (engravingEffect.length > 0) ? engravingEffect.join(', ') : '';
-                                const statsData = (statsArr.length > 0) ? statsArr.join(', ') : '';
-                                const cardEffect = (cardEffectArr.length > 0) ? cardEffectArr[cardEffectArr.length - 1] : '';
+                                engravingData = (engravingEffect.length > 0) ? engravingEffect.join(', ') : '';
+                                statsData = (statsArr.length > 0) ? statsArr.join(', ') : '';
+                                cardEffect = (cardEffectArr.length > 0) ? cardEffectArr[cardEffectArr.length - 1] : '';
                                 characterUpdate(profile, engravingData, statsData, cardEffect, extraEffect,equipmentSet);
-                            } return characterSearch(characterName);
+                            }
                         }
                     })
-                    .then(updateRes => {
-                        const data = updateRes[0];
-                        console.log(data);
-                        characterData = `${data.mokoko_sponsor === 1 ? '🌱 후원자 ':''}[${data.characterClassName}]\n${(data.characterTitle !== '' && data.characterTitle !== null) ? data.characterTitle + ' ' : ''}${data.characterName}\n\n` +
+                    
+                    engravingData = (engravingEffect.length > 0) ? engravingEffect.join(', ') : '';
+                    statsData = (statsArr.length > 0) ? statsArr.join(', ') : '';
+                    cardEffect = (cardEffectArr.length > 0) ? cardEffectArr[cardEffectArr.length - 1] : '';
+
+                    characterData = `${mokoko_sponsor === 1 ? '🌱 후원자 ':''}[${profile.CharacterClassName}]\n${(profile.Title !== '' && profile.Title !== null) ? profile.Title + ' ' : ''}${profile.CharacterName}\n\n` +
                                     `[캐릭터 기본정보]\n` +
-                                    `템/전/원      ${data.itemLevel}/${data.characterLevel}/${data.expeditionLevel}\n` +
-                                    `서버/길드     ${data.serverName}/${(data.guildName !== '' && data.guildName !== null) ? data.guildName : '미가입'}\n` +
-                                    `체력/공격력    ${data.statsHealthPoints}/${data.statsAttactPower}\n` +
-                                    `스킬포인트     ${data.characterSkillPoint}/${data.characterSkillPoint_total}\n` +
-                                    `${data.equipmentSet !== null ? `장비세트효과   ${data.equipmentSet}\n`:'\n'}` + 
-                                    `${(data.elixrEffect !== '' && data.elixrEffect !== null) ? `엘릭서         ${data.elixrEffect}\n\n` : '\n'}` +
-                                    `${(data.statsInfo !== '') ? '[특성정보]\n'+data.statsInfo + '\n\n' : ''}` +
-                                    `${(data.engravingInfo !== '') ? '[각인정보]\n' + data.engravingInfo + '\n\n' : ''}` + 
-                                    `${(data.cardEffectInfo !== '') ? '[카드세트효과]\n' + data.cardEffectInfo : ''}`;
-                    })
-                    .catch(error => console.error(error));
+                                    `템/전/원      ${profile.ItemAvgLevel}/${profile.CharacterLevel}/${profile.ExpeditionLevel}\n` +
+                                    `서버/길드     ${profile.ServerName}/${(profile.GuildName !== '' && profile.GuildName !== null) ? profile.GuildName : '미가입'}\n` +
+                                    `체력/공격력    ${profile.Stats[6].Value}/${profile.Stats[7].Value}\n` +
+                                    `스킬포인트     ${profile.UsingSkillPoint}/${profile.TotalSkillPoint}\n` +
+                                    `${equipmentSet !== null ? `장비세트효과   ${equipmentSet}\n`:'\n'}` + 
+                                    `${(extraEffect !== '' && extraEffect !== null) ? `엘릭서         ${extraEffect}\n\n` : '\n'}` +
+                                    `${(statsData !== '') ? '[특성정보]\n'+ statsData + '\n\n' : ''}` +
+                                    `${(engravingData !== '') ? '[각인정보]\n' + engravingData + '\n\n' : ''}` + 
+                                    `${(cardEffect !== '') ? '[카드세트효과]\n' + cardEffect : ''}`;
                     return characterData;
                 } else {
                     return '존재하지 않는 계정입니다.';
