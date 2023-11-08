@@ -282,8 +282,8 @@ const characterUpdate = async (info,data,engraving,statsText,cardEffect,elixirEf
         const statsValue1 = data.Stats && data.Stats[6] ? data.Stats[6].Value : '';
         const statsValue2 = data.Stats && data.Stats[7] ? data.Stats[7].Value : '';
         const updateQuery = 'UPDATE LOA_CHARACTER_DEFINFO SET characterTitle = ?, characterLevel = ?, itemLevel = ?, expeditionLevel = ?, characterSkillPoint = ?, characterSkillPoint_total = ?, guildName = ?, statsHealthPoints = ?,' +
-                            'statsAttactPower = ?, statsInfo = ?, cardEffectInfo = ?, engravingInfo = ?, updateTime = NOW(), characterImage = ?, elixrEffect = ?, equipmentSet = ? WHERE characterName = ? AND serverName = ?';
-        const updateValues = [data.Title, data.CharacterLevel, data.ItemAvgLevel, data.ExpeditionLevel, data.UsingSkillPoint, data.TotalSkillPoint, data.GuildName, statsValue1, statsValue2, statsText, cardEffect, engraving, data.CharacterImage, elixirEff, equipmentSet, data.CharacterName, info.ServerName];
+                            'statsAttactPower = ?, statsInfo = ?, cardEffectInfo = ?, engravingInfo = ?, updateTime = NOW(), characterImage = ?, elixrEffect = ?, equipmentSet = ?, serverName = ? WHERE characterName = ?';
+        const updateValues = [data.Title, data.CharacterLevel, data.ItemAvgLevel, data.ExpeditionLevel, data.UsingSkillPoint, data.TotalSkillPoint, data.GuildName, statsValue1, statsValue2, statsText, cardEffect, engraving, data.CharacterImage, elixirEff, equipmentSet, info.ServerName, data.CharacterName];
         const result = await queryDb(conn, updateQuery, updateValues);
         return result;
     } catch (error) {
