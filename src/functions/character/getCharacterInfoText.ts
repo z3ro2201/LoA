@@ -33,8 +33,7 @@ async function getCharacterInfoText(characterName: string) {
                     let chowol = null;
                     let mokoko_sponsor = null;
                     let equipmentSet = null;
-                    console.log(profile)
-
+                    
                     // 스탯정보
                     const statsArr = [];
                     let i:number = 0;
@@ -81,12 +80,6 @@ async function getCharacterInfoText(characterName: string) {
                                                 const tmp = topStr.toUpperCase().split('<BR>');
                                                 tmpExtraEffect = tmp[1].replace(global.regex.htmlEntity, '');
                                             }
-                                            //  else {
-                                            //     if(key.includes('레벨 합')) {
-                                            //         elixirTotalArr.push(key.toUpperCase().split('<BR>')[0].replace(global.regex.htmlEntity, '').replace(/\d단계 : /, ''));
-                                            //         console.log(key.toUpperCase().split('<BR>')[0].replace(global.regex.htmlEntity, ''))
-                                            //     }
-                                            // }
                                         });
                                     }
                                     if(element.value.Element_000.topStr.indexOf('초월') !== -1) {
@@ -261,7 +254,6 @@ const characterInsert = async (data,engraving,statsText,cardEffect,elixirEff,equ
         const insertQuery = 'INSERT INTO LOA_CHARACTER_DEFINFO ' + insertColumns + ' VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,NOW(),NOW(),?)';
         const insertValues = [data.CharacterName, data.CharacterClassName, data.Title, data.ServerName, data.CharacterLevel, data.ItemAvgLevel, data.ExpeditionLevel, data.UsingSkillPoint, data.TotalSkillPoint, data.GuildName, statsValue1, statsValue2, statsText, cardEffect, engraving, equipmentSet, elixirEff, data.CharacterImage];
         const result = await queryDb(conn, insertQuery, insertValues);
-        console.log(elixirEff)
         return result;
     } catch (error) {
         console.error('Query execution failed:', error);
@@ -282,7 +274,6 @@ const characterUpdate = async (data,engraving,statsText,cardEffect,elixirEff,equ
                             'statsAttactPower = ?, statsInfo = ?, cardEffectInfo = ?, engravingInfo = ?, updateTime = NOW(), characterImage = ?, elixrEffect = ?, equipmentSet = ? WHERE characterName = ? AND serverName = ?';
         const updateValues = [data.Title, data.CharacterLevel, data.ItemAvgLevel, data.ExpeditionLevel, data.UsingSkillPoint, data.TotalSkillPoint, data.GuildName, statsValue1, statsValue2, statsText, cardEffect, engraving, data.CharacterImage, elixirEff, equipmentSet, data.CharacterName, data.ServerName];
         const result = await queryDb(conn, updateQuery, updateValues);
-        console.log(elixirEff)
         return result;
     } catch (error) {
         console.error('Query execution failed:', error);

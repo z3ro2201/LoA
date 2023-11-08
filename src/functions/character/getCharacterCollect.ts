@@ -252,7 +252,7 @@ async function getCharacterCollectText(characterName, content = null) {
                 if (collectDataKey in apiData) {
                     
                     const collectDataArray = apiData[collectDataKey].split('|');
-                    let i = 0;            
+                    let i = 0;
                     for (const collectItem of db) {
                         if(examCommand !== "MOKOKOSEEDS") {
                             const isCollected = collectDataArray[i] === '0' ? '미획득' : '획득';
@@ -272,15 +272,6 @@ async function getCharacterCollectText(characterName, content = null) {
             } else {
                 console.error(`Error: apiData is undefined or not an object.`);
             }
-            // const collectDataArray = apiData[collectDataKey].split('|');
-            // let i = 0;
-
-            // for (const collectItem of db) {
-            //     const isCollected = collectDataArray[i] === '0' ? '' : '획득';
-            //     console.log(collectDataArray)
-            //     characterData.push(`${collectItem.collect_name}: ${isCollected}`);
-            //     i++;
-            // }
         }
 
         return `${commandTitle}\n[획득정보]\n${collectsNow}/${collectsTotal}\n---상세정보는 전체보기---\n\n[상세내용]\n${characterData.join('\n')}`;

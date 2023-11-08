@@ -16,6 +16,7 @@ async function getEquipmentText(characterName: string) {
             const profile = data.ArmoryProfile;
             const equipment = data.ArmoryEquipment;
             let equipmentSet = null;
+            let tmpExtraEffect = null;
 
             if (data?.ArmoryProfile) {
                 // 서버 응답을 파싱하여 캐릭터 정보를 추출
@@ -51,6 +52,10 @@ async function getEquipmentText(characterName: string) {
                                                 tmpElementElixir.push(key.toUpperCase().split('<BR>')[0].replace(global.regex.htmlEntity, ''));
                                             }
                                         }
+                                        else if (topStr.includes('연성 추가 효과')) {
+                                            const tmp = topStr.toUpperCase().split('<BR>');
+                                            tmpExtraEffect = tmp[1].replace(global.regex.htmlEntity, '');
+                                        }
                                         //  else {
                                         //     if(key.includes('레벨 합')) {
                                         //         elixirTotalArr.push(key.toUpperCase().split('<BR>')[0].replace(global.regex.htmlEntity, '').replace(/\d단계 : /, ''));
@@ -67,9 +72,16 @@ async function getEquipmentText(characterName: string) {
                                     equipmentGrade = (tmp_grade !== null) ? ` ${tmp_grade}` : '';
                                 }
                             }
+                            
+                            if (element && element.value && element.type && element.type.indexOf('ItemPartBox') !== -1) {
+                                if(element.value && element.value.Element_000 && element.value.Element_000.replace(global.regex.htmlEntity, '').includes("세트 효과 레벨")) {
+                                    equipmentSet = element.value.Element_001.replace(global.regex.htmlEntity, '').replace('Lv.', '');
+                                }
+                            }
                             if(tmpElementElixir.length > 0) elixirDataArr.push(`${tmp.Type} ${tmpElementElixir.join(' ')}`);
                         }
                     }
+
                     const equipmentSetName = tmp.Name.replace('+', ' ');
                     const lastIndex = equipmentSetName.lastIndexOf(' ');
                     const visiblePart = equipmentSetName.substring(0, lastIndex + 1); // 마지막 공백까지의 부분 추출
@@ -77,10 +89,13 @@ async function getEquipmentText(characterName: string) {
                     qualityValue += parseInt(quality);
                     i++;
                 }
+                // 엘릭서 내용 병합
+                let extraEffect = (tmpExtraEffect !== null) ? `${tmpExtraEffect !== null ? tmpExtraEffect : ''} (${elixirTot})` : null;
+
                 // if(elixirTotalArr.length > 0) elixirDataArr.push(elixirTotalArr[elixirTotalArr.length - 1]);
                 if(elixirTot > 0) elixirDataArr.push(`지혜의 엘릭서 레벨 합: ${elixirTot}`);
                 const elixirMessage = (elixirDataArr.length > 0) ? `\n&nbsp;\n[엘릭서 확인은 전체보기]\n${elixirDataArr.join('\n')}` : '';
-                const characterData = `${engravingArr.join('\n')}\n${equipmentSet !== null ? `세트효과: ${equipmentSet}\n`:'\n'}\n아이템레벨: ${profile.ItemMaxLevel}\n평균품질: ${(qualityValue/6).toFixed(3)}${elixirMessage}`;
+                const characterData = `${engravingArr.join('\n')}\n${equipmentSet !== null ? `세트효과: ${equipmentSet}\n`:'\n'}${extraEffect !== null ? `엘릭서: ${extraEffect}\n` : '\n'}\n아이템레벨: ${profile.ItemMaxLevel}\n평균품질: ${(qualityValue/6).toFixed(3)}${elixirMessage}`;
                 return characterData;
             } else {
                 return '없는 계정입니다.'
