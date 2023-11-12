@@ -187,7 +187,7 @@ async function getCharacterInfoText(characterName: string) {
                     return '존재하지 않는 계정입니다.';
                 }
             } catch (error) {
-                throw error; // 오류를 호출자로 던짐
+                throw '로스트아크API(전투정보실)에 문제가 있어 불러올 수 없습니다.'; // 오류를 호출자로 던짐
             }
         } else {
             const characterResult = await characterSearch(characterName)
