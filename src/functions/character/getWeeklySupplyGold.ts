@@ -97,7 +97,7 @@ async function weeklySupplyGold(characterName: string) {
         characterRiceList.push(`${characterRiceData.characterLevel} ${characterRiceData.characterClassName} ${characterRiceData.characterItemLevel} ${characterRiceData.characterName} \n- ${tmpSortingData.join('\n- ')}\n ㄴ 수급가능: ${groupGoldTot}\n`);
 
       })
-      return `[주급(BETA)] 베타버전입니다.\n\n${characterRiceList.join('\n')}\n총 수급가능한 골드: ${goldTotal}\n\n* 2주에 한번 도는 레이드의 경우 제외처리 되었습니다.`;
+      return `[주급(BETA)] 베타버전입니다.\n* 버그는 제보 부탁드립니다.\n\n-- 주급 상세보기는 전체보기 --\n**\n${characterRiceList.join('\n')}\n총 수급가능한 골드: ${goldTotal}\n\n* 2주에 한번 도는 레이드의 경우 제외처리 되었습니다.`;
     } else {
       return `요청하신 캐릭터는 주급(주간골드수급)데이터를 생성할 수 없습니다.`;
     }
