@@ -97,7 +97,7 @@ async function weeklySupplyGold(characterName: string) {
         characterRiceList.push(`${characterRiceData.characterLevel} ${characterRiceData.characterClassName} ${characterRiceData.characterItemLevel} ${characterRiceData.characterName} \n- ${tmpSortingData.join('\n- ')}\n ㄴ 수급가능: ${groupGoldTot}\n`);
 
       })
-      return `[주급(테스트)]\n<>\n${characterRiceList.join('\n')}\n총 수급가능한 골드: ${goldTotal}`;
+      return `[주급(BETA)] 베타버전입니다.\n\n${characterRiceList.join('\n')}\n총 수급가능한 골드: ${goldTotal}\n\n* 2주에 한번 도는 레이드의 경우 제외처리 되었습니다.`;
     } else {
       return `요청하신 캐릭터는 주급(주간골드수급)데이터를 생성할 수 없습니다.`;
     }
@@ -161,11 +161,20 @@ const checkRaidList = async (characterData) => {
           riceGold: parseFloat(raidData.raid_rewardGold),
           riceWeek: riceWeeks
         };
-
-        tmpCharacterRaidData.categoryRiceData[category].push(raidInfo);
+        
+        if (category in tmpCharacterRaidData.categoryRiceData) {
+           if(tmpCharacterRaidData.categoryRiceData[category].length < 1) {
+            tmpCharacterRaidData.categoryRiceData[category].push(raidInfo);
+           } else {
+            if(tmpCharacterRaidData.categoryRiceData[category][0].diff === difficulty)
+              tmpCharacterRaidData.categoryRiceData[category].push(raidInfo);
+           }
+           console.log(difficulty)
+        } 
         riceTotal += parseFloat(raidData.raid_rewardGold);
       }
     }
+    console.log(tmpCharacterRaidData)
 
     // 상위 3개 던전만 출력하도록 바꿈
     const top3Categories = Object.keys(tmpCharacterRaidData.categoryRiceData).slice(0, 3);
