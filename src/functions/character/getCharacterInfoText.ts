@@ -184,7 +184,7 @@ async function getCharacterInfoText(characterName: string) {
                                     `${(statsData !== '') ? '[특성정보]\n'+ statsData + '\n\n' : ''}` +
                                     `${(engravingData !== '') ? '[각인정보]\n' + engravingData + '\n\n' : ''}` + 
                                     `${(cardEffect !== '') ? '[카드세트효과]\n' + cardEffect : ''}` +
-                                    `${(collects !== '') ? '[내실]\n' + collects : ''}`;
+                                    `${(collects !== '') ? '\n\n[내실]\n' + collects : ''}`;
                     return characterData;
                 } else {
                     return '존재하지 않는 계정입니다.';

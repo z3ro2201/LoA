@@ -33,6 +33,7 @@ async function getEquipmentText(characterName: string) {
                     const quality = JSON.parse(toolTips).Element_001.value.qualityValue;
                     const cleanedToolTipString = tmp.Tooltip;
                     const tooltipObject = JSON.parse(cleanedToolTipString);
+                    let ella = null;
                     for(const tmpData in tooltipObject) {
                         const tmpElementElixir = [];
                         if(tooltipObject.hasOwnProperty(tmpData)) {
@@ -65,7 +66,6 @@ async function getEquipmentText(characterName: string) {
                                     });
                                 }
                                 if(element.value.Element_000.topStr.indexOf('초월') !== -1) {
-                                    console.log(element.value.Element_000.topStr);
                                     // const tmp_grade = element.value.Element_000.topStr.replace(global.regex.htmlEntity, '').match(/(\[초월\]) ([1-3]단계) ([0-9])/);
                                     // equipmentGrade = (tmp_grade !== null) ? `[초월 ${tmp_grade[2].replace('단계', '')}]` : element.value.Element_000.topStr.replace(global.regex.htmlEntity, '');
                                     const tmp_grade = element.value.Element_000.topStr.replace(global.regex.htmlEntity, '');
@@ -78,14 +78,25 @@ async function getEquipmentText(characterName: string) {
                                     equipmentSet = element.value.Element_001.replace(global.regex.htmlEntity, '').replace('Lv.', '');
                                 }
                             }
+
+                            if(element && element.value && element.type && element.type.indexOf('IndentStringGroup') !== -1) {
+                                console.log(element.value.Element_000.contentStr.Element_000.contentStr)
+                                if(element.value && element.value.Element_000 && element.value.Element_000.contentStr && element.value.Element_000.contentStr.Element_000.contentStr.replace(global.regex.htmlEntity, '').includes("엘라 부여 완료")){
+                                    ella = '[엘라] ';
+                                }
+                                // if(element.value && element.value.Element_001 && element.value.Element_000.replace(global.regex.htmlEntity, '').includes("엘라 부여 완료")) {
+                                //     
+                                // }
+                            }
                             if(tmpElementElixir.length > 0) elixirDataArr.push(`${tmp.Type} ${tmpElementElixir.join(' ')}`);
                         }
                     }
 
+                    console.log(ella)
                     const equipmentSetName = tmp.Name.replace('+', ' ');
                     const lastIndex = equipmentSetName.lastIndexOf(' ');
                     const visiblePart = equipmentSetName.substring(0, lastIndex + 1); // 마지막 공백까지의 부분 추출
-                    engravingArr.push(`${tmp.Grade}${equipmentGrade} ${tmp.Type} +${visiblePart.replace(/[^0-9]/g, '')} : ${quality}`);
+                    engravingArr.push(`${ella!==null?ella:''}${tmp.Grade}${equipmentGrade} ${tmp.Type} +${visiblePart.replace(/[^0-9]/g, '')} : ${quality}`);
                     qualityValue += parseInt(quality);
                     i++;
                 }
