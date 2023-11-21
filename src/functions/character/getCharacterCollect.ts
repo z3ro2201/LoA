@@ -208,8 +208,6 @@ async function getCharacterCollect(characterName: string) {
          }
 }
 
-
-
 async function getCharacterCollectText(characterName, content = null) {
     const commandTitle = `${characterName}님의 ${content === null ? '내실' : content}정보\n`;
     const apiStatus = await apiCheck();
@@ -245,6 +243,8 @@ async function getCharacterCollectText(characterName, content = null) {
 
         if (examCommand === null) {
             return `${commandTitle}${apiData.collect_text}`;
+        } else if(examCommand === 'returnData') {
+            return apiData.collect_text
         } else if (examCommand !== null) {
             const db = await collectData(examCommand);
             const collectDataKey = `collect_${examCommand.toLowerCase()}_count`;
@@ -285,6 +285,8 @@ async function getCharacterCollectText(characterName, content = null) {
 
             if (content === null) {
                 return `${characterName}님의 내실정보\n${data.collect_text}`;
+            } else {
+                return data.collect_text;
             }
         }
     }
@@ -405,6 +407,8 @@ function returnCollect(collectName) {
         case "기억의오르골":
         case "오르골":
             return "MEMORYMUSICBOX";
+        case 'returnData':
+            return "returnData";
         default:
             return null;
     }

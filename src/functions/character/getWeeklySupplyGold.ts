@@ -75,6 +75,7 @@ async function weeklySupplyGold(characterName: string) {
             }
             });
             const keys = Object.keys(diffData);
+            console.log(diffData)
             keys.forEach((key) => {
               const values = diffData[key];
               const total = values.reduce((sum, value) => sum + value, 0);
@@ -87,7 +88,6 @@ async function weeklySupplyGold(characterName: string) {
         });
         tmpCharacterRiceData.sort((a, b) => b.riceGold - a.riceGold);
         const riceGoldSortingData = tmpCharacterRiceData.slice(0, 3);
-        console.log(riceGoldSortingData);
         const tmpSortingData = [];
         let groupGoldTot = 0;
         riceGoldSortingData.map((sortData) => {
@@ -171,12 +171,10 @@ const checkRaidList = async (characterData) => {
             if(tmpCharacterRaidData.categoryRiceData[category][0].diff === difficulty)
               tmpCharacterRaidData.categoryRiceData[category].push(raidInfo);
            }
-           console.log(difficulty)
         } 
         riceTotal += parseFloat(raidData.raid_rewardGold);
       }
     }
-    console.log(tmpCharacterRaidData)
 
     // 상위 3개 던전만 출력하도록 바꿈
     const top3Categories = Object.keys(tmpCharacterRaidData.categoryRiceData).slice(0, 3);

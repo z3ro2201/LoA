@@ -3,6 +3,7 @@ import global from '../../config/config'
 import {apiCheck} from '../utils/apiCheck'
 import { init as initDb, connect as connectDb, query as queryDb } from '../../config/mysqlConf'
 import { getCharacterSuspendAccount } from './getCharacterSuspendAccount';
+import getCharacterCollectText from './getCharacterCollect';
 
 export const command: Record<string, string>= {
     command: global.prefix + '캐릭터',
@@ -170,6 +171,7 @@ async function getCharacterInfoText(characterName: string) {
                     engravingData = (engravingEffect.length > 0) ? engravingEffect.join(', ') : '';
                     statsData = (statsArr.length > 0) ? statsArr.join(', ') : '';
                     cardEffect = (cardEffectArr.length > 0) ? cardEffectArr[cardEffectArr.length - 1] : '';
+                    let collects = await getCharacterCollectText(characterName, 'returnData');
 
                     characterData = `${mokoko_sponsor === 1 ? '🌱 후원자 ':''}[${profile.CharacterClassName}]\n${(profile.Title !== '' && profile.Title !== null) ? profile.Title + ' ' : ''}${profile.CharacterName}\n\n` +
                                     `[캐릭터 기본정보]\n` +
@@ -181,13 +183,14 @@ async function getCharacterInfoText(characterName: string) {
                                     `${(extraEffect !== '' && extraEffect !== null) ? `엘릭서         ${extraEffect}\n\n` : '\n'}` +
                                     `${(statsData !== '') ? '[특성정보]\n'+ statsData + '\n\n' : ''}` +
                                     `${(engravingData !== '') ? '[각인정보]\n' + engravingData + '\n\n' : ''}` + 
-                                    `${(cardEffect !== '') ? '[카드세트효과]\n' + cardEffect : ''}`;
+                                    `${(cardEffect !== '') ? '[카드세트효과]\n' + cardEffect : ''}` +
+                                    `${(collects !== '') ? '[내실]\n' + collects : ''}`;
                     return characterData;
                 } else {
                     return '존재하지 않는 계정입니다.';
                 }
             } catch (error) {
-                throw '로스트아크API(전투정보실)에 문제가 있어 불러올 수 없습니다.'; // 오류를 호출자로 던짐
+                return '(일시적인 장애) 로스트아크API(전투정보실)에 문제가 있어 불러올 수 없습니다.'; // 오류를 호출자로 던짐
             }
         } else {
             const characterResult = await characterSearch(characterName)
