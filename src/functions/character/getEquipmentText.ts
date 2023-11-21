@@ -82,7 +82,7 @@ async function getEquipmentText(characterName: string) {
                             if(element && element.value && element.type && element.type.indexOf('IndentStringGroup') !== -1) {
                                 console.log(element.value.Element_000.contentStr.Element_000.contentStr)
                                 if(element.value && element.value.Element_000 && element.value.Element_000.contentStr && element.value.Element_000.contentStr.Element_000.contentStr.replace(global.regex.htmlEntity, '').includes("엘라 부여 완료")){
-                                    ella = '[엘라] ';
+                                    ella = ' [엘라] ';
                                 }
                                 // if(element.value && element.value.Element_001 && element.value.Element_000.replace(global.regex.htmlEntity, '').includes("엘라 부여 완료")) {
                                 //     
@@ -96,7 +96,7 @@ async function getEquipmentText(characterName: string) {
                     const equipmentSetName = tmp.Name.replace('+', ' ');
                     const lastIndex = equipmentSetName.lastIndexOf(' ');
                     const visiblePart = equipmentSetName.substring(0, lastIndex + 1); // 마지막 공백까지의 부분 추출
-                    engravingArr.push(`${ella!==null?ella:''}${tmp.Grade}${equipmentGrade} ${tmp.Type} +${visiblePart.replace(/[^0-9]/g, '')} : ${quality}`);
+                    engravingArr.push(`${tmp.Grade}${ella!==null?ella:''}${equipmentGrade} ${tmp.Type} +${visiblePart.replace(/[^0-9]/g, '')} : ${quality}`);
                     qualityValue += parseInt(quality);
                     i++;
                 }
