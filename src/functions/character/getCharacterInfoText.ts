@@ -188,7 +188,7 @@ async function getCharacterInfoText(characterName: string) {
                                     `체력/공격력<4>${profile.Stats[6].Value}/${profile.Stats[7].Value}\n` +
                                     `스킬포인트<5>${profile.UsingSkillPoint}/${profile.TotalSkillPoint}\n` +
                                     `${equipmentSet !== null ? `장비세트효과<3>${equipmentSet}\n`:''}` + 
-                                    `${(extraEffect !== '' && extraEffect !== null) ? `엘릭서<*9>${extraEffect}\n` : ''}` +
+                                    `${(extraEffect !== '' && extraEffect !== null) ? `엘릭서<12>${extraEffect}\n` : ''}` +
                                     `${(statsData !== '') ? '\n[특성정보]\n'+ statsData + '\n' : ''}` +
                                     `${(engravingData !== '') ? '\n[각인정보]\n' + engravingData + '\n' : ''}` + 
                                     `${(cardEffect !== '') ? '\n[카드세트효과]\n' + cardEffect : ''}` +
@@ -213,7 +213,7 @@ async function getCharacterInfoText(characterName: string) {
                             `체력/공격력<4>${data.statsHealthPoints}/${data.statsAttactPower}\n` +
                             `스킬포인트<5>${data.characterSkillPoint}/${data.characterSkillPoint_total}\n` +
                             `${data.equipmentSet !== null ? `장비세트효과<3>${data.equipmentSet}\n`:'\n'}` + 
-                            `${(data.elixrEffect !== '' && data.elixrEffect !== null) ? `엘릭서         ${data.elixrEffect}\n` : ''}` +
+                            `${(data.elixrEffect !== '' && data.elixrEffect !== null) ? `엘릭서<12>${data.elixrEffect}\n` : ''}` +
                             `${(data.statsInfo !== '') ? '\n[특성정보]\n'+data.statsInfo + '\n' : ''}` +
                             `${(data.engravingInfo !== '') ? '\n[각인정보]\n' + data.engravingInfo + '\n\n' : ''}` + 
                             `${(data.cardEffectInfo !== '') ? '\n[카드세트효과]\n' + data.cardEffectInfo : ''}`;
@@ -238,7 +238,7 @@ async function getCharacterInfoText(characterName: string) {
                             `체력/공격력<4>${data.statsHealthPoints}/${data.statsAttactPower}\n` +
                             `스킬포인트<5>${data.characterSkillPoint}/${data.characterSkillPoint_total}\n` +
                             `${data.equipmentSet !== null ? `장비세트효과<3>${data.equipmentSet}\n`:''}` + 
-                            `${(data.elixrEffect !== '' && data.elixrEffect !== null) ? `엘릭서         ${data.elixrEffect}\n` : ''}` +
+                            `${(data.elixrEffect !== '' && data.elixrEffect !== null) ? `엘릭서<12>${data.elixrEffect}\n` : ''}` +
                             `${(data.statsInfo !== '') ? '\n[특성정보]\n'+data.statsInfo + '\n' : ''}` +
                             `${(data.engravingInfo !== '') ? '\n[각인정보]\n' + data.engravingInfo + '\n' : ''}` + 
                             `${(data.cardEffectInfo !== '') ? '\n[카드세트효과]\n' + data.cardEffectInfo : ''}`;
