@@ -14,6 +14,8 @@ export const command: Record<string, string>= {
 async function getCharacterInfoText(characterName: string) {
     const apiUrl = `${global.apiUrl.lostark}armories/characters/${characterName}`;
     const suspendAccountCheck = await getCharacterSuspendAccount(characterName);
+    // 직업각인목록
+    const professionalEngraving = ["광전사의 비기", "광기", "중력 숙련", "분노의 망치", "전투 태세", "고독한 기사", "심판자", "축복의 오라", "처단자", "포식자", "오의 강화", "초심", "충격 단련", "극의: 체술", "세맥타통", "역천지체", "절제", "절정", "일격필살", "오의난무", "강화 무기", "핸드거너", "화력 강화", "포격 강화", "두 번쨰 동료", "죽음의 습격", "아르데타인의 기술", "진화의 유산", "사냥의 시간", "피스메이커", "황후의 은총", "황제의 칙령", "넘치는 교감", "상급 소환사", "진실된 용맹", "절실한 구원", "환류", "점화", "완벽한 억제", "멈출 수 없는 충동", "잔재된 기운", "버스트", "달의 소리", "갈증", "그믐의 경계", "만월의 집행자", "회귀", "만개", "이슬비", "질풍노도"];
     
     if(suspendAccountCheck === 204) {
         // 데이터를 리턴할 변수
@@ -122,12 +124,18 @@ async function getCharacterInfoText(characterName: string) {
                     let statsText = (statsArr.length > 0) ? `[특성정보]\n${statsArr.join(', ')}` : '';
                         
                     const engravingEffect = [];
+                    let professEngList = null;
                     if(engraving && engraving.Effects) {
                         for(let tmp of engraving.Effects) {
                             engravingEffect.push(tmp.Name.replace(' Lv.', ''));
                         }
                         if(engravingEffect.length > 0) {
                             engravingText += `${engravingEffect.join(', ')}\n`;
+                        }
+                    }
+                    if(engraving !== null && engraving.Engravings !== null) {
+                        for(let tmp of engraving.Engravings) {
+                            if(professionalEngraving.includes(tmp.Name)) professEngList = tmp.Name;
                         }
                     }
 
@@ -149,7 +157,7 @@ async function getCharacterInfoText(characterName: string) {
                             engravingData = (engravingEffect.length > 0) ? engravingEffect.join(', ') : '';
                             statsData = (statsArr.length > 0) ? statsArr.join(', ') : '';
                             cardEffect = (cardEffectArr.length > 0) ? cardEffectArr[cardEffectArr.length - 1] : '';
-                            characterInsert(characterInfo, profile, engravingData, statsData, cardEffect, extraEffect,equipmentSet);
+                            characterInsert(characterInfo, profile, engravingData, professEngList, statsData, cardEffect, extraEffect,equipmentSet);
                         } else {
                             const now: Date = new Date();
                             const updateTime: Date = new Date(res[0].updateTime);
@@ -163,7 +171,7 @@ async function getCharacterInfoText(characterName: string) {
                                 engravingData = (engravingEffect.length > 0) ? engravingEffect.join(', ') : '';
                                 statsData = (statsArr.length > 0) ? statsArr.join(', ') : '';
                                 cardEffect = (cardEffectArr.length > 0) ? cardEffectArr[cardEffectArr.length - 1] : '';
-                                characterUpdate(characterInfo, profile, engravingData, statsData, cardEffect, extraEffect,equipmentSet);
+                                characterUpdate(characterInfo, profile, engravingData, professEngList, statsData, cardEffect, extraEffect,equipmentSet);
                             }
                         }
                     })
@@ -173,17 +181,17 @@ async function getCharacterInfoText(characterName: string) {
                     cardEffect = (cardEffectArr.length > 0) ? cardEffectArr[cardEffectArr.length - 1] : '';
                     let collects = await getCharacterCollectText(characterName, 'returnData');
 
-                    characterData = `${mokoko_sponsor === 1 ? '🌱 후원자 ':''}[${profile.CharacterClassName}]\n${(profile.Title !== '' && profile.Title !== null) ? profile.Title + ' ' : ''}${profile.CharacterName}\n\n` +
+                    characterData = `${mokoko_sponsor === 1 ? '🌱 ':''}${professEngList === null ? '--' : `${professEngList}`} ${profile.CharacterClassName}\n${(profile.Title !== '' && profile.Title !== null) ? profile.Title + ' ' : ''}${profile.CharacterName}\n\n` +
                                     `[캐릭터 기본정보]\n` +
-                                    `템/전/원      ${profile.ItemAvgLevel}/${profile.CharacterLevel}/${profile.ExpeditionLevel}\n` +
-                                    `서버/길드     ${characterInfo.ServerName}/${(profile.GuildName !== '' && profile.GuildName !== null) ? profile.GuildName : '미가입'}\n` +
-                                    `체력/공격력    ${profile.Stats[6].Value}/${profile.Stats[7].Value}\n` +
-                                    `스킬포인트     ${profile.UsingSkillPoint}/${profile.TotalSkillPoint}\n` +
-                                    `${equipmentSet !== null ? `장비세트효과   ${equipmentSet}\n`:'\n'}` + 
-                                    `${(extraEffect !== '' && extraEffect !== null) ? `엘릭서         ${extraEffect}\n\n` : '\n'}` +
-                                    `${(statsData !== '') ? '[특성정보]\n'+ statsData + '\n\n' : ''}` +
-                                    `${(engravingData !== '') ? '[각인정보]\n' + engravingData + '\n\n' : ''}` + 
-                                    `${(cardEffect !== '') ? '[카드세트효과]\n' + cardEffect : ''}` +
+                                    `템/전/원<9>${profile.ItemAvgLevel}/${profile.CharacterLevel}/${profile.ExpeditionLevel}\n` +
+                                    `서버/길드<7>${characterInfo.ServerName}/${(profile.GuildName !== '' && profile.GuildName !== null) ? profile.GuildName : '미가입'}\n` +
+                                    `체력/공격력<4>${profile.Stats[6].Value}/${profile.Stats[7].Value}\n` +
+                                    `스킬포인트<5>${profile.UsingSkillPoint}/${profile.TotalSkillPoint}\n` +
+                                    `${equipmentSet !== null ? `장비세트효과<3>${equipmentSet}\n`:''}` + 
+                                    `${(extraEffect !== '' && extraEffect !== null) ? `엘릭서<*9>${extraEffect}\n` : ''}` +
+                                    `${(statsData !== '') ? '\n[특성정보]\n'+ statsData + '\n' : ''}` +
+                                    `${(engravingData !== '') ? '\n[각인정보]\n' + engravingData + '\n' : ''}` + 
+                                    `${(cardEffect !== '') ? '\n[카드세트효과]\n' + cardEffect : ''}` +
                                     `${(collects !== '') ? '\n\n[내실]\n' + collects : ''}`;
                     return characterData;
                 } else {
@@ -198,17 +206,17 @@ async function getCharacterInfoText(characterName: string) {
                 characterData = '[안내] 데이터를 가져올 수 없습니다. (이유: 서비스 점검시간, 보관된 데이터가 없음)';
             } else {
                 const data = characterResult[0];
-                characterData = `[캐싱된 데이터] ${data.mokoko_sponsor === 1 ? '🌱 후원자 ':''}[${data.characterClassName}]\n${(data.characterTitle !== '' && data.characterTitle !== null) ? data.characterTitle + ' ' : ''}${data.characterName}\n\n` +
+                characterData = `[캐싱된 데이터] ${data.mokoko_sponsor === 1 ? '🌱 ':''}${data.professEngList === null ? '--' : `${data.professEngList}`} ${data.characterClassName}\n${(data.characterTitle !== '' && data.characterTitle !== null) ? data.characterTitle + ' ' : ''}${data.characterName}\n\n` +
                             `[캐릭터 기본정보]\n` +
-                            `템/전/원      ${data.itemLevel}/${data.characterLevel}/${data.expeditionLevel}\n` +
-                            `서버/길드     ${data.serverName}/${(data.guildName !== '' && data.guildName !== null) ? data.guildName : '미가입'}\n` +
-                            `체력/공격력    ${data.statsHealthPoints}/${data.statsAttactPower}\n` +
-                            `스킬포인트     ${data.characterSkillPoint}/${data.characterSkillPoint_total}\n` +
-                            `${data.equipmentSet !== null ? `장비세트효과   ${data.equipmentSet}\n`:'\n'}` + 
-                            `${(data.elixrEffect !== '' && data.elixrEffect !== null) ? `엘릭서         ${data.elixrEffect}\n\n` : '\n'}` +
-                            `${(data.statsInfo !== '') ? '[특성정보]\n'+data.statsInfo + '\n\n' : ''}` +
-                            `${(data.engravingInfo !== '') ? '[각인정보]\n' + data.engravingInfo + '\n\n' : ''}` + 
-                            `${(data.cardEffectInfo !== '') ? '[카드세트효과]\n' + data.cardEffectInfo : ''}`;
+                            `템/전/원<9>${data.itemLevel}/${data.characterLevel}/${data.expeditionLevel}\n` +
+                            `서버/길드<7>${data.serverName}/${(data.guildName !== '' && data.guildName !== null) ? data.guildName : '미가입'}\n` +
+                            `체력/공격력<4>${data.statsHealthPoints}/${data.statsAttactPower}\n` +
+                            `스킬포인트<5>${data.characterSkillPoint}/${data.characterSkillPoint_total}\n` +
+                            `${data.equipmentSet !== null ? `장비세트효과<3>${data.equipmentSet}\n`:'\n'}` + 
+                            `${(data.elixrEffect !== '' && data.elixrEffect !== null) ? `엘릭서         ${data.elixrEffect}\n` : ''}` +
+                            `${(data.statsInfo !== '') ? '\n[특성정보]\n'+data.statsInfo + '\n' : ''}` +
+                            `${(data.engravingInfo !== '') ? '\n[각인정보]\n' + data.engravingInfo + '\n\n' : ''}` + 
+                            `${(data.cardEffectInfo !== '') ? '\n[카드세트효과]\n' + data.cardEffectInfo : ''}`;
             }
             return characterData;
         }
@@ -223,17 +231,17 @@ async function getCharacterInfoText(characterName: string) {
                 characterData = '[안내] 데이터를 가져올 수 없습니다. (이유: 서비스 점검시간, 보관된 데이터가 없음)';
             } else {
                 const data = res[0];
-                characterData = `[캐싱된 데이터] ${data.mokoko_sponsor === 1 ? '🌱 후원자 ':''}[${data.characterClassName}]\n${(data.characterTitle !== '' && data.characterTitle !== null) ? data.characterTitle + ' ' : ''}${data.characterName}\n\n` +
+                characterData = `[캐싱된 데이터] ${data.mokoko_sponsor === 1 ? '🌱 ':''}${data.professEngList === null ? '--' : `${data.professEngList}`} ${data.characterClassName}\n${(data.characterTitle !== '' && data.characterTitle !== null) ? data.characterTitle + ' ' : ''}${data.characterName}\n\n` +
                             `[캐릭터 기본정보]\n` +
-                            `템/전/원      ${data.itemLevel}/${data.characterLevel}/${data.expeditionLevel}\n` +
-                            `서버/길드     ${data.serverName}/${(data.guildName !== '' && data.guildName !== null) ? data.guildName : '미가입'}\n` +
-                            `체력/공격력    ${data.statsHealthPoints}/${data.statsAttactPower}\n` +
-                            `스킬포인트     ${data.characterSkillPoint}/${data.characterSkillPoint_total}\n` +
-                            `${data.equipmentSet !== null ? `장비세트효과   ${data.equipmentSet}\n`:'\n'}` + 
-                            `${(data.elixrEffect !== '' && data.elixrEffect !== null) ? `엘릭서         ${data.elixrEffect}\n\n` : '\n'}` +
-                            `${(data.statsInfo !== '') ? '[특성정보]\n'+data.statsInfo + '\n\n' : ''}` +
-                            `${(data.engravingInfo !== '') ? '[각인정보]\n' + data.engravingInfo + '\n\n' : ''}` + 
-                            `${(data.cardEffectInfo !== '') ? '[카드세트효과]\n' + data.cardEffectInfo : ''}`;
+                            `템/전/원<9>${data.itemLevel}/${data.characterLevel}/${data.expeditionLevel}\n` +
+                            `서버/길드<7>${data.serverName}/${(data.guildName !== '' && data.guildName !== null) ? data.guildName : '미가입'}\n` +
+                            `체력/공격력<4>${data.statsHealthPoints}/${data.statsAttactPower}\n` +
+                            `스킬포인트<5>${data.characterSkillPoint}/${data.characterSkillPoint_total}\n` +
+                            `${data.equipmentSet !== null ? `장비세트효과<3>${data.equipmentSet}\n`:''}` + 
+                            `${(data.elixrEffect !== '' && data.elixrEffect !== null) ? `엘릭서         ${data.elixrEffect}\n` : ''}` +
+                            `${(data.statsInfo !== '') ? '\n[특성정보]\n'+data.statsInfo + '\n' : ''}` +
+                            `${(data.engravingInfo !== '') ? '\n[각인정보]\n' + data.engravingInfo + '\n' : ''}` + 
+                            `${(data.cardEffectInfo !== '') ? '\n[카드세트효과]\n' + data.cardEffectInfo : ''}`;
             }
         })
         .catch(e => {
@@ -263,15 +271,15 @@ const characterSearch = async (characterName: string) => {
 }
 
 // 캐릭터명 insert
-const characterInsert = async (info, data,engraving,statsText,cardEffect,elixirEff,equipmentSet) => {
+const characterInsert = async (info, data, engraving, professEngraving, statsText, cardEffect, elixirEff, equipmentSet) => {
     const conn = initDb();
     await connectDb(conn);
     try {
         const statsValue1 = data.Stats && data.Stats[6] ? data.Stats[6].Value : '';
         const statsValue2 = data.Stats && data.Stats[7] ? data.Stats[7].Value : '';
-        const insertColumns = '(characterName, characterClassName, characterTitle, serverName, characterLevel, itemLevel, expeditionLevel, characterSkillPoint, characterSkillPoint_total, guildName, statsHealthPoints, statsAttactPower, statsInfo, cardEffectInfo, engravingInfo, equipmentSet, elixrEffect, regdateTime, updateTime, characterImage)'
-        const insertQuery = 'INSERT INTO LOA_CHARACTER_DEFINFO ' + insertColumns + ' VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,NOW(),NOW(),?)';
-        const insertValues = [info.CharacterName, data.CharacterClassName, data.Title, info.ServerName, data.CharacterLevel, data.ItemAvgLevel, data.ExpeditionLevel, data.UsingSkillPoint, data.TotalSkillPoint, data.GuildName, statsValue1, statsValue2, statsText, cardEffect, engraving, equipmentSet, elixirEff, data.CharacterImage];
+        const insertColumns = '(characterName, characterClassName, characterTitle, serverName, characterLevel, itemLevel, expeditionLevel, characterSkillPoint, characterSkillPoint_total, guildName, statsHealthPoints, statsAttactPower, statsInfo, cardEffectInfo, professionalEng, engravingInfo, equipmentSet, elixrEffect, regdateTime, updateTime, characterImage)'
+        const insertQuery = 'INSERT INTO LOA_CHARACTER_DEFINFO ' + insertColumns + ' VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,NOW(),NOW(),?)';
+        const insertValues = [info.CharacterName, data.CharacterClassName, data.Title, info.ServerName, data.CharacterLevel, data.ItemAvgLevel, data.ExpeditionLevel, data.UsingSkillPoint, data.TotalSkillPoint, data.GuildName, statsValue1, statsValue2, statsText, cardEffect, professEngraving, engraving, equipmentSet, elixirEff, data.CharacterImage];
         const result = await queryDb(conn, insertQuery, insertValues);
         return result;
     } catch (error) {
@@ -283,15 +291,15 @@ const characterInsert = async (info, data,engraving,statsText,cardEffect,elixirE
 }
 
 // 캐릭터명 update
-const characterUpdate = async (info,data,engraving,statsText,cardEffect,elixirEff,equipmentSet) => {
+const characterUpdate = async (info,data,engraving,professEngraving,statsText,cardEffect,elixirEff,equipmentSet) => {
     const conn = initDb();
     await connectDb(conn);
     try {
         const statsValue1 = data.Stats && data.Stats[6] ? data.Stats[6].Value : '';
         const statsValue2 = data.Stats && data.Stats[7] ? data.Stats[7].Value : '';
         const updateQuery = 'UPDATE LOA_CHARACTER_DEFINFO SET characterTitle = ?, characterLevel = ?, itemLevel = ?, expeditionLevel = ?, characterSkillPoint = ?, characterSkillPoint_total = ?, guildName = ?, statsHealthPoints = ?,' +
-                            'statsAttactPower = ?, statsInfo = ?, cardEffectInfo = ?, engravingInfo = ?, updateTime = NOW(), characterImage = ?, elixrEffect = ?, equipmentSet = ?, serverName = ? WHERE characterName = ?';
-        const updateValues = [data.Title, data.CharacterLevel, data.ItemAvgLevel, data.ExpeditionLevel, data.UsingSkillPoint, data.TotalSkillPoint, data.GuildName, statsValue1, statsValue2, statsText, cardEffect, engraving, data.CharacterImage, elixirEff, equipmentSet, info.ServerName, data.CharacterName];
+                            'statsAttactPower = ?, statsInfo = ?, cardEffectInfo = ?, professionalEng = ?, engravingInfo = ?, updateTime = NOW(), characterImage = ?, elixrEffect = ?, equipmentSet = ?, serverName = ? WHERE characterName = ?';
+        const updateValues = [data.Title, data.CharacterLevel, data.ItemAvgLevel, data.ExpeditionLevel, data.UsingSkillPoint, data.TotalSkillPoint, data.GuildName, statsValue1, statsValue2, statsText, cardEffect, professEngraving, engraving, data.CharacterImage, elixirEff, equipmentSet, info.ServerName, data.CharacterName];
         const result = await queryDb(conn, updateQuery, updateValues);
         return result;
     } catch (error) {
