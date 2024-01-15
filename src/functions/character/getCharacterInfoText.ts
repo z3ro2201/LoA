@@ -52,6 +52,7 @@ async function getCharacterInfoText(characterName: string) {
                     let chowol = null;
                     let mokoko_sponsor = null;
                     let equipmentSet = null;
+                    let equipmentSetLevel = 0;
 
                     // 스탯정보
                     const statsArr = [];
@@ -106,10 +107,9 @@ async function getCharacterInfoText(characterName: string) {
                                         chowol = (tmp_grade !== null) ? `초월 ${tmp_grade[2]}` : element.value.Element_000.topStr.replace(global.regex.htmlEntity, '');
                                     }
                                 }
-                                if (element && element.value && element.type && element.type.indexOf('ItemPartBox') !== -1) {
-                                    if(element.value && element.value.Element_000 && element.value.Element_000.replace(global.regex.htmlEntity, '').includes("세트 효과 레벨")) {
-                                        equipmentSet = element.value.Element_001.replace(global.regex.htmlEntity, '').replace('Lv.', '');
-                                    }
+                                if (element && element.value && element.type && element.type.indexOf('SetItemGroup') !== -1) {
+                                    equipmentSet = `${element.value.firstMsg.replace(global.regex.htmlEntity, '')} (${element.value.itemData.Element_000.label.replace(global.regex.htmlEntity, '').replace(' ', '')}) `;
+                                    equipmentSetLevel++;
                                 }
                             }
                         }
@@ -201,12 +201,12 @@ async function getCharacterInfoText(characterName: string) {
                                     `서버/길드<7>${characterInfo.ServerName}/${(profile.GuildName !== '' && profile.GuildName !== null) ? profile.GuildName : '미가입'}\n` +
                                     `체력/공격력<4>${profile.Stats[6].Value}/${profile.Stats[7].Value}\n` +
                                     `스킬포인트<5>${profile.UsingSkillPoint}/${profile.TotalSkillPoint}\n` +
-                                    `${equipmentSet !== null ? `장비세트효과<3>${equipmentSet}\n`:''}` + 
+                                    `${equipmentSetLevel === 6 ? `장비세트효과<3>${equipmentSet}\n`:''}` + 
                                     `${(extraEffect !== '' && extraEffect !== null) ? `엘릭서<12>${extraEffect}\n` : ''}` +
                                     `${(statsData !== '') ? '\n[특성정보]\n'+ statsData + '\n' : ''}` +
                                     `${(engravingData !== '') ? '\n[각인정보]\n' + engravingData + '\n' : ''}` + 
-                                    `${(cardEffect !== '') ? '\n[카드세트효과]\n' + cardEffect : ''}` +
-                                    `${(collects !== '') ? '\n\n[내실]\n' + collects : ''}`;
+                                    `${(cardEffect !== '') ? '\n[카드세트효과]\n' + cardEffect + '\n' : ''}` +
+                                    `${(collects !== '') ? '\n[내실]\n' + collects : ''}`;
                     return characterData;
                 } else {
                     return '존재하지 않는 계정입니다.';

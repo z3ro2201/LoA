@@ -68,11 +68,9 @@ async function getEquipmentText(characterName: string) {
                             }
                             
                             if (element && element.value && element.type && element.type.indexOf('SetItemGroup') !== -1) {
-                                // if(element.value && element.value.Element_000 && element.value.Element_000.replace(global.regex.htmlEntity, '').includes("세트 효과 레벨")) {
-                                    equipmentSet = element.value.firstMsg.replace(global.regex.htmlEntity, '').replace('Lv.', '');
-                                    equipmentName = `${element.value.firstMsg.replace(global.regex.htmlEntity, '')} (${element.value.itemData.Element_000.label.replace(global.regex.htmlEntity, '')}) `;
-                                    equipmentSetLevel++;
-                                // }
+                                equipmentSet = element.value.firstMsg.replace(global.regex.htmlEntity, '').replace('Lv.', '');
+                                equipmentName = `${element.value.firstMsg.replace(global.regex.htmlEntity, '')} (${element.value.itemData.Element_000.label.replace(global.regex.htmlEntity, '').replace(' ', '')}) `;
+                                equipmentSetLevel++;
                             }
 
                             if(element && element.value && element.type && element.type.indexOf('IndentStringGroup') !== -1) {
