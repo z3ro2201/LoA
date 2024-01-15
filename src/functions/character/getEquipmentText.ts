@@ -27,12 +27,14 @@ async function getEquipmentText(characterName: string) {
                 let i: number = 0;
                 let qualityValue: number = 0;
                 let elixirTot = 0;
+                let equipmentSetLevel = 0;
                 for(let tmp of equipment) {
                     if(i > 5) break;
                     const toolTips = tmp.Tooltip.replace(global.regex.htmlEntity, '');
                     const quality = JSON.parse(toolTips).Element_001.value.qualityValue;
                     const cleanedToolTipString = tmp.Tooltip;
                     const tooltipObject = JSON.parse(cleanedToolTipString);
+                    let equipmentName = '';
                     let ella = null;
                     for(const tmpData in tooltipObject) {
                         const tmpElementElixir = [];
@@ -65,10 +67,12 @@ async function getEquipmentText(characterName: string) {
                                 }
                             }
                             
-                            if (element && element.value && element.type && element.type.indexOf('ItemPartBox') !== -1) {
-                                if(element.value && element.value.Element_000 && element.value.Element_000.replace(global.regex.htmlEntity, '').includes("세트 효과 레벨")) {
-                                    equipmentSet = element.value.Element_001.replace(global.regex.htmlEntity, '').replace('Lv.', '');
-                                }
+                            if (element && element.value && element.type && element.type.indexOf('SetItemGroup') !== -1) {
+                                // if(element.value && element.value.Element_000 && element.value.Element_000.replace(global.regex.htmlEntity, '').includes("세트 효과 레벨")) {
+                                    equipmentSet = element.value.firstMsg.replace(global.regex.htmlEntity, '').replace('Lv.', '');
+                                    equipmentName = `${element.value.firstMsg.replace(global.regex.htmlEntity, '')} (${element.value.itemData.Element_000.label.replace(global.regex.htmlEntity, '')}) `;
+                                    equipmentSetLevel++;
+                                // }
                             }
 
                             if(element && element.value && element.type && element.type.indexOf('IndentStringGroup') !== -1) {
@@ -84,11 +88,10 @@ async function getEquipmentText(characterName: string) {
                         }
                     }
 
-                    console.log(ella)
                     const equipmentSetName = tmp.Name.replace('+', ' ');
                     const lastIndex = equipmentSetName.lastIndexOf(' ');
                     const visiblePart = equipmentSetName.substring(0, lastIndex + 1); // 마지막 공백까지의 부분 추출
-                    engravingArr.push(`${tmp.Grade}${ella!==null?ella:''}${equipmentGrade} ${tmp.Type} +${visiblePart.replace(/[^0-9]/g, '')} : ${quality}`);
+                    engravingArr.push(`${tmp.Grade}${ella!==null?ella:''} ${tmp.Type} +${visiblePart.replace(/[^0-9]/g, '')} ${equipmentName}: ${quality}${(equipmentGrade !== '') ? `\nㄴ${equipmentGrade}`:''}`);
                     qualityValue += parseInt(quality);
                     i++;
                 }
@@ -98,7 +101,7 @@ async function getEquipmentText(characterName: string) {
                 // if(elixirTotalArr.length > 0) elixirDataArr.push(elixirTotalArr[elixirTotalArr.length - 1]);
                 if(elixirTot > 0) elixirDataArr.push(`지혜의 엘릭서 레벨 합: ${elixirTot}`);
                 const elixirMessage = (elixirDataArr.length > 0) ? `\n&nbsp;\n[엘릭서 확인은 전체보기]\n${elixirDataArr.join('\n')}` : '';
-                const characterData = `${engravingArr.join('\n')}\n${equipmentSet !== null ? `세트효과: ${equipmentSet}\n`:'\n'}${extraEffect !== null ? `엘릭서: ${extraEffect}\n` : '\n'}\n아이템레벨: ${profile.ItemMaxLevel}\n평균품질: ${(qualityValue/6).toFixed(3)}${elixirMessage}`;
+                const characterData = `❙ 아이템레벨: ${profile.ItemMaxLevel} (평균품질: ${(qualityValue/6).toFixed(3)})\n\n${engravingArr.join('\n')}\n${(equipmentSetLevel === 6) ? `\n❙ 세트효과: ${equipmentSet}\n`:'\n'}${extraEffect !== null ? `❙ 엘릭서: ${extraEffect}` : ''}\n${elixirMessage}`;
                 return characterData;
             } else {
                 return '없는 계정입니다.'

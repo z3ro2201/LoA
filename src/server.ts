@@ -8,7 +8,7 @@ import utilRouter from './routes/utilRoutes'
 import path from 'path';
 
 const app: Application = express();
-const port:Number = 5001;
+const port:Number = 5000;
 
 app.disable('x-powered-by');
 
