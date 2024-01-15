@@ -27,15 +27,33 @@ async function getCharacterGemText(characterName: string) {
                     const gems = response.data.ArmoryGem;
 
                     // 보석정보
+                    const gemsList = [];
                     const gemsTmpArr = [];
                     let i:number = 0;
                     for(const tmp of gems.Gems) {
+                        const matches = tmp.Name.replace(global.regex.htmlEntity, '').match(/(\d)\S* (\S*)의 보석/);
                         const skillsName = gems.Effects.filter((item) => tmp.Slot === item.GemSlot)[0];
-                        const arrName = `${tmp.Name.replace(global.regex.htmlEntity, '').replace(/(\d+)레벨 (.+)의 보석/, '$2')}`;
-                        const tmpData = `${tmp.Name.replace(global.regex.htmlEntity, '').replace(/(\d+)레벨 (.+)의 보석/, '$1 $2')} ${skillsName.Name}`;
-                        gemsTmpArr.push({level: tmp.Level, gemsName: arrName, data: tmpData});
+                        if (matches && matches.length === 3) {
+                          const level = matches[1];
+                          const type = matches[2];
+                          gemsTmpArr.push({level: level, gemsName: type, skills: skillsName.Name});
+                          
+                          //보석 목록에 추가할것
+                          const isMatched = gemsList.some(gem => gem.type.includes(type));
+                          if(!isMatched) {
+                            gemsList.push({type: type, count: 1});
+                          } else {
+                            const matchedGem = gemsList.find(gem => gem.type === type);
+                            if (matchedGem) {
+                                matchedGem.count = (matchedGem.count || 0) + 1;
+                            }
+                          }
+                        }
+
                         i++;
                     }
+
+                    console.log(gemsList)
 
                     const gemsArr = [];
 
@@ -47,17 +65,22 @@ async function getCharacterGemText(characterName: string) {
                     gemsTmpArr.forEach(item => {
                         const key = item.gemsName;
                         if(!gemsArr[key]) gemsArr[key] = [];
-                        gemsArr[key].push(item.data);
+                        gemsArr[key].push(`${item.level.toString().padStart(2, '0')} ${item.gemsName.length > 1 ? item.gemsName.slice(0,1) : item.gemsName} II ${item.skills}`);
                     })
 
                     // 서버 응답을 파싱하여 캐릭터 정보를 추출
-                    let characterData = '';
+                    const characterData = [];
                     for(const key in gemsArr) {
-                        characterData += `[${key}]\n`;
-                        gemsArr[key].forEach(data => characterData += `${data}\n`);
-                        characterData += '\n';
+                        characterData.push(`\n[${key}]`);
+                        gemsArr[key].forEach(data => characterData.push(`${data}`));
                     }
-                    return characterData;
+
+                    const tmpGemsList = [];
+                    gemsList.forEach(item => {
+                        tmpGemsList.push(`${item.type} (${item.count})`);
+                    });
+
+                    return `❙ 보석정보\n❙ 전체 (${i}) ${tmpGemsList.join(' ')}\n━━━━━━━━━━━━━━${characterData.join("\n")}`;
                 } else {
                     return '존재하지 않는 계정을 검색하셨습니다.';
                 }
