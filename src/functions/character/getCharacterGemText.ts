@@ -65,7 +65,7 @@ async function getCharacterGemText(characterName: string) {
                     gemsTmpArr.forEach(item => {
                         const key = item.gemsName;
                         if(!gemsArr[key]) gemsArr[key] = [];
-                        gemsArr[key].push(`${item.level.toString().padStart(2, '0')} ${item.gemsName.length > 1 ? item.gemsName.slice(0,1) : item.gemsName} II ${item.skills}`);
+                        gemsArr[key].push(`${item.level} ${item.gemsName.length > 1 ? item.gemsName.slice(0,1) : item.gemsName} II ${item.skills}`);
                     })
 
                     // 서버 응답을 파싱하여 캐릭터 정보를 추출
