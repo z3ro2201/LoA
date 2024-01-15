@@ -56,26 +56,35 @@ async function weeklySupplyGold(characterName: string) {
     const raidListData = await checkRaidList(characterListArr);
     if(raidListData !== 0) {
       let goldTotal = 0;
+      let goldTotal2 = 0;
       const characterRiceList = [];
       const characterRiceDetail = [];
       raidListData.forEach((characterRiceData) => {
         const tmpCharacterRiceData = [];
+        const tmpCharacterRiceData2 = [];
         const riceCategory = Object.values(characterRiceData.categoryRiceData);
         riceCategory.forEach((riceDataArray) => {
           const diffData = {};
+          const diffData2 = {};
           if (Array.isArray(riceDataArray)) {
             const diffName = riceDataArray[0].diff;
             riceDataArray.forEach((riceData) => {
+              console.log(riceData.riceWeek);
               if(riceData.riceWeek === 0) {
-              const { diff, riceGold } = riceData;
-              if (!diffData[diff]) {
-                diffData[diff] = [];
+                const { diff, riceGold } = riceData;
+                if (!diffData[diff]) {
+                  diffData[diff] = [];
+                }
+                diffData[diff].push(riceGold);
+              } else {
+                const { diff, riceGold } = riceData;
+                if (!diffData[diff]) {
+                  diffData2[diff] = [];
+                }
+                diffData2[diff].push(riceGold);
               }
-              diffData[diff].push(riceGold);
-            }
             });
             const keys = Object.keys(diffData);
-            console.log(diffData)
             keys.forEach((key) => {
               const values = diffData[key];
               const total = values.reduce((sum, value) => sum + value, 0);
@@ -84,22 +93,44 @@ async function weeklySupplyGold(characterName: string) {
               const riceName = riceDataArray[0].riceName;
               tmpCharacterRiceData.push({riceName: `${riceName}${diffName}${phase}`, riceDiff: diffName, riceGold: total});
             });
+
+            
+            const keys2 = Object.keys(diffData2);
+            keys2.forEach((key) => {
+              const values = diffData[key];
+              const total = values.reduce((sum, value) => sum + value, 0);
+              const diffName = key !== 'null' ? ` [${key}]` : '';
+              const phase = values.length > 1 ? ` ${values.length}관문` : '';
+              const riceName = riceDataArray[0].riceName;
+              tmpCharacterRiceData2.push({riceName: `${riceName}${diffName}${phase}`, riceDiff: diffName, riceGold: total});
+            });
           }
         });
         tmpCharacterRiceData.sort((a, b) => b.riceGold - a.riceGold);
         const riceGoldSortingData = tmpCharacterRiceData.slice(0, 3);
+        const riceGoldSortingData2 = tmpCharacterRiceData2;
         const tmpSortingData = [];
+        const tmpSortingData2 = [];
         let groupGoldTot = 0;
+        let groupGoldTot2 = 0;
         riceGoldSortingData.map((sortData) => {
           tmpSortingData.push(`${sortData.riceName}: ${sortData.riceGold}`)
           goldTotal += sortData.riceGold;
           groupGoldTot += sortData.riceGold;
         });
-        characterRiceList.push(`${characterRiceData.characterLevel} ${characterRiceData.characterClassName} ${characterRiceData.characterItemLevel} ${characterRiceData.characterName}: ${groupGoldTot}`);
-        characterRiceDetail.push(`${characterRiceData.characterLevel} ${characterRiceData.characterClassName} ${characterRiceData.characterItemLevel} ${characterRiceData.characterName} \n- ${tmpSortingData.join('\n- ')}\n ㄴ 수급가능: ${groupGoldTot}\n`);
+        riceGoldSortingData2.map((sortData) => {
+          if(sortData.week !== 0) {
+            tmpSortingData2.push(`${sortData.riceName}: ${sortData.riceGold}`)
+            goldTotal2 += sortData.riceGold;
+            groupGoldTot2 += sortData.riceGold;
+          }
+        });
+        const characterInfo = `${characterRiceData.characterItemLevel.toFixed(2)} ${(characterRiceData.characterClassName.length > 4) ? characterRiceData.characterClassName.slice(0,4) : characterRiceData.characterClassName} ${characterRiceData.characterName}`
+        characterRiceList.push(`${characterInfo}: ${groupGoldTot}`);
+        characterRiceDetail.push(`${characterInfo} \n- ${tmpSortingData.join('\n- ')}\n\n ㄴ 수급가능: ${groupGoldTot}\n`);
 
       })
-      return `[주급(BETA)] (* 버그제보, 2주단위레이드제외)\n\n${characterRiceList.join('\n')}\n\n수급가능골드: ${goldTotal}\n\n[상세 내용은 전체보기]\n~~\n${characterRiceDetail.join('\n')}\n* 2주에 한번 도는 레이드의 경우 제외처리 되었습니다.`;
+      return `❙ 주급정보\n\n${characterRiceList.join('\n')}\n\n❙ 주간합계: ${goldTotal}\n\n[상세 내용은 전체보기]\n~~\n${characterRiceDetail.join('\n')}\n* 2주에 한번 도는 레이드의 경우 제외처리 되었습니다.`;
     } else {
       return `요청하신 캐릭터는 주급(주간골드수급)데이터를 생성할 수 없습니다.`;
     }
