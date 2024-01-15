@@ -122,21 +122,35 @@ async function getCharacterInfoText(characterName: string) {
                     const guildName = (profile.GuildName === null) ? '미가입' : profile.GuildName;
                     let engravingText = '';
                     let statsText = (statsArr.length > 0) ? `[특성정보]\n${statsArr.join(', ')}` : '';
-                        
+                    
+                    const jobEffect = []; // 직업각인을 저장
                     const engravingEffect = [];
                     let professEngList = null;
                     if(engraving && engraving.Effects) {
                         for(let tmp of engraving.Effects) {
+                            let match = tmp.Name.match(/([가-힣\s]+)\s*Lv\.\s*(\d+)/);
                             engravingEffect.push(tmp.Name.replace(' Lv.', ''));
+                            let arrMatch = professionalEngraving.some(item => {return item.trim() === match[1].trim()});
+                            if (match && arrMatch) {
+                                let [_, name, level] = match;
+                                jobEffect.push({ "Name": name, "Level": parseInt(level) });
+                            }
                         }
+
                         if(engravingEffect.length > 0) {
                             engravingText += `${engravingEffect.join(', ')}\n`;
                         }
                     }
-                    if(engraving !== null && engraving.Engravings !== null) {
-                        for(let tmp of engraving.Engravings) {
-                            if(professionalEngraving.includes(tmp.Name)) professEngList = tmp.Name;
-                        }
+
+                    // Level이 가장 높은 요소 찾기
+                    const highestLevel = Math.max(...jobEffect.map(effect => effect.Level));
+
+                    // Level이 가장 높은 요소만 남기기
+                    const filteredJobEffect = jobEffect.filter(effect => effect.Level === highestLevel);
+
+
+                    if(engraving !== null && filteredJobEffect.length !== 0) {
+                        professEngList = filteredJobEffect[0].Name;
                     }
 
                     // 활성화된 세트효과
