@@ -31,7 +31,7 @@ async function getCharacterGemText(characterName: string) {
                     const gemsTmpArr = [];
                     let i:number = 0;
                     for(const tmp of gems.Gems) {
-                        const matches = tmp.Name.replace(global.regex.htmlEntity, '').match(/(\d)\S* (\S*)의 보석/);
+                        const matches = tmp.Name.replace(global.regex.htmlEntity, '').match(/(\d+)\S* (\S*)의 보석/);
                         const skillsName = gems.Effects.filter((item) => tmp.Slot === item.GemSlot)[0];
                         if (matches && matches.length === 3) {
                           const level = matches[1];
@@ -52,8 +52,6 @@ async function getCharacterGemText(characterName: string) {
 
                         i++;
                     }
-
-                    console.log(gemsList)
 
                     const gemsArr = [];
 
