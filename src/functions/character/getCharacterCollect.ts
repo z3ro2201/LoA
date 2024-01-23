@@ -98,8 +98,8 @@ async function getCharacterCollect(characterName: string) {
                         });
 
                         // 모코코 씨앗
-                        const seedsNowCount = Number($('#lui-tab1-2 .collection-list ul li span em span').text());
-                        const seedsMaxCount = Number($('#lui-tab1-2 .collection-list ul li span em span').text());
+                        const seedsNowCount = Number($('#lui-tab1-2 .collection-list p span.now-count').text().replace(/,/g, ''));
+                        const seedsMaxCount = Number($('#lui-tab1-2 .collection-list p span.max-count').text().replace(/,/g, ''));
                         const seedsPercent = (seedsNowCount / seedsMaxCount) * 100;
                         const seedsComplete = (seedsNowCount === seedsMaxCount) ? 1 : 0;
                         const seedsData = [];
@@ -214,7 +214,7 @@ async function getCharacterCollect(characterName: string) {
                         // const shortInfoArr = $('.lui-tab__menu').html().replace(/\n/, '').split('</a>').map(item => item.replace(global.regex.htmlEntity, ''));
                         const shortInfoArr = [];
                         percentCalc.map(item => {
-                            shortInfoArr.push(`[${Math.round(item.percent)}%] ${item.text} (${item.now}/${item.max})`);
+                            shortInfoArr.push(`[${Math.round(item.percent)}%] ${item.text} (${item.now.toLocaleString()}/${item.max.toLocaleString()})`);
                         })
                         shortInfoArr.pop();
 
