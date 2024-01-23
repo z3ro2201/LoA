@@ -69,7 +69,6 @@ async function weeklySupplyGold(characterName: string) {
           if (Array.isArray(riceDataArray)) {
             const diffName = riceDataArray[0].diff;
             riceDataArray.forEach((riceData) => {
-              console.log(riceData.riceWeek);
               if(riceData.riceWeek === 0) {
                 const { diff, riceGold } = riceData;
                 if (!diffData[diff]) {
@@ -78,7 +77,7 @@ async function weeklySupplyGold(characterName: string) {
                 diffData[diff].push(riceGold);
               } else {
                 const { diff, riceGold } = riceData;
-                if (!diffData[diff]) {
+                if (!diffData2[diff]) {
                   diffData2[diff] = [];
                 }
                 diffData2[diff].push(riceGold);
