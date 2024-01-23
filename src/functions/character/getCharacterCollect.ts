@@ -74,6 +74,7 @@ async function getCharacterCollect(characterName: string) {
                         // 거인의 심장
                         const heartNowCount = Number($('#lui-tab1-0 .collection-list p span.now-count').text());
                         const heartMaxCount = Number($('#lui-tab1-0 .collection-list p span.max-count').text());
+                        const heartPercent = (heartNowCount / heartMaxCount) * 100;
                         const heartComplete = (heartMaxCount === heartNowCount) ? 1 : 0;
                         const heartData = [];
                         $('#lui-tab1-0 .collection-list ul.list li').each((i, e) => {
@@ -86,6 +87,7 @@ async function getCharacterCollect(characterName: string) {
                         // 섬의 마음
                         const isLandNowCount = Number($('#lui-tab1-1 .collection-list p span.now-count').text());
                         const isLandMaxCount = Number($('#lui-tab1-1 .collection-list p span.max-count').text());
+                        const isLandPercent = (isLandNowCount / isLandMaxCount) * 100;
                         const isLandComplete = (isLandNowCount === isLandMaxCount) ? 1 : 0;
                         const isLandData = [];
                         $('#lui-tab1-1 .collection-list ul.list li').each((i, e) => {
@@ -98,6 +100,7 @@ async function getCharacterCollect(characterName: string) {
                         // 모코코 씨앗
                         const seedsNowCount = Number($('#lui-tab1-2 .collection-list ul li span em span').text());
                         const seedsMaxCount = Number($('#lui-tab1-2 .collection-list ul li span em span').text());
+                        const seedsPercent = (seedsNowCount / seedsMaxCount) * 100;
                         const seedsComplete = (seedsNowCount === seedsMaxCount) ? 1 : 0;
                         const seedsData = [];
                         $('#lui-tab1-2 .collection-list ul.list li').each((i, e) => {
@@ -108,6 +111,7 @@ async function getCharacterCollect(characterName: string) {
                         // 위대한 미술품
                         const artworkNowCount = Number($('#lui-tab1-3 .collection-list p span.now-count').text());
                         const artworkMaxCount = Number($('#lui-tab1-3 .collection-list p span.max-count').text());
+                        const artworkPercent = (artworkNowCount / artworkMaxCount) * 100;
                         const artworkComplete = (artworkNowCount === artworkMaxCount) ? 1 : 0;
                         const artworkData = [];
                         $('#lui-tab1-3 .collection-list ul.list li').each((i, e) => {
@@ -120,6 +124,7 @@ async function getCharacterCollect(characterName: string) {
                         // 항해 모험물
                         const voyageNowCount = Number($('#lui-tab1-4 .collection-list p span.now-count').text());
                         const voyageMaxCount = Number($('#lui-tab1-4 .collection-list p span.max-count').text());
+                        const voyagePercent = (voyageNowCount / voyageMaxCount) * 100;
                         const voyageComplete = (voyageNowCount === voyageMaxCount) ? 1 : 0;
                         const voyageData = [];
                         $('#lui-tab1-4 .collection-list ul.list li').each((i, e) => {
@@ -132,6 +137,7 @@ async function getCharacterCollect(characterName: string) {
                         // 세계수의 잎
                         const worldTreeNowCount = Number($('#lui-tab1-5 .collection-list p span.now-count').text());
                         const worldTreeMaxCount = Number($('#lui-tab1-5 .collection-list p span.max-count').text());
+                        const worldTreePercent = (worldTreeNowCount / worldTreeMaxCount) * 100;
                         const worldTreeComplete = (worldTreeNowCount === worldTreeMaxCount) ? 1 : 0;
                         const worldTreeData = [];
                         $('#lui-tab1-5 .collection-list ul.list li').each((i, e) => {
@@ -144,6 +150,7 @@ async function getCharacterCollect(characterName: string) {
                         // 이그네아의 징표
                         const ignareNowCount = Number($('#lui-tab1-6 .collection-list p span.now-count').text());
                         const ignareMaxCount = Number($('#lui-tab1-6 .collection-list p span.max-count').text());
+                        const ignarePercent = (ignareNowCount/ignareMaxCount) * 100;
                         const ignareComplete = (ignareNowCount === ignareMaxCount) ? 1 : 0;
                         const ignareData = [];
                         $('#lui-tab1-6 .collection-list ul.list li').each((i, e) => {
@@ -156,6 +163,7 @@ async function getCharacterCollect(characterName: string) {
                         // 오르페우스의 별
                         const starNowCount = Number($('#lui-tab1-7 .collection-list p span.now-count').text());
                         const starMaxCount = Number($('#lui-tab1-7 .collection-list p span.max-count').text());
+                        const starPercent = (starNowCount / starMaxCount) * 100;
                         const starComplete = (starNowCount === starMaxCount) ? 1 : 0;
                         const starData = [];
                         $('#lui-tab1-7 .collection-list ul.list li').each((i, e) => {
@@ -168,6 +176,7 @@ async function getCharacterCollect(characterName: string) {
                         // 기억의 오르골
                         const musicboxNowCount = Number($('#lui-tab1-8 .collection-list p span.now-count').text());
                         const musicboxMaxCount = Number($('#lui-tab1-8 .collection-list p span.max-count').text());
+                        const musicboxPercent = (musicboxNowCount/musicboxMaxCount) * 100;
                         const musicboxComplete = (musicboxNowCount === musicboxMaxCount) ? 1 : 0;
                         const musicboxData = [];
                         $('#lui-tab1-8 .collection-list ul.list li').each((i, e) => {
@@ -176,6 +185,19 @@ async function getCharacterCollect(characterName: string) {
                             if(hasCompleteClass) musicboxData.push('1');
                             else musicboxData.push('0');
                         });
+
+                        // 전체 백분율을 위해 재계산
+                        const percentCalc = [
+                            {text: '거인의 심장', percent: heartPercent, now: heartNowCount, max: heartMaxCount},
+                            {text: '섬의 마음', percent: isLandPercent, now: isLandNowCount, max: isLandMaxCount},
+                            {text: '모코코 씨앗', percent: seedsPercent, now: seedsNowCount, max: seedsMaxCount},
+                            {text: '위대한 미술품', percent: artworkPercent, now: artworkNowCount, max: artworkMaxCount},
+                            {text: '항해 모험물', percent: voyagePercent, now: voyageNowCount, max: voyageMaxCount},
+                            {text: '세계수의 잎', percent: worldTreePercent, now: worldTreeNowCount, max: worldTreeMaxCount},
+                            {text: '이그네아의 징표', percent: ignarePercent, now: ignareNowCount, max: ignareMaxCount},
+                            {text: '오르페우스의 별', percent: starPercent, now: starNowCount, max: starMaxCount},
+                            {text: '기억의 오르골', percent: musicboxPercent, now: musicboxNowCount, max: musicboxMaxCount}
+                        ];
 
                         // 각 배열을 일반 문자열화
                         const heart = heartData.join('|');
@@ -189,10 +211,14 @@ async function getCharacterCollect(characterName: string) {
                         const musicbox = musicboxData.join('|');
 
                         // 내실정보 간략
-                        const shortInfoArr = $('.lui-tab__menu').html().replace(/\n/, '').split('</a>').map(item => item.replace(global.regex.htmlEntity, ''));
+                        // const shortInfoArr = $('.lui-tab__menu').html().replace(/\n/, '').split('</a>').map(item => item.replace(global.regex.htmlEntity, ''));
+                        const shortInfoArr = [];
+                        percentCalc.map(item => {
+                            shortInfoArr.push(`[${Math.round(item.percent)}%] ${item.text} (${item.now}/${item.max})`);
+                        })
                         shortInfoArr.pop();
 
-                        const shortInfo = shortInfoArr.join(', ');
+                        const shortInfo = shortInfoArr.join('\n');
 
                         if(dataMode === 'insert') characterInsert(characterName, shortInfo, heart, heartComplete, island, isLandComplete, seeds, seedsComplete, artworks, artworkComplete, voyage, voyageComplete, worldtree, worldTreeComplete, ignare, ignareComplete, star, starComplete, musicbox, musicboxComplete);
                         else characterUpdate(characterName, shortInfo, heart, heartComplete, island, isLandComplete, seeds, seedsComplete, artworks, artworkComplete, voyage, voyageComplete, worldtree, worldTreeComplete, ignare, ignareComplete, star, starComplete, musicbox, musicboxComplete);
@@ -209,7 +235,7 @@ async function getCharacterCollect(characterName: string) {
 }
 
 async function getCharacterCollectText(characterName, content = null) {
-    const commandTitle = `${characterName}님의 ${content === null ? '내실' : content}정보\n`;
+    const commandTitle = `❙ ${characterName}님의 ${content === null ? '내실' : content}정보\n`;
     const apiStatus = await apiCheck();
     let apiData = null;
     const characterData = [];
