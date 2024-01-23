@@ -61,75 +61,86 @@ async function weeklySupplyGold(characterName: string) {
       const characterRiceDetail = [];
       raidListData.forEach((characterRiceData) => {
         const tmpCharacterRiceData = [];
-        const tmpCharacterRiceData2 = [];
         const riceCategory = Object.values(characterRiceData.categoryRiceData);
         riceCategory.forEach((riceDataArray) => {
           const diffData = {};
-          const diffData2 = {};
           if (Array.isArray(riceDataArray)) {
             const diffName = riceDataArray[0].diff;
             riceDataArray.forEach((riceData) => {
-              if(riceData.riceWeek === 0) {
-                const { diff, riceGold } = riceData;
+              if(riceData.riceWeek !== 2) {
+                const { diff, riceGold, phase } = riceData;
                 if (!diffData[diff]) {
                   diffData[diff] = [];
                 }
-                diffData[diff].push(riceGold);
+                diffData[diff].push({gold: riceGold, phase: phase, week: 0 });
               } else {
-                const { diff, riceGold } = riceData;
-                if (!diffData2[diff]) {
-                  diffData2[diff] = [];
+                const { diff, riceGold, phase } = riceData;
+                if (!diffData[diff]) {
+                  diffData[diff] = [];
                 }
-                diffData2[diff].push(riceGold);
+                diffData[diff].push({gold: riceGold, phase: phase, week: 2 });
               }
             });
-            const keys = Object.keys(diffData);
-            keys.forEach((key) => {
+            const data = Object.keys(diffData);
+            data.forEach((key) => {
               const values = diffData[key];
-              const total = values.reduce((sum, value) => sum + value, 0);
-              const diffName = key !== 'null' ? ` [${key}]` : '';
-              const phase = values.length > 1 ? ` 1~${values.length}관문` : '';
-              const riceName = riceDataArray[0].riceName;
-              tmpCharacterRiceData.push({riceName: `${riceName}${diffName}${phase}`, riceDiff: diffName, riceGold: total});
-            });
+              const week2Array = values.filter(item => item.week === 2);
+              const weekNot2Array = values.filter(item => item.week !== 2);
 
-            
-            const keys2 = Object.keys(diffData2);
-            keys2.forEach((key) => {
-              const values = diffData[key];
-              const total = values.reduce((sum, value) => sum + value, 0);
-              const diffName = key !== 'null' ? ` [${key}]` : '';
-              const phase = values.length > 1 ? ` ${values.length}관문` : '';
+              const diffName = key != 'null' ? ` [${key}]` : '';
               const riceName = riceDataArray[0].riceName;
-              tmpCharacterRiceData2.push({riceName: `${riceName}${diffName}${phase}`, riceDiff: diffName, riceGold: total});
+              const week2NotPhase = weekNot2Array.length > 1 ? ` 1~${weekNot2Array.length}관문` : '';
+              const week2NotGoldTotal = weekNot2Array.reduce((total, item) => total + item.gold, 0);
+              tmpCharacterRiceData.push({riceName: `${riceName}${diffName}${week2NotPhase}`, riceDiff: diffName, riceGold: week2NotGoldTotal, riceWeek: 0});
+              if(week2Array.length > 0) {
+                const week2TotalPhase = week2Array.length > 1 ? week2Array[0].phase + week2Array.length : week2Array[0].phase;
+                const week2Phase = `${week2TotalPhase.length > 1 ? ` ${week2Array[0].phase}~${week2TotalPhase}` : ` ${week2Array[0].phase}`}관문`;
+                const week2GoldTotal = week2Array.reduce((total, item) => total + item.gold, 0);
+                tmpCharacterRiceData.push({riceName: `(2주) ${riceName}${diffName}${week2Phase}`, riceDiff: diffName, riceGold: week2GoldTotal, riceWeek: 2});
+              }
             });
           }
         });
-        tmpCharacterRiceData.sort((a, b) => b.riceGold - a.riceGold);
-        const riceGoldSortingData = tmpCharacterRiceData.slice(0, 3);
-        const riceGoldSortingData2 = tmpCharacterRiceData2;
+        tmpCharacterRiceData.sort((a, b) => {
+          // b.riceGold - a.riceGold
+          // 먼저 riceGold 기준으로 내림차순 정렬
+          const goldComparison = b.riceGold - a.riceGold;
+
+          // riceWeek가 2인 경우는 항상 뒤로 보냄
+          const aIsWeek2 = a.riceWeek === 2;
+          const bIsWeek2 = b.riceWeek === 2;
+
+          // riceWeek가 2인 경우를 처리
+          if (aIsWeek2 && !bIsWeek2) {
+            return 1; // a를 뒤로 보냄
+          } else if (!aIsWeek2 && bIsWeek2) {
+            return -1; // b를 뒤로 보냄
+          }
+
+          // riceWeek가 2가 아닌 경우 먼저 riceGold로 정렬
+          return goldComparison;
+        });
+        const riceGoldSortingData = tmpCharacterRiceData;//.slice(0, 3);
         const tmpSortingData = [];
-        const tmpSortingData2 = [];
         let groupGoldTot = 0;
-        let groupGoldTot2 = 0;
+        let week2GoldTot = 0;
+        let weekNot2GoldTot = 0;
         riceGoldSortingData.map((sortData) => {
-          tmpSortingData.push(`${sortData.riceName}: ${sortData.riceGold}`)
-          goldTotal += sortData.riceGold;
-          groupGoldTot += sortData.riceGold;
-        });
-        riceGoldSortingData2.map((sortData) => {
-          if(sortData.week !== 0) {
-            tmpSortingData2.push(`${sortData.riceName}: ${sortData.riceGold}`)
+          tmpSortingData.push(`${sortData.riceName}: ${sortData.riceGold.toLocaleString()}`);
+          if(sortData.riceWeek !== 2) {
+            weekNot2GoldTot += sortData.riceGold;
+            goldTotal += sortData.riceGold;
+          } else {
+            week2GoldTot += sortData.riceGold;
             goldTotal2 += sortData.riceGold;
-            groupGoldTot2 += sortData.riceGold;
           }
         });
-        const characterInfo = `${characterRiceData.characterItemLevel.toFixed(2)} ${(characterRiceData.characterClassName.length > 4) ? characterRiceData.characterClassName.slice(0,4) : characterRiceData.characterClassName} ${characterRiceData.characterName}`
-        characterRiceList.push(`${characterInfo}: ${groupGoldTot}`);
-        characterRiceDetail.push(`${characterInfo} \n- ${tmpSortingData.join('\n- ')}\n\n ㄴ 수급가능: ${groupGoldTot}\n`);
-
+        const characterInfo = `${characterRiceData.characterItemLevel.toFixed(2)} ${(characterRiceData.characterClassName.length > 4) ? characterRiceData.characterClassName : characterRiceData.characterClassName} ${characterRiceData.characterName}`
+        characterRiceList.push(`${characterInfo}: ${weekNot2GoldTot.toLocaleString()}${week2GoldTot > 0 ? ` (${week2GoldTot.toLocaleString()})` :''}`);
+        characterRiceDetail.push(`${characterInfo} \n- ${tmpSortingData.join('\n- ')}\n ㄴ 수급가능: ${weekNot2GoldTot.toLocaleString()}${week2GoldTot > 0 ? ` (${week2GoldTot.toLocaleString()})` :''}\n`);
       })
-      return `❙ 주급정보\n\n${characterRiceList.join('\n')}\n\n❙ 주간합계: ${goldTotal}\n\n[상세 내용은 전체보기]\n~~\n${characterRiceDetail.join('\n')}\n* 2주에 한번 도는 레이드의 경우 제외처리 되었습니다.`;
+      console.log(goldTotal)
+      return `❙ 주급정보 (2주레이드는 괄호)\n\n${characterRiceList.join('\n')}\n\n❙ 주간합계: ${goldTotal.toLocaleString()}${goldTotal2 > 0 ? ` (${goldTotal2.toLocaleString()})` : ''}\n\n[상세 내용은 전체보기]\n~~\n${characterRiceDetail.join('\n')}`;
     } else {
       return `요청하신 캐릭터는 주급(주간골드수급)데이터를 생성할 수 없습니다.`;
     }
@@ -205,6 +216,7 @@ const checkRaidList = async (characterData) => {
         riceTotal += parseFloat(raidData.raid_rewardGold);
       }
     }
+
 
     // 상위 3개 던전만 출력하도록 바꿈
     const top3Categories = Object.keys(tmpCharacterRaidData.categoryRiceData).slice(0, 3);
