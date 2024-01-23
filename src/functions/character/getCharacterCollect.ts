@@ -213,12 +213,18 @@ async function getCharacterCollect(characterName: string) {
                         // 내실정보 간략
                         // const shortInfoArr = $('.lui-tab__menu').html().replace(/\n/, '').split('</a>').map(item => item.replace(global.regex.htmlEntity, ''));
                         const shortInfoArr = [];
+                        let collectLow = 0;
+                        let collectMax = 0;
                         percentCalc.map(item => {
                             shortInfoArr.push(`[${Math.round(item.percent)}%] ${item.text} (${item.now.toLocaleString()}/${item.max.toLocaleString()})`);
+                            collectLow += item.now; 
+                            collectMax += item.max;
                         })
                         shortInfoArr.pop();
 
-                        const shortInfo = shortInfoArr.join('\n');
+                        const collectAllPercent = (collectLow / collectMax) * 100;
+
+                        const shortInfo = `${shortInfoArr.join('\n')}\n\n• 전체 내실 진행율: ${collectAllPercent.toFixed(2)}%`;
 
                         if(dataMode === 'insert') characterInsert(characterName, shortInfo, heart, heartComplete, island, isLandComplete, seeds, seedsComplete, artworks, artworkComplete, voyage, voyageComplete, worldtree, worldTreeComplete, ignare, ignareComplete, star, starComplete, musicbox, musicboxComplete);
                         else characterUpdate(characterName, shortInfo, heart, heartComplete, island, isLandComplete, seeds, seedsComplete, artworks, artworkComplete, voyage, voyageComplete, worldtree, worldTreeComplete, ignare, ignareComplete, star, starComplete, musicbox, musicboxComplete);
@@ -235,7 +241,7 @@ async function getCharacterCollect(characterName: string) {
 }
 
 async function getCharacterCollectText(characterName, content = null) {
-    const commandTitle = `❙ ${characterName}님의 ${content === null ? '내실' : content}정보\n`;
+    const commandTitle = `❙ ${characterName}님의 ${content === null ? '내실' : content}정보\n\n`;
     const apiStatus = await apiCheck();
     let apiData = null;
     const characterData = [];
