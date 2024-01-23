@@ -220,7 +220,6 @@ async function getCharacterCollect(characterName: string) {
                             collectLow += item.now; 
                             collectMax += item.max;
                         })
-                        shortInfoArr.pop();
 
                         const collectAllPercent = (collectLow / collectMax) * 100;
 
