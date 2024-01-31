@@ -4,7 +4,7 @@ import { init as initDb, connect as connectDb, query as queryDb } from '../../co
 
 const command: Record<string, string>= {
     command: global.prefix + '보상(ㅂㅅ)',
-    help: '[오레하|아르고스|발탄노말|발탄하드|비아노말|비아하드|쿠크|노브|하브|노칸|하칸|노양겔|하양겔|상노탑|상하탑|카멘노말|카멘하드|(준비중: 에키드나(노말, 하드))]\n(재료를 보려면 뒤에 "더보기" 추가하세요. 초성가능. 발비, 발하, 상하탑, 상노탑 가능)',
+    help: '[오레하|아르고스|발탄노말|발탄하드|비아노말|비아하드|쿠크|노브|하브|노칸|하칸|노양겔|하양겔|상노탑|상하탑|노멘|하멘|에키드나노말|에키드나하드]\n(재료를 보려면 뒤에 "더보기" 추가하세요. 초성가능. 발비, 발하, 상하탑, 상노탑 가능)',
     description: '레이드 보상을 볼 수 있습니다.'
 }
 
@@ -163,12 +163,12 @@ const changeRaidName = (str: string) => {
         case "ㅅㅎ":
             return { name: '상아탑', diff: '하드' };
         case "카멘노말":
-        case "카노":
+        case "노멘":
         case "ㅋㅁㄴㅁ":
         case "ㅋㄴ":
             return { name: '카멘', diff: '노말' };
         case "카멘하드":
-        case "카하":
+        case "하멘":
         case "ㅋㅁㅎㄷ":
         case "ㅋㅎ":
             return { name: '카멘', diff: '하드' };
