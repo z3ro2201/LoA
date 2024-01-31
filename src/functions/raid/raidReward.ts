@@ -137,11 +137,13 @@ const changeRaidName = (str: string) => {
         case "ㅇㄹㅎㄷ":
             return { name: '일리아칸', diff: '하드' };
         case "카양겔노말":
+        case "노양겔":
         case "카양노말":
         case "ㅋㅇㄱㄴㅁ":
         case "ㅋㅇㄴㅁ":
             return { name: '카양겔', diff: '노말'};
         case "카양겔하드":
+        case "하양겔":
         case "카양하드":
         case "ㅋㅇㄱㅎㄷ":
         case "ㅋㅇㅎㄷ":
@@ -170,6 +172,16 @@ const changeRaidName = (str: string) => {
         case "ㅋㅁㅎㄷ":
         case "ㅋㅎ":
             return { name: '카멘', diff: '하드' };
+        case "에키드나노말":
+        case "에노":
+        case "ㅇㅋㄷㄴㄴㅁ":
+        case "ㅇㄴ":
+            return { name: '에키드나', diff: '노말' };
+        case "에키드나하드":
+        case "에하":
+        case "ㅇㅋㄷㄴㄴㅁ":
+        case "ㅇㅎ":
+            return { name: '에키드나', diff: '하드' };
         default: return 0;
     }
 }
