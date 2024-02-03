@@ -139,7 +139,6 @@ async function weeklySupplyGold(characterName: string) {
         characterRiceList.push(`${characterInfo}: ${weekNot2GoldTot.toLocaleString()}${week2GoldTot > 0 ? ` (${week2GoldTot.toLocaleString()})` :''}`);
         characterRiceDetail.push(`${characterInfo} \n- ${tmpSortingData.join('\n- ')}\n ㄴ 수급가능: ${weekNot2GoldTot.toLocaleString()}${week2GoldTot > 0 ? ` (${week2GoldTot.toLocaleString()})` :''}\n`);
       })
-      console.log(goldTotal)
       return `❙ 주급정보 (2주레이드는 괄호)\n\n${characterRiceList.join('\n')}\n\n❙ 주간합계: ${goldTotal.toLocaleString()}${goldTotal2 > 0 ? ` (${goldTotal2.toLocaleString()})` : ''}\n\n[상세 내용은 전체보기]\n~~\n${characterRiceDetail.join('\n')}`;
     } else {
       return `요청하신 캐릭터는 주급(주간골드수급)데이터를 생성할 수 없습니다.`;
