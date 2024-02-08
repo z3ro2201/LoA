@@ -1,6 +1,7 @@
 import express, { Router, Request, Response } from 'express';
 import {raidAuction, raidAuctionIncludePlayer} from '../functions/utils/raidAuction';
 import {getEmoticon} from '../functions/utils/loaEmoticon';
+import getAuctionGems from '../functions/utils/getAuctionGems';
 
 const utilRouter: Router = express.Router();
 
@@ -87,5 +88,16 @@ utilRouter.get('/emoticon/:loaconName', async (req: Request, res: Response) => {
     }
 });
 
+// 보석정보
+utilRouter.get('/gemstone/:gemstoneName', async (req: Request, res: Response) => {
+    const gemstoneName:string = req.params.gemstoneName;
+    try {
+        const gemstoneData = await getAuctionGems(gemstoneName);
+        res.status(200).json(gemstoneData);
+
+    } catch (error) {
+        console.error(error)
+    }
+});
 
 export default utilRouter;
