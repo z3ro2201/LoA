@@ -220,7 +220,7 @@ async function getCharacterInfoText(characterName: string) {
                     };
                 } else {
                     return {
-                        code: 200,
+                        code: 204,
                         message: '존재하지 않는 계정입니다.'
                     }
                 }
@@ -267,7 +267,7 @@ async function getCharacterInfoText(characterName: string) {
         const characterResult = await characterSearch(characterName)
         .then(res => {
             if(Array.isArray(res) && res.length === 0) {
-                code - 204;
+                code = 204;
                 characterData = '[안내] 데이터를 가져올 수 없습니다. (이유: 서비스 점검시간, 보관된 데이터가 없음)';
             } else {
                 const data = res[0];
