@@ -65,7 +65,7 @@ characterRouter.get('/:characterName/info', async (req: Request, res: Response) 
     try {
         const characterData = await getCharacterInfoText(characterName);
         res.status(200).send({
-            code: 200,
+            code: characterData.code,
             message: '정상적으로 처리되었습니다.',
             characterData: characterData
         })
@@ -73,6 +73,7 @@ characterRouter.get('/:characterName/info', async (req: Request, res: Response) 
         console.error(error);
         res.status(500).json({
             error: {
+                code: 500,
                 message: "처리과정에 문제가 발생하였습니다."
             }
         })

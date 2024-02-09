@@ -4,9 +4,9 @@ import {apiCheck} from '../utils/apiCheck'
 import { init as initDb, connect as connectDb, query as queryDb } from '../../config/mysqlConf'
 
 export const command: Record<string, string>= {
-    command: global.prefix + '~로아콘',
-    help: '로아콘 이름',
-    description: '로아콘을 보여드립니다.'
+    command: global.prefix + '경매보석',
+    help: '/경매보석 [보석종류]',
+    description: '경매장 보석정보를 보여드립니다.'
 }
 
 async function getAuctionGems(strItemName) {

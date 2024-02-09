@@ -19,6 +19,7 @@ async function getCharacterInfoText(characterName: string) {
     
     if(suspendAccountCheck === 204) {
         // 데이터를 리턴할 변수
+        let code = 0;
         let characterData = '';
         const apiStatus = await apiCheck();
         if(apiStatus === true) {
@@ -32,7 +33,10 @@ async function getCharacterInfoText(characterName: string) {
                     return response.find(characterData => characterData.CharacterName.includes(characterName));
                 })
                 .catch(e => {
-                    return '생성되지 않았거나 삭제된 캐릭터 입니다.';
+                    return {
+                        code: 204,
+                        message: '생성되지 않았거나 삭제된 캐릭터 입니다.'
+                    }
                 });
 
                 const response = await axios.get(apiUrl, {
@@ -45,7 +49,10 @@ async function getCharacterInfoText(characterName: string) {
                     const card = response.data.ArmoryCard;
                     const equipment = response.data.ArmoryEquipment;
                     if(equipment === null) {
-                        return '장비를 장착하지 않은 캐릭터는 정보를 가져올 수 없습니다.';
+                        return {
+                            code: 204,
+                            message: '장비를 장착하지 않은 캐릭터는 정보를 가져올 수 없습니다.'
+                        };
                     }
                     let elixirTot = 0;
                     let tmpExtraEffect = null;
@@ -207,19 +214,30 @@ async function getCharacterInfoText(characterName: string) {
                                     `${(engravingData !== '') ? '\n[각인정보]\n' + engravingData + '\n' : ''}` + 
                                     `${(cardEffect !== '') ? '\n[카드세트효과]\n' + cardEffect + '\n' : ''}` +
                                     `${(collects !== '') ? '\n[내실]\n' + collects : ''}`;
-                    return characterData;
+                    return {
+                        code: 200,
+                        message: characterData
+                    };
                 } else {
-                    return '존재하지 않는 계정입니다.';
+                    return {
+                        code: 200,
+                        message: '존재하지 않는 계정입니다.'
+                    }
                 }
             } catch (error) {
-                return '(일시적인 장애) 로스트아크API(전투정보실)에 문제가 있어 불러올 수 없습니다.'; // 오류를 호출자로 던짐
+                return {
+                    code: 500,
+                    message: '(일시적인 장애) 로스트아크API(전투정보실)에 문제가 있어 불러올 수 없습니다.'
+                }; // 오류를 호출자로 던짐
             }
         } else {
             const characterResult = await characterSearch(characterName)
             if(Array.isArray(characterResult) && characterResult.length === 0) {
+                code = 204;
                 characterData = '[안내] 데이터를 가져올 수 없습니다. (이유: 서비스 점검시간, 보관된 데이터가 없음)';
             } else {
                 const data = characterResult[0];
+                code = 200;
                 characterData = `[캐싱된 데이터] ${data.mokoko_sponsor === 1 ? '🌱 ':''}${data.professEngList === null ? '--' : `${data.professEngList}`} ${data.characterClassName}\n${(data.characterTitle !== '' && data.characterTitle !== null) ? data.characterTitle + ' ' : ''}${data.characterName}\n\n` +
                             `[캐릭터 기본정보]\n` +
                             `템/전/원<9>${data.itemLevel}/${data.characterLevel}/${data.expeditionLevel}\n` +
@@ -232,19 +250,28 @@ async function getCharacterInfoText(characterName: string) {
                             `${(data.engravingInfo !== '') ? '\n[각인정보]\n' + data.engravingInfo + '\n\n' : ''}` + 
                             `${(data.cardEffectInfo !== '') ? '\n[카드세트효과]\n' + data.cardEffectInfo : ''}`;
             }
-            return characterData;
+            return {
+                code: code,
+                message: characterData
+            };
         }
     } else if (suspendAccountCheck === 200) {
-        return '해당 계정은 정지된 계정입니다.';
+        return {
+            code: 204,
+            message: '해당 계정은 정지된 계정입니다.'
+        };
     } else if (suspendAccountCheck === 202) {
          // 로스트아크 점검중일때
         let characterData = '';
+        let code = 0;
         const characterResult = await characterSearch(characterName)
         .then(res => {
             if(Array.isArray(res) && res.length === 0) {
+                code - 204;
                 characterData = '[안내] 데이터를 가져올 수 없습니다. (이유: 서비스 점검시간, 보관된 데이터가 없음)';
             } else {
                 const data = res[0];
+                code = 200;
                 characterData = `[캐싱된 데이터] ${data.mokoko_sponsor === 1 ? '🌱 ':''}${data.professEngList === null ? '--' : `${data.professEngList}`} ${data.characterClassName}\n${(data.characterTitle !== '' && data.characterTitle !== null) ? data.characterTitle + ' ' : ''}${data.characterName}\n\n` +
                             `[캐릭터 기본정보]\n` +
                             `템/전/원<9>${data.itemLevel}/${data.characterLevel}/${data.expeditionLevel}\n` +
@@ -259,11 +286,18 @@ async function getCharacterInfoText(characterName: string) {
             }
         })
         .catch(e => {
+            code = 500;
             throw e;
         });
-        return characterData;
+        return {
+            code: code,
+            message: characterData
+        };
     } else {
-        return '해당 계정은 없는 계정입니다.';
+        return {
+            code: 204,
+            message: '해당 계정은 없는 계정입니다.'
+        };
     }
 }
 
