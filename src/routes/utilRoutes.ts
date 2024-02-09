@@ -2,6 +2,8 @@ import express, { Router, Request, Response } from 'express';
 import {raidAuction, raidAuctionIncludePlayer} from '../functions/utils/raidAuction';
 import {getEmoticon} from '../functions/utils/loaEmoticon';
 import getAuctionGems from '../functions/utils/getAuctionGems';
+import getAuctionGemsChartJsonData from '../functions/utils/getAuctionGemsChartJsonData';
+import auctionGemChart from '../functions/utils/auctionGemsChart';
 
 const utilRouter: Router = express.Router();
 
@@ -99,5 +101,22 @@ utilRouter.get('/gemstone/:gemstoneName', async (req: Request, res: Response) =>
         console.error(error)
     }
 });
+
+// 보석차트 JSON데이터
+utilRouter.get('/getGemstoneChartData/:gemstoneName', async (req: Request, res: Response)=>{
+    const gemstoneName:string = req.params.gemstoneName;
+    try{
+        const gemstoneData = await getAuctionGemsChartJsonData(gemstoneName);
+        res.status(200).json(gemstoneData)
+    }catch(error){
+        console.error(error)
+    }
+})
+
+utilRouter.get('/gemstoneChart/:gemstoneName', async (req: Request, res: Response)=>{
+    const gemstoneName:string = req.params.gemstoneName;
+    const html = auctionGemChart(gemstoneName);
+    res.status(200).send(html);
+})
 
 export default utilRouter;
