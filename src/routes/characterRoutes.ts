@@ -64,11 +64,7 @@ characterRouter.get('/:characterName/info', async (req: Request, res: Response) 
     const characterName = req.params.characterName;
     try {
         const characterData = await getCharacterInfoText(characterName);
-        res.status(200).send({
-            code: characterData.code,
-            message: '정상적으로 처리되었습니다.',
-            characterData: characterData
-        })
+        res.status(200).send(characterData)
     } catch (error) {
         console.error(error);
         res.status(500).json({
