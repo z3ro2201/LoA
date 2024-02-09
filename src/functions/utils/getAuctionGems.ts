@@ -81,7 +81,7 @@ async function getAuctionGems(strItemName) {
 
                 return {
                     code: 200,
-                    message: `${itemName} 최저가: ${lowAmount.toLocaleString('ko-KR')}\n전일대비: ${changeAmount.toLocaleString('ko-KR')} (${percentChange.toFixed(2)}%)`
+                    message: `${itemName} 최저가: ${lowAmount.toLocaleString('ko-KR')}\n전일대비: ${changeAmount.toLocaleString('ko-KR')} (${percentChange.toFixed(2)}%)\n\n시세차트: https://loaapi.2er0.io/util/gemstoneChart/${strItemName}`
                 };
             } else {
                 return {
