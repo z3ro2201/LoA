@@ -12,11 +12,47 @@ function auctionGemChart(strItemName) {
 <body>
     <script>
     const body = document.querySelector('body');
+    const url = location.href;
 
     axios.get('/util/getGemstoneChartData/${encodeURI(strItemName)}')
     .then(res => {
         const response = res.data;
         if(response.code === 200) {
+            const urlParts = url.split('/');
+            const lastPart = decodeURI(urlParts[urlParts.length - 1]);
+            const itemName = lastPart.substring(1);
+            const itemLevel = lastPart.substring(0,1);
+            
+            // 보석 데이터 모음
+            const gemsRow = document.createElement('div');
+            const gemsName = ['멸화', '홍염'];
+            const gemsSelector = document.createElement('select');
+            gemsName.forEach(item => {
+                const elementOption = document.createElement('option');
+                elementOption.text = item + '의 보석';
+                elementOption.value = item.substring(0,1);
+                if(item.substring(0,1) === itemName) elementOption.selected = true;
+                gemsSelector.append(elementOption);
+            })
+            gemsSelector.className = 'gemsName';
+
+
+            const gemsLevel = document.createElement('select');
+            for(let i = 1; i <= 10; i++) {
+                const elementOption = document.createElement('option');
+                elementOption.text = i + '레벨';
+                elementOption.value = i;
+                if(i === parseInt(itemLevel)) elementOption.selected = true;
+                gemsLevel.append(elementOption)
+            }
+            gemsLevel.className = 'gemsLevel';
+
+            const btnSubmit = document.createElement('button');
+            btnSubmit.innerText = '변경';
+            btnSubmit.addEventListener('click', changeUrl);
+
+
+            gemsRow.append(gemsSelector, gemsLevel, btnSubmit);
             // Chart.js를 사용하여 차트 생성
             const chartData = response.data;
 
@@ -28,7 +64,7 @@ function auctionGemChart(strItemName) {
             eleCanvas.id = 'gemstoneChart';
 
             // canvas 생성 후 body에 넣기
-            document.querySelector('body').append(eleTitle, eleCanvas);
+            document.querySelector('body').append(eleTitle, gemsRow, eleCanvas);
 
             const labels = [];
             chartData.forEach(item => {
@@ -72,6 +108,13 @@ function auctionGemChart(strItemName) {
         errMsg.innerText = '문제가 발생했어요';
         body.append(errMsg);
     })
+
+    function changeUrl() {
+        const gemName = document.querySelector('.gemsName option:checked');
+        const gemLevel = document.querySelector('.gemsLevel option:checked');
+        const strValue = gemLevel.value + gemName.value;
+        window.location.href = '/util/gemstoneChart/' + strValue;
+    }
     </script>
 </body>
 </html>`;
