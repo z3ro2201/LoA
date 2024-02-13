@@ -9,7 +9,7 @@ export const command: Record<string, string>= {
     description: '경매장 보석정보를 보여드립니다.'
 }
 
-async function getAuctionGemsChartJsonData(strItemName) {
+async function getAuctionGemsChartJsonData(strItemName, strSyncTime = '1h') {
     const apiStatus = await apiCheck();
     const apiUrl = `${global.apiUrl.lostark}auctions/items`;
 
@@ -68,7 +68,7 @@ async function getAuctionGemsChartJsonData(strItemName) {
             const lowAmount = res.Items[0].AuctionInfo.BuyPrice;
             const itemName  = res.Items[0].Name;
             
-            const gemstone = await gemstoneData(itemName);
+            const gemstone = await gemstoneData(itemName, strSyncTime);
 
             if(gemstone.length > 0) {
                 return {
@@ -92,12 +92,29 @@ async function getAuctionGemsChartJsonData(strItemName) {
 }
 
 // 실시간 차트정보
-const gemstoneData = async (gemstoneName) => {
+const gemstoneData = async (gemstoneName, gemstoneTime = '1h') => {
     const conn = initDb();
     await connectDb(conn);
     try {
-        const selectQuery = 'SELECT item_name, item_amount, DATE_FORMAT(item_registDateTime, \'%Y-%m-%d %H:00:00\') AS hourly_registDateTime, item_registDate FROM LOA_AUCTION_GEMS_PRICE WHERE item_name = ? AND item_registDate >= CURDATE() - INTERVAL 1 DAY AND item_registDate <= CURDATE() GROUP BY hourly_registDateTime';
-        const selectValues = [gemstoneName];
+        let selectQuery = '';
+        let selectValues = [];
+        if(gemstoneTime === '1h') {
+            selectQuery = 'SELECT item_name, item_amount, DATE_FORMAT(item_registDateTime, \'%Y-%m-%d %H:00:00\') AS hourly_registDateTime, item_registDate FROM LOA_AUCTION_GEMS_PRICE WHERE item_name = ? AND item_registDate >= CURDATE() - INTERVAL 1 DAY AND item_registDate <= CURDATE() GROUP BY hourly_registDateTime';
+            selectValues = [gemstoneName];
+        } else {
+            selectQuery = 'SELECT ' +
+                          'DATE(item_registDateTime) AS date, ' +
+                          'MIN(item_amount) AS lowest_price, ' +
+                          'MAX(item_amount) AS highest_price, ' +
+                          '(SELECT item_amount FROM LOA_AUCTION_GEMS_PRICE WHERE DATE(item_registDateTime) = DATE_FORMAT(item_registDateTime, \'%Y-%m-%d\') AND item_name = ? ORDER BY item_registDateTime ASC LIMIT 1) AS start_price, ' +
+                          '(SELECT item_amount FROM LOA_AUCTION_GEMS_PRICE WHERE DATE(item_registDateTime) = DATE_FORMAT(item_registDateTime, \'%Y-%m-%d\') AND item_name = ? ORDER BY item_registDateTime DESC LIMIT 1) AS end_price ' +
+                          'FROM LOA_AUCTION_GEMS_PRICE WHERE item_name = ? ' +
+                          'AND item_registDateTime >= CURDATE() - INTERVAL 1 MONTH ' +
+                          'AND item_registDateTime <= CURDATE() ' +
+                          'GROUP BY DATE(item_registDateTime) ' +
+                          'ORDER BY DATE(item_registDateTime) ASC';
+            selectValues = [gemstoneName, gemstoneName, gemstoneName];
+        }
         const result = await queryDb(conn, selectQuery, selectValues);
         return result;
     } catch (error) {

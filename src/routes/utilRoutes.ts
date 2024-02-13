@@ -113,6 +113,17 @@ utilRouter.get('/getGemstoneChartData/:gemstoneName', async (req: Request, res: 
     }
 })
 
+utilRouter.get('/getGemstoneChartData/:gemstoneName/:gemstoneSyncTime', async (req: Request, res: Response)=>{
+    const gemstoneName:string = req.params.gemstoneName;
+    const gemstoneTime:string = req.params.gemstoneSyncTime;
+    try{
+        const gemstoneData = await getAuctionGemsChartJsonData(gemstoneName, gemstoneTime);
+        res.status(200).json(gemstoneData)
+    }catch(error){
+        console.error(error)
+    }
+})
+
 utilRouter.get('/gemstoneChart/:gemstoneName', async (req: Request, res: Response)=>{
     const gemstoneName:string = req.params.gemstoneName;
     const html = auctionGemChart(gemstoneName);
