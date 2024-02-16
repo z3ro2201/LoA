@@ -17,6 +17,7 @@ async function getEquipmentText(characterName: string) {
             const equipment = data.ArmoryEquipment;
             let equipmentSet = null;
             let tmpExtraEffect = null;
+            const highLevelRefining = [];
 
             if (data?.ArmoryProfile) {
                 // 서버 응답을 파싱하여 캐릭터 정보를 추출
@@ -27,6 +28,7 @@ async function getEquipmentText(characterName: string) {
                 let i: number = 0;
                 let qualityValue: number = 0;
                 let elixirTot = 0;
+                let highLevel = null;
                 let equipmentSetLevel = 0;
                 for(let tmp of equipment) {
                     if(i > 5) break;
@@ -40,6 +42,15 @@ async function getEquipmentText(characterName: string) {
                         const tmpElementElixir = [];
                         if(tooltipObject.hasOwnProperty(tmpData)) {
                             const element = tooltipObject[tmpData];
+                            if (element && element.value && element.type && element.type.indexOf('SingleTextBox') !== -1) {
+                                const elementValue = element.value.replace(global.regex.htmlEntity, '');
+                                if(elementValue.includes("상급 재련")){
+                                    const regex = /\d+/g;
+                                    const numbers = elementValue.match(regex).map(Number);
+                                    highLevel = numbers.join('')
+                                    highLevelRefining.push(`[${tmp.Type}] ${numbers.join('')}단계`);
+                                }
+                            }
                             if (element && element.value && element.type && element.type.indexOf('IndentStringGroup') !== -1) {
                                 const indentContentStr = element.value.Element_000.contentStr;
                                 if (indentContentStr) {
@@ -74,7 +85,6 @@ async function getEquipmentText(characterName: string) {
                             }
 
                             if(element && element.value && element.type && element.type.indexOf('IndentStringGroup') !== -1) {
-                                console.log(element.value.Element_000.contentStr.Element_000.contentStr)
                                 if(element.value && element.value.Element_000 && element.value.Element_000.contentStr && element.value.Element_000.contentStr.Element_000.contentStr.replace(global.regex.htmlEntity, '').includes("엘라 부여 완료")){
                                     ella = ' [엘라] ';
                                 }
@@ -89,7 +99,7 @@ async function getEquipmentText(characterName: string) {
                     const equipmentSetName = tmp.Name.replace('+', ' ');
                     const lastIndex = equipmentSetName.lastIndexOf(' ');
                     const visiblePart = equipmentSetName.substring(0, lastIndex + 1); // 마지막 공백까지의 부분 추출
-                    engravingArr.push(`${tmp.Grade}${ella!==null?ella:''} ${tmp.Type} +${visiblePart.replace(/[^0-9]/g, '')} ${equipmentName}: ${quality}${(equipmentGrade !== '') ? `\nㄴ${equipmentGrade}`:''}`);
+                    engravingArr.push(`${tmp.Grade}${ella!==null?ella:''} ${tmp.Type} +${visiblePart.replace(/[^0-9]/g, '')}${highLevel !== null ? ` (+${highLevel})` : ''} ${equipmentName}: ${quality}${(equipmentGrade !== '') ? `\nㄴ${equipmentGrade}`:''}`);
                     qualityValue += parseInt(quality);
                     i++;
                 }
@@ -98,8 +108,8 @@ async function getEquipmentText(characterName: string) {
 
                 // if(elixirTotalArr.length > 0) elixirDataArr.push(elixirTotalArr[elixirTotalArr.length - 1]);
                 if(elixirTot > 0) elixirDataArr.push(`지혜의 엘릭서 레벨 합: ${elixirTot}`);
-                const elixirMessage = (elixirDataArr.length > 0) ? `\n&nbsp;\n[엘릭서 확인은 전체보기]\n${elixirDataArr.join('\n')}` : '';
-                const characterData = `❙ 아이템레벨: ${profile.ItemMaxLevel} (평균품질: ${(qualityValue/6).toFixed(3)})\n\n${engravingArr.join('\n')}\n${(equipmentSetLevel === 6) ? `\n❙ 세트효과: ${equipmentSet}\n`:'\n'}${extraEffect !== null ? `❙ 엘릭서: ${extraEffect}` : ''}\n${elixirMessage}`;
+                const elixirMessage = (elixirDataArr.length > 0) ? `\n&nbsp;\n[엘릭서, 상급재련 확인은 전체보기]\n${elixirDataArr.join('\n')}` : '';
+                const characterData = `❙ 아이템레벨: ${profile.ItemMaxLevel} (평균품질: ${(qualityValue/6).toFixed(3)})\n\n${engravingArr.join('\n')}\n${(equipmentSetLevel === 6) ? `\n❙ 세트효과: ${equipmentSet}\n`:'\n'}${extraEffect !== null ? `❙ 엘릭서: ${extraEffect}` : ''}\n${elixirMessage}${highLevelRefining.length > 0 ? `\n\n❙ 상급재련\n ${highLevelRefining.join('\n')}` : ''}`;
                 return characterData;
             } else {
                 return '없는 계정입니다.'
