@@ -1,13 +1,15 @@
 function auctionGemChart(strItemName) {
-    const html = `
-    <!DOCTYPE html>
+    const html = `<!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>로스트아크 차트</title>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/luxon@1.26.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.0.1/dist/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.0.0"></script>
+    <script src="https://www.chartjs.org/chartjs-chart-financial/chartjs-chart-financial.js"></script>
 </head>
 <body>
     <script>
@@ -53,6 +55,7 @@ function auctionGemChart(strItemName) {
 
 
             gemsRow.append(gemsSelector, gemsLevel, btnSubmit);
+
             // Chart.js를 사용하여 차트 생성
             const chartData = response.data;
 
@@ -64,7 +67,10 @@ function auctionGemChart(strItemName) {
             eleCanvas.id = 'gemstoneChart';
 
             // canvas 생성 후 body에 넣기
-            document.querySelector('body').append(eleTitle, gemsRow, eleCanvas);
+            const newRow1 = document.createElement('div');
+            newRow1.className = 'row';
+            newRow1.append(eleTitle, gemsRow, eleCanvas)
+            document.querySelector('body').append(newRow1);
 
             const labels = [];
             chartData.forEach(item => {
