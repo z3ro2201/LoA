@@ -4,6 +4,7 @@ import {getEmoticon} from '../functions/utils/loaEmoticon';
 import getAuctionGems from '../functions/utils/getAuctionGems';
 import getAuctionGemsChartJsonData from '../functions/utils/getAuctionGemsChartJsonData';
 import auctionGemChart from '../functions/utils/auctionGemsChart';
+import getAuctionEngravingData from '../functions/utils/getEngravingInfo'
 
 const utilRouter: Router = express.Router();
 
@@ -128,6 +129,13 @@ utilRouter.get('/gemstoneChart/:gemstoneName', async (req: Request, res: Respons
     const gemstoneName:string = req.params.gemstoneName;
     const html = auctionGemChart(gemstoneName);
     res.status(200).send(html);
+})
+
+// 각인정보
+utilRouter.get('/getEngravingData/:engravingName', async (req: Request, res: Response) => {
+    const engravingName:string = req.params.engravingName;
+    const engravingData = await getAuctionEngravingData(engravingName);
+    res.status(200).json(engravingData);
 })
 
 export default utilRouter;
