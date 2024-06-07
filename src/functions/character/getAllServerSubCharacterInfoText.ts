@@ -43,8 +43,9 @@ async function getAllServerSubCharacterInfoText(characterName: string) {
                 .then(res => {
                     if(Array.isArray(res) && res.length === 0) {
                         const characterDataArr = sortedCharacterListArr.map(character => character.textStr);
-                        const characterData = `[${characterServer[0].ServerName} 서버]\n${characterDataArr.join('\n')}\n\n총 ${characterDataArr.length}개의 캐릭터 보유`;
-                        return characterData;
+                        const characterData = characterDataArr//`[${characterServer[0].ServerName} 서버]\n${characterDataArr.join('\n')}\n\n총 ${characterDataArr.length}개의 캐릭터 보유`;
+                        console.log(characterDataArr)
+                        return characterDataArr;
                     }
                 });
 

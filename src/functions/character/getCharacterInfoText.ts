@@ -22,6 +22,7 @@ async function getCharacterInfoText(characterName: string) {
         let code = 0;
         let characterData = '';
         const apiStatus = await apiCheck();
+        
         if(apiStatus === false) {
             try {
                 const characterApi = `${global.apiUrl.lostark}characters/${characterName}/siblings`;
