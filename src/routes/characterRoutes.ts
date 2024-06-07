@@ -18,7 +18,7 @@ import getCharacterCollectText from '../functions/character/getCharacterCollect'
 import weeklySupplyGold from '../functions/character/getWeeklySupplyGold'
 import { getCharacterSuspendAccount } from '../functions/character/getCharacterSuspendAccount';
 import getCharacterEngravingText from '../functions/character/getCharacterEngravingText'
-import getAllServerSubCharacterInfoText from 'functions/character/getAllServerSubCharacterInfoText';
+import getAllServerSubCharacterInfoText from '../functions/character/getAllServerSubCharacterInfoText';
 
 const characterRouter: Router = express.Router();
 
