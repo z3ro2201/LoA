@@ -10,7 +10,7 @@ interface subCharacterList {
     itemLevel: number
 }
 
-async function getSubCharacterInfoText(characterName: string) {
+async function getAllServerSubCharacterInfoText(characterName: string) {
     const apiUrl = `${global.apiUrl.lostark}characters/${characterName}/siblings`;
     const suspendAccountCheck = await getCharacterSuspendAccount(characterName);
     if(suspendAccountCheck === 204) {
@@ -27,10 +27,7 @@ async function getSubCharacterInfoText(characterName: string) {
                 const characterServer = data.filter(characterData => characterData.CharacterName === characterName);
                 const characterListArr = [];
                 for(const tmp of data) {
-                    if(characterServer[0].ServerName === tmp.ServerName) {
-                        //const updateData = await getCharacterData(tmp.CharacterName);
-                        characterListArr.push({combatLevel: tmp.CharacterLevel, itemLevel: parseFloat(tmp.ItemAvgLevel.replace(',', '')), textStr: `${tmp.CharacterLevel.toString().padStart(2, '0')} ${tmp.CharacterClassName}  ${tmp.CharacterName}  (${tmp.ItemAvgLevel})`})
-                    }
+                    characterListArr.push({combatLevel: tmp.CharacterLevel, itemLevel: parseFloat(tmp.ItemAvgLevel.replace(',', '')), textStr: `${tmp.CharacterLevel.toString().padStart(2, '0')} ${tmp.CharacterClassName}  ${tmp.CharacterName}  (${tmp.ItemAvgLevel})`})
                 }
 
                 // 레벨 순 정렬
@@ -122,4 +119,4 @@ const characterUpdate = async (info,data,engraving,professEngraving,statsText,ca
     }
 }
 
-export default getSubCharacterInfoText;
+export default getAllServerSubCharacterInfoText;

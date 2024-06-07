@@ -22,7 +22,7 @@ async function getCharacterInfoText(characterName: string) {
         let code = 0;
         let characterData = '';
         const apiStatus = await apiCheck();
-        if(apiStatus === true) {
+        if(apiStatus === false) {
             try {
                 const characterApi = `${global.apiUrl.lostark}characters/${characterName}/siblings`;
                 const characterInfo = await axios.get(characterApi, {
@@ -238,7 +238,7 @@ async function getCharacterInfoText(characterName: string) {
             } else {
                 const data = characterResult[0];
                 code = 200;
-                characterData = `[캐싱된 데이터] ${data.mokoko_sponsor === 1 ? '🌱 ':''}${data.professEngList === null ? '--' : `${data.professEngList}`} ${data.characterClassName}\n${(data.characterTitle !== '' && data.characterTitle !== null) ? data.characterTitle + ' ' : ''}${data.characterName}\n\n` +
+                characterData = `[캐싱된 데이터] ${data.mokoko_sponsor === 1 ? '🌱 ':''}${data.professionalEng === null || data.professionalEng === undefined ? '--' : `${data.professionalEng}`} ${data.characterClassName}\n${(data.characterTitle !== '' && data.characterTitle !== null) ? data.characterTitle + ' ' : ''}${data.characterName}\n\n` +
                             `[캐릭터 기본정보]\n` +
                             `템/전/원<9>${data.itemLevel}/${data.characterLevel}/${data.expeditionLevel}\n` +
                             `서버/길드<7>${data.serverName}/${(data.guildName !== '' && data.guildName !== null) ? data.guildName : '미가입'}\n` +
