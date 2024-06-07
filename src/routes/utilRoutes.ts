@@ -5,6 +5,7 @@ import getAuctionGems from '../functions/utils/getAuctionGems';
 import getAuctionGemsChartJsonData from '../functions/utils/getAuctionGemsChartJsonData';
 import auctionGemChart from '../functions/utils/auctionGemsChart';
 import getAuctionEngravingData from '../functions/utils/getEngravingInfo'
+import {getPatchnews} from '../functions/utils/getPatchnews'
 
 const utilRouter: Router = express.Router();
 
@@ -136,6 +137,15 @@ utilRouter.get('/getEngravingData/:engravingName', async (req: Request, res: Res
     const engravingName:string = req.params.engravingName;
     const engravingData = await getAuctionEngravingData(engravingName);
     res.status(200).json(engravingData);
+})
+
+// 패치정보
+utilRouter.get('/getPatchnews', async (req: Request, res: Response) => {
+    const newsData = await getPatchnews();
+    res.status(200).json({
+        code: 200,
+        data: newsData[0]
+    })
 })
 
 export default utilRouter;
