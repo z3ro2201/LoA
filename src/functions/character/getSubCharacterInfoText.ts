@@ -22,7 +22,7 @@ async function getSubCharacterInfoText(characterName: string) {
                 });
 
                 const data = response.data;
-
+                
                 // 캐릭터목록
                 const characterServer = data.filter(characterData => characterData.CharacterName === characterName);
                 const characterListArr = [];
@@ -42,14 +42,13 @@ async function getSubCharacterInfoText(characterName: string) {
                 const sortedCharacterListArr = characterListArr.map(({textStr}) => ({textStr}));
 
                 // 정렬된 배열을 기반으로 문자열 생성 및 추가
-                const characterResult = await characterSearch(characterName)
-                .then(res => {
-                    if(Array.isArray(res) && res.length === 0) {
+                
+                    if(Array.isArray(data) && data.length === 0) {
+                        console.log(sortedCharacterListArr)
                         const characterDataArr = sortedCharacterListArr.map(character => character.textStr);
                         const characterData = `[${characterServer[0].ServerName} 서버]\n${characterDataArr.join('\n')}\n\n총 ${characterDataArr.length}개의 캐릭터 보유`;
                         return characterData;
                     }
-                });
 
 
             } catch (error) {
