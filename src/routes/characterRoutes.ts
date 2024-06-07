@@ -18,6 +18,7 @@ import getCharacterCollectText from '../functions/character/getCharacterCollect'
 import weeklySupplyGold from '../functions/character/getWeeklySupplyGold'
 import { getCharacterSuspendAccount } from '../functions/character/getCharacterSuspendAccount';
 import getCharacterEngravingText from '../functions/character/getCharacterEngravingText'
+import getAllServerSubCharacterInfoText from '../functions/character/getAllServerSubCharacterInfoText';
 
 const characterRouter: Router = express.Router();
 
@@ -81,6 +82,27 @@ characterRouter.get('/:characterName/subCharacterList', async (req: Request, res
     const characterName = req.params.characterName;
     try {
         const characterData = await getSubCharacterInfoText(characterName);
+        res.status(200).send({
+            code: 200,
+            message: '정상적으로 처리되었습니다.',
+            characterData: characterData
+        })
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            error: {
+                message: "처리과정에 문제가 발생하였습니다."
+            }
+        })
+    }
+});
+
+
+// 모든서버 부캐 정보 가져오기
+characterRouter.get('/:characterName/allServerSubCharacterList', async (req: Request, res: Response) => {
+    const characterName = req.params.characterName;
+    try {
+        const characterData = await getAllServerSubCharacterInfoText(characterName);
         res.status(200).send({
             code: 200,
             message: '정상적으로 처리되었습니다.',
