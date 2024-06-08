@@ -36,7 +36,7 @@ export const getPatchnews = async () => {
             todayKST.setUTCDate(todayKST.getUTCDate());
         } else {
             // 로요일이 아니면 이전주 로요일로
-            todayKST.setUTCDate(todayKST.getUTCDate() - dayOfWeekKST + 2);
+            todayKST.setUTCDate(todayKST.getUTCDate() - dayOfWeekKST + 3);
         }
         
         isWednesday = new Date(todayKST);
