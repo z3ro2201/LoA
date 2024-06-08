@@ -26,21 +26,22 @@ export const getPatchnews = async () => {
         const todayKST = new Date(todayUTC.getTime() + kstOffSet);
         
         // UTC 기준 요일 계산
-        const dayOfWeekKST = todayKST.getUTCDay();
+        const dayOfWeekKST = todayUTC.getUTCDay();
         let isWednesday;
         
-        if (dayOfWeekKST < 3) {
-            // 로요일이 아니면 이전주 로요일로
-            todayKST.setUTCDate(todayKST.getUTCDate() - dayOfWeekKST + 3);
-        } else {
+        console.log(todayKST)
+        todayKST.setUTCHours(0, 0, 0, 0);
+        if (dayOfWeekKST === 3) {
             // 로요일이거나, 로요일이 지나면
-            todayKST.setUTCDate(dayOfWeekKST === 3 ? todayKST.getUTCDate() : todayKST.getUTCDate() - dayOfWeekKST + 3);
+            todayKST.setUTCDate(todayKST.getUTCDate());
+        } else {
+            // 로요일이 아니면 이전주 로요일로
+            todayKST.setUTCDate(todayKST.getUTCDate() - dayOfWeekKST + 2);
         }
         
-        todayKST.setUTCHours(0, 0, 0, 0);
         isWednesday = new Date(todayKST);
-
-        const localPatchNewsResult = await patchNewsSearch(isWednesday.getTime());
+        
+        const localPatchNewsResult = await patchNewsSearch();
 
         if(localPatchNewsResult.length === 0) {
 
@@ -60,8 +61,8 @@ export const getPatchnews = async () => {
                     const dateParts = dateText.split('.');
                     const dates = dateParts[2].slice(0, 2);
                     const newsDate = new Date(Date.UTC(Number(dateParts[0]), parseInt(dateParts[1]) - 1, parseInt(dates), 0, 0, 0, 0));
-                    
-                    if (newsDate.getTime() === isWednesday.getTime()) {
+
+                    if (newsDate.getTime() === todayKST.getTime()) {
                         const closestAnchor = dateElement.closest('a'); // 가장 가까운 'a' 요소를 찾습니다
                         
                         if (closestAnchor.find('.list__title').text().includes('업데이트 내역 안내')) {
@@ -85,7 +86,7 @@ export const getPatchnews = async () => {
                                     articleContents.push(cleanedString);
                                 }
                             });
-
+                            
                             articles.push({
                                 title: articleTitle,
                                 content: articleContents.join("\n")
@@ -93,7 +94,7 @@ export const getPatchnews = async () => {
 
                             patchNewsInsert({
                                 title: articleTitle,
-                                time: newsDate.getTime(),
+                                time: newsDate,
                                 content: articleContents.join("\n")
                             })
                             
@@ -115,13 +116,12 @@ export const getPatchnews = async () => {
 
 
 // 패치 조회, 만약 없는경우 return 0
-const patchNewsSearch = async (patchUploadDate: string) => {
+const patchNewsSearch = async () => {
     const conn = initDb();
     await connectDb(conn);
     try {
-        const selectQuery = 'SELECT * FROM LOA_PATCHNEWS_INFO WHERE news_uploadDate = ?';
-        const selectValues = [patchUploadDate];
-        const result = await queryDb(conn, selectQuery, selectValues);
+        const selectQuery = 'SELECT * FROM LOA_PATCHNEWS_INFO WHERE STR_TO_DATE(news_uploadDate, \'%Y-%m-%d\') <= CURDATE()';
+        const result = await queryDb(conn, selectQuery);
         return result;
     } catch (error) {
         console.error('Query execution failed:', error);
