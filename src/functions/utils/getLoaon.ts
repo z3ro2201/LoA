@@ -4,13 +4,10 @@ import { init as initDb, connect as connectDb, query as queryDb } from '../../co
 
 const dateConvert = (stringDate:string, hypenType: string, times: boolean) => {
     const dates = new Date(stringDate);
-
-    const kstOffSet = 9 * 60 * 60 * 1000; // 9시간을 밀리초로 변환
-    const todayKST = new Date(dates.getTime() + kstOffSet);
-
-    const year = todayKST.getFullYear();
-    const month = (todayKST.getMonth() + 1).toString().padStart(2, '0');
-    const day = (todayKST.getDate()).toString().padStart(2, '0');
+    
+    const year = dates.getFullYear();
+    const month = (dates.getMonth() + 1).toString().padStart(2, '0');
+    const day = (dates.getDate()).toString().padStart(2, '0');
 
     const hour = dates.getHours().toString().padStart(2, '0');
     const minute = dates.getMinutes().toString().padStart(2, '0');
