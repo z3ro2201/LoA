@@ -63,9 +63,9 @@ export const getLOAONData = async () => {
             lostarkFestivalVideoData.forEach(item => {
                 const loaonTitle = `[${item.loaon_title}]`;
                 const loaonEventDate = dateConvert(item.loaon_startdatetime, '.', true);
-                const loaonEventTime = timeConvert(item.loaon_startdatetime);
+                const loaonLiveTime = timeConvert(item.loaon_livetime);
                 const nowTime = todayKST.getTime();
-                const loaonLiveUrl = (nowTime >= loaonEventTime) ? `\n라이브: ${item.loaon_liveurl}` : '';
+                const loaonLiveUrl = (nowTime >= loaonLiveTime) ? `\n라이브: ${item.loaon_liveurl}` : '';
                 const loaonEventUrl = `\n이벤트정보: ${item.loaon_eventUrl}`;
                 loaonListArr.push(`[${loaonTitle}]\n${loaonEventDate}${loaonLiveUrl}${loaonEventUrl}`)
             })
