@@ -7,6 +7,7 @@ import auctionGemChart from '../functions/utils/auctionGemsChart';
 import getAuctionEngravingData from '../functions/utils/getEngravingInfo'
 import {getPatchnews} from '../functions/utils/getPatchnews'
 import {getEventCoupon} from '../functions/utils/getEventCoupon'
+import {getLOAONData} from '../functions/utils/getLoaon'
 
 const utilRouter: Router = express.Router();
 
@@ -155,6 +156,14 @@ utilRouter.get('/getEventCoupon', async (req: Request, res: Response) => {
     res.status(200).json({
         code: 200,
         data: couponData
+    })
+})
+// 로아온 정보
+utilRouter.get('/getLoaFesta', async (req: Request, res: Response) => {
+    const festaData = await getLOAONData();
+    res.status(200).json({
+        code: 200,
+        data: festaData
     })
 })
 
