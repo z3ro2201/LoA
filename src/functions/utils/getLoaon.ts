@@ -57,6 +57,7 @@ export const getLOAONData = async () => {
         const lostarkFestivalVideoData = await loaonSearch(convertDate);
 
         if(lostarkFestivalVideoData.length === 0) {
+            return '로아온 정보가 없습니다.'
         } else {
             const loaonListArr = [];
             lostarkFestivalVideoData.forEach(item => {
