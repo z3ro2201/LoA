@@ -6,6 +6,7 @@ import getAuctionGemsChartJsonData from '../functions/utils/getAuctionGemsChartJ
 import auctionGemChart from '../functions/utils/auctionGemsChart';
 import getAuctionEngravingData from '../functions/utils/getEngravingInfo'
 import {getPatchnews} from '../functions/utils/getPatchnews'
+import {getEventCoupon} from '../functions/utils/getEventCoupon'
 
 const utilRouter: Router = express.Router();
 
@@ -145,6 +146,15 @@ utilRouter.get('/getPatchnews', async (req: Request, res: Response) => {
     res.status(200).json({
         code: 200,
         data: newsData[0]
+    })
+})
+
+// 쿠폰정보
+utilRouter.get('/getEventCoupon', async (req: Request, res: Response) => {
+    const couponData = await getEventCoupon();
+    res.status(200).json({
+        code: 200,
+        data: couponData
     })
 })
 
