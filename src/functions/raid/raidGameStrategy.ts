@@ -38,7 +38,7 @@ export const raidGameStrategy = async (raidName : string) => {
                 console.log(item)
                 raidListArr.push(`${item.boss_phase !== '' && item.boss_phase !== null ? ` [${item.boss_phase}] `:''}${item.boss_url}`)
             })
-            return `[${bossname}]\n${raidListArr.join('\n')}`
+            return `[${bossname}] ${raidListArr.join('\n')}`
         }
     } catch (error) {
         console.error('Error fetching patch news:', error);
