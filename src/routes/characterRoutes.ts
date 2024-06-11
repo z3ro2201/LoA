@@ -62,7 +62,7 @@ characterRouter.get('/:characterName/info/json', async (req: Request, res: Respo
 });
 
 characterRouter.get('/:characterName/info', async (req: Request, res: Response) => {
-    const characterName = req.params.characterName;
+    const characterName = req.params.characterName === '소카치돈' ? '소고기카레치즈돈까스' : req.params.characterName;
     try {
         const characterData = await getCharacterInfoText(characterName);
         res.status(200).send(characterData)
