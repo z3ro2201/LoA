@@ -42,6 +42,7 @@ export const getPatchnews = async () => {
         isWednesday = new Date(todayKST);
         
         const localPatchNewsResult = await patchNewsSearch();
+        console.log(localPatchNewsResult.length)
 
         if(localPatchNewsResult.length === 0) {
 
@@ -51,7 +52,7 @@ export const getPatchnews = async () => {
             const $ = Cheerio.load(listHtmlResponse.data);
             const isNewsListDiv = $('div.list.list--default').length > 0;
             const newsListDiv = $('div.list.list--default').children();
-
+            
             for (let i = 0; i < newsListDiv.length; i++) {
                 const element = newsListDiv[i];
                 const dateElement = $(element).find('.list__date'); // list__date 요소를 찾습니다
@@ -62,6 +63,7 @@ export const getPatchnews = async () => {
                     const dates = dateParts[2].slice(0, 2);
                     const newsDate = new Date(Date.UTC(Number(dateParts[0]), parseInt(dateParts[1]) - 1, parseInt(dates), 0, 0, 0, 0));
 
+                    console.log(newsDate, dateText, dateParts, newsDate.getTime(), todayKST.getTime())
                     if (newsDate.getTime() === todayKST.getTime()) {
                         const closestAnchor = dateElement.closest('a'); // 가장 가까운 'a' 요소를 찾습니다
                         
@@ -120,7 +122,9 @@ const patchNewsSearch = async () => {
     const conn = initDb();
     await connectDb(conn);
     try {
-        const selectQuery = 'SELECT * FROM LOA_PATCHNEWS_INFO WHERE STR_TO_DATE(news_uploadDate, \'%Y-%m-%d\') <= CURDATE()';
+        // const selectQuery = 'SELECT * FROM LOA_PATCHNEWS_INFO WHERE STR_TO_DATE(news_uploadDate, \'%Y-%m-%d\') >= CURDATE()';
+        // const selectQuery = "SELECT * FROM LOA_PATCHNEWS_INFO WHERE STR_TO_DATE(news_uploadDate, '%Y-%m-%d') BETWEEN STR_TO_DATE(CASE WHEN DAYOFWEEK(NOW()) = 4 THEN DATE_SUB(NOW(), INTERVAL 7 DAY) ELSE DATE_SUB(DATE_ADD(NOW(), INTERVAL (3 - DAYOFWEEK(NOW())) DAY), INTERVAL 7 DAY) END, '%Y-%m-%d') AND STR_TO_DATE(CASE WHEN DAYOFWEEK(NOW()) = 4 THEN DATE_ADD(NOW(), INTERVAL 6 DAY) ELSE DATE_ADD(NOW(), INTERVAL (3 - DAYOFWEEK(NOW())) DAY) END, '%Y-%m-%d') ORDER BY news_uploadDate DESC LIMIT 0, 1";
+        const selectQuery = "SELECT * FROM LOA_PATCHNEWS_INFO WHERE STR_TO_DATE(news_uploadDate, '%Y-%m-%d') BETWEEN CASE WHEN DAYOFWEEK(NOW()) = 4 THEN STR_TO_DATE(DATE(NOW()), '%Y-%m-%d') ELSE STR_TO_DATE(DATE_SUB(NOW(), INTERVAL (DAYOFWEEK(NOW()) - 4) DAY), '%Y-%m-%d') END AND CASE WHEN DAYOFWEEK(NOW()) = 4 THEN STR_TO_DATE(DATE_ADD(NOW(), INTERVAL 6 DAY), '%Y-%m-%d') ELSE STR_TO_DATE(DATE_ADD(NOW(), INTERVAL (9 - DAYOFWEEK(NOW())) DAY), '%Y-%m-%d') END ORDER BY news_uploadDate DESC LIMIT 0, 1";
         const result = await queryDb(conn, selectQuery);
         return result;
     } catch (error) {
