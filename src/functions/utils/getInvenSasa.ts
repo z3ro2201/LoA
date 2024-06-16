@@ -18,7 +18,7 @@ export const getInvenSasa = async (characterName:string) => {
             });
 
             if($('div.no-result').length > 0) {
-                return '대상자가 없습니다.';
+                return '최근 1만 게시글 중 (제목/내용) 검색 결과가 없습니다.';
             }
             
             for (let i = 0; i < invenSasa.length; i++) {
