@@ -29,7 +29,7 @@ export const getInvenSasa = async (characterName:string) => {
                 invenSasaList.push(`${sasaUserTitle.text()}`)
             }
             
-            return `[${characterName} 유저 사사게 조회결과 (${invenSasaList.length}건)]\n -${invenSasaList.join('\n-')}\n\n${sasaUrl}`
+            return `** 주의: 인벤 게시물 조회이므로 관계되지 않은 캐릭터가 나올 수 있습니다.\n[${characterName} 유저 사사게 조회결과 (${invenSasaList.length}건)]\n -${invenSasaList.join('\n-')}\n\n${sasaUrl}\n `
 
     } catch (error) {
         console.error('Error fetching patch news:', error);
