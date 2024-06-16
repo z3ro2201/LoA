@@ -171,7 +171,7 @@ utilRouter.get('/getLoaFesta', async (req: Request, res: Response) => {
 
 // 사사게 정보
 utilRouter.get('/getInvenSasa/:characterName', async (req: Request, res: Response) => {
-    const characterName:string = req.params.characterName;
+    const characterName:string = req.params.characterName.trim();
     const invenData = await getInvenSasa(characterName);
     res.status(200).json({
         code: 200,
@@ -180,7 +180,7 @@ utilRouter.get('/getInvenSasa/:characterName', async (req: Request, res: Respons
 })
 
 utilRouter.get('/invenSasa/:characterName', async (req: Request, res: Response) => {
-    const characterName:string = req.params.characterName;
+    const characterName:string = req.params.characterName.trim();
     const invenBoardUrl:string = 'https://www.inven.co.kr/board/lostark/5355?query=list&p=1&sterm=&name=subjcont&keyword=';
     res.redirect(`${invenBoardUrl}${characterName}`)
 })
