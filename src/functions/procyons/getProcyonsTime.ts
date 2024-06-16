@@ -37,7 +37,11 @@ async function getProcyonsTime(procyonCategoryName: string) {
                 .filter((datetime) => {
                     return nowTimeStamp < datetime.getTime()
                 })
-                tempTimeTable.push({time: startTime[0], ContentsName: tmp.ContentsName, Location: tmp.Location});
+
+                if(startTime[0] !== undefined) {
+                    console.log(`time: ${startTime[0]}, ContentsName: ${tmp.ContentsName}, Location: ${tmp.Location}`)
+                    tempTimeTable.push({time: startTime[0], ContentsName: tmp.ContentsName, Location: tmp.Location});
+                }
             }
         }
         tempTimeTable.sort((a,b) => a.time.getTime() - b.time.getTime());
