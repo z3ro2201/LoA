@@ -8,6 +8,7 @@ import getAuctionEngravingData from '../functions/utils/getEngravingInfo'
 import {getPatchnews} from '../functions/utils/getPatchnews'
 import {getEventCoupon} from '../functions/utils/getEventCoupon'
 import {getLOAONData} from '../functions/utils/getLoaon'
+import { getInvenSasa } from '../functions/utils/getInvenSasa'
 
 const utilRouter: Router = express.Router();
 
@@ -158,6 +159,7 @@ utilRouter.get('/getEventCoupon', async (req: Request, res: Response) => {
         data: couponData
     })
 })
+
 // 로아온 정보
 utilRouter.get('/getLoaFesta', async (req: Request, res: Response) => {
     const festaData = await getLOAONData();
@@ -165,6 +167,22 @@ utilRouter.get('/getLoaFesta', async (req: Request, res: Response) => {
         code: 200,
         data: festaData
     })
+})
+
+// 사사게 정보
+utilRouter.get('/getInvenSasa/:characterName', async (req: Request, res: Response) => {
+    const characterName:string = req.params.characterName;
+    const invenData = await getInvenSasa(characterName);
+    res.status(200).json({
+        code: 200,
+        data: invenData
+    })
+})
+
+utilRouter.get('/invenSasa/:characterName', async (req: Request, res: Response) => {
+    const characterName:string = req.params.characterName;
+    const invenBoardUrl:string = 'https://www.inven.co.kr/board/lostark/5355?query=list&p=1&sterm=&name=subjcont&keyword=';
+    res.redirect(`${invenBoardUrl}${characterName}`)
 })
 
 export default utilRouter;
