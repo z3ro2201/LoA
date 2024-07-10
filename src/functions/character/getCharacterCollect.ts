@@ -366,8 +366,8 @@ const characterInsert = async (characterName, textdata, heartData, heartStu, isl
     try {
         const insertColumns = '(characterName, collect_text, collect_heartofgiant_count, collect_heartofgiant_complete, collect_island_count, collect_island_complete, collect_mokokoseeds_count, collect_mokokoseeds_complete, ' +
                               'collect_artwark_count, collect_artwork_complete, collect_voyageadventure_count, collect_voyageadventure_complete, collect_theworldtreeleaves_count, collect_theworldtreeleaves_complete, ' + 
-                              'collect_ignaismark_count, collect_ignaismark_complete, collect_orpheusstar_count, collect_orpheusstar_complete, collect_memorymusicbox_count, collect_memorymusicbox_complete, registDate, isSuspend, collect_crimsonnailsfate_count, collect_crimsonnailsfate_complete, isDelete, upDatetime)';
-        const insertQuery = 'INSERT INTO LOA_CHARACTER_COLLECT ' + insertColumns + ' VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,NOW(),0,0,NOW())';
+                              'collect_ignaismark_count, collect_ignaismark_complete, collect_orpheusstar_count, collect_orpheusstar_complete, collect_memorymusicbox_count, collect_memorymusicbox_complete, collect_crimsonnailsfate_count, collect_crimsonnailsfate_complete, registDate, isSuspend, isDelete, upDatetime)';
+        const insertQuery = 'INSERT INTO LOA_CHARACTER_COLLECT ' + insertColumns + ' VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,NOW(),0,0,NOW())';
         const insertValues = [characterName, textdata, heartData, heartStu, islandData, isLandStu, seedData, seedStu, artData, artStu, voyageData, voyageStu, treeData, treeStu, ignareData, ignareStu, starData, starStu, musicData, musicStu, crimsonmapData, crimsonmapStu];
         const result = await queryDb(conn, insertQuery, insertValues);
         return result;
