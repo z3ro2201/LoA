@@ -29,7 +29,7 @@ export const getCharacterSuspendAccount = async (characterName : string, mode: n
                 const notFoundCharacterMessage = (notFoundCharacterHtml && notFoundCharacterHtml.includes("캐릭터 정보가 없습니다")) ? 204 : ((notFoundCharacterHtml && notFoundCharacterHtml.includes("최신화된 캐릭터 정보")) ? 201 : 200);
                 console.log(notFoundCharacterMessage)
                 if(notFoundCharacterMessage === 201) {
-                    return { code: 201, message: '[SEASON 3] 최신화 된 정보가 필요합니다.'}
+                    return { code: 201, message: '[SEASON 3] 최신화 된 정보가 필요합니다. (사유: 시즌 3 패치 이후의 로그인 이력 없음, 전투정보실에서 불러 올 수 없음)\n' + lostarkHomeUrl }
                 }
                 else if(notFoundCharacterMessage === 204 && openapiAccountSta) { // 둘 다 있으니 정지된 계정으로 판단 (만약 정상계정이면 isDiv는 0이 되어야 함.)
                     await characterInsert(openapiAccountSta.ArmoryProfile);
