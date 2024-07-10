@@ -89,6 +89,7 @@ const changeRaidName = (str: string) => {
             return { name: '발탄', diff: '하드'};
         case "비아키스싱글":
         case "비아싱글":
+        case "비싱":
         case "싱노":
         case "ㅂㅇㅋㅅㅅㄱ":
         case "ㅂㅇㅅㄱ":
@@ -190,6 +191,7 @@ const changeRaidName = (str: string) => {
         case "상아탑싱글":
         case "싱노탑":
         case "싱노":
+        case "싱양겔":
         case "ㅅㅇㅌㅅㄱ":
         case "ㅆㄴㅌ":
         case "ㅆㄴ":
