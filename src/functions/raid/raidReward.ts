@@ -4,7 +4,7 @@ import { init as initDb, connect as connectDb, query as queryDb } from '../../co
 
 const command: Record<string, string>= {
     command: global.prefix + '보상(ㄹㅇㄷㅂㅅ)',
-    help: '[오레하|아르고스|발탄노말|발탄하드|비아노말|비아하드|쿠크|노브|하브|노칸|하칸|노양겔|하양겔|상노탑|상하탑|노멘|하멘|에키드나노말|에키드나하드]\n(재료를 보려면 뒤에 "더보기" 추가하세요. 초성가능)',
+    help: '[오레하|아르고스|발싱(발탄:싱글[ㅂㅌㅅㄱ]|발탄노말|발탄하드|비싱(비아키스:싱글[ㅂㅇㅅㄱ])|비아노말|비아하드|쿠싱(쿠크세이튼:싱글[ㅋㅅ])|쿠크|싱브(아브렐슈드:싱글)|노브|하브|노칸|하칸|싱칸(일리아칸:싱글)|노양겔|하양겔|싱양겔(카양겔:싱글)|상노탑|상하탑|상싱탑(상아탑:싱글)|노멘|하멘|에키드나노말|에키드나하드]\n(재료를 보려면 뒤에 "더보기" 추가하세요. 초성가능)',
     description: '레이드 보상을 볼 수 있습니다.'
 }
 
@@ -33,7 +33,9 @@ export const raidName = async (str: string, goldOptions: string) => {
                     bonusGold += parseInt(reward.raid_bonus_amountGold);
             }
         }
-        return `${title}\n${rewardArr.join('\n')}\n획득골드: ${totalGold}G${bonusGold !== 0 && !isNaN(bonusGold) ? ` / 더보기: ${bonusGold}G` : ''}\n이미지로 보기: https://loaapi.2er0.io/assets/images/${rewards[0].imageUrl}`;
+        console.log(rewards)
+        const imageUrl = rewards[0]&& rewards[0].imageUrl ? '이미지로 보기: https://loaapi.2er0.io/assets/images/' + rewards[0].imageUrl : ''
+        return `${title}\n${rewardArr.join('\n')}\n획득골드: ${totalGold}G${bonusGold !== 0 && !isNaN(bonusGold) ? ` / 더보기: ${bonusGold}G` : ''}\n${imageUrl}`;
     } else {
         return `${command.command} ${command.help}`;
     }
@@ -46,8 +48,9 @@ const queryRaids = async (data) => {
     try {
         const raidValue1:string = data && data.name ? data.name : '';
         const raidValue2:string = data && data.diff ? data.diff : '';
-        const selectQuery = 'SELECT raid.*, img.raid_reward_imageUrl as imageUrl FROM loa.LOA_CONF_RAID raid INNER JOIN loa.LOA_CONF_RAIDIMAGE img ON raid.raid_category = img.raid_category AND (img.raid_difficulty = raid.raid_difficulty OR img.raid_difficulty IS NULL) WHERE raid.raid_name = ? AND raid.raid_ko_difficulty = ?';
+        const selectQuery = 'SELECT raid.*, img.raid_reward_imageUrl as imageUrl FROM loa.LOA_CONF_RAID raid LEFT JOIN loa.LOA_CONF_RAIDIMAGE img ON raid.raid_category = img.raid_category AND (img.raid_difficulty = raid.raid_difficulty OR img.raid_difficulty IS NULL) WHERE raid.raid_name = ? AND raid.raid_ko_difficulty = ?';
         const selectValues = [raidValue1, raidValue2];
+        console.log(selectQuery, selectValues)
         const result = await queryDb(conn, selectQuery, selectValues);
         return result;
     } catch (error) {
@@ -69,6 +72,11 @@ const changeRaidName = (str: string) => {
         case "ㅇㄺㅅ":
         case "ㅇㄹㄱㅅ":
             return { name: '아르고스' };
+        case "발탄싱글":
+        case "발싱":
+        case "ㅂㅌㅅㄱ":
+        case "ㅂㅅ":
+            return { name: '발탄', diff: '싱글'};
         case "발탄노말":
         case "발노":
         case "ㅂㅌㄴㅁ":
@@ -79,6 +87,13 @@ const changeRaidName = (str: string) => {
         case "ㅂㅌㅎㄷ":
         case "ㅂㅎ":
             return { name: '발탄', diff: '하드'};
+        case "비아키스싱글":
+        case "비아싱글":
+        case "싱노":
+        case "ㅂㅇㅋㅅㅅㄱ":
+        case "ㅂㅇㅅㄱ":
+        case "ㅂㅇㅅㄴ":
+            return { name: '비아키스', diff: '싱글' };
         case "비아키스노말":
         case "비아노말":
         case "비노":
@@ -93,11 +108,26 @@ const changeRaidName = (str: string) => {
         case "ㅂㅇㅎㄷ":
         case "ㅂㅎ":
             return { name: '비아키스', diff: '하드'};
+        case "쿠크세이튼싱글":
+        case "쿠크싱글":
+        case "쿠싱":
+        case "ㅋㅋㅅㅇㅌㅅㄱ":
+        case "ㅋㅋㅅㄱ":
+        case "ㅋㅅ":
+            return { name: '쿠크세이튼', diff: '싱글' };
         case "쿠크세이튼":
         case "쿠크":
         case "ㅋㅋㅅㅇㅌ":
         case "ㅋㅋ":
             return { name: '쿠크세이튼' };
+        case "아브렐슈드싱글":
+        case "아브싱글":
+        case "싱브":
+        case "ㅇㅂㄽㄷㅅㄱ":
+        case "ㅇㅂㄹㅅㄷㅅㄱ":
+        case "ㅇㅂㅅㄱ":
+        case "ㅅㅂ":
+            return { name: '아브렐슈드', diff: '싱글'};
         case "아브렐슈드노말":
         case "아브노말":
         case "노브":
@@ -117,6 +147,15 @@ const changeRaidName = (str: string) => {
         case "ㅎㅂㄹㅅㄷ":
         case "ㅎㅂ":
             return { name: '아브렐슈드', diff: '하드'};
+        case "일리아칸싱글":
+        case "싱노":
+        case "싱칸":
+        case "일리싱글":
+        case "ㅇㄹㅇㅋㅅㄱ":
+        case "ㅅㄴ":
+        case "ㅅㅋ":
+        case "ㅇㄹㅅㄱ":
+            return { name: '일리아칸', diff: '싱글' };
         case "일리아칸노말":
         case "일노":
         case "노칸":
@@ -148,6 +187,13 @@ const changeRaidName = (str: string) => {
         case "ㅋㅇㄱㅎㄷ":
         case "ㅋㅇㅎㄷ":
             return { name: '카양겔', diff: '하드'};
+        case "상아탑싱글":
+        case "싱노탑":
+        case "싱노":
+        case "ㅅㅇㅌㅅㄱ":
+        case "ㅆㄴㅌ":
+        case "ㅆㄴ":
+            return { name: '상아탑', diff: '싱글'};
         case "상아탑노말":
         case "상노탑":
         case "상노":
