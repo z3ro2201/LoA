@@ -192,7 +192,7 @@ async function getCharacterCollect(characterName: string) {
                         const crimsonMapsPercent = (crimsonMapsNowCount/crimsonMapsMaxCount) * 100;
                         const crimsonMapsComplete = (crimsonMapsNowCount === crimsonMapsMaxCount) ? 1 : 0;
                         const crimsonMapsData = [];
-                        $('#lui-tab1-8 .collection-list ul.list li').each((i, e) => {
+                        $('#lui-tab1-9 .collection-list ul.list li').each((i, e) => {
                             const hasCompleteClass = $(e).hasClass('complete');
 
                             if(hasCompleteClass) musicboxData.push('1');
@@ -240,8 +240,8 @@ async function getCharacterCollect(characterName: string) {
 
                         const shortInfo = `${shortInfoArr.join('\n')}\n\n• 전체 내실 진행율: ${collectAllPercent.toFixed(2)}%`;
 
-                        if(dataMode === 'insert') characterInsert(characterName, shortInfo, heart, heartComplete, island, isLandComplete, seeds, seedsComplete, artworks, artworkComplete, voyage, voyageComplete, worldtree, worldTreeComplete, ignare, ignareComplete, star, starComplete, musicbox, musicboxComplete, crimsonmap, crimsonmapComplete);
-                        else characterUpdate(characterName, shortInfo, heart, heartComplete, island, isLandComplete, seeds, seedsComplete, artworks, artworkComplete, voyage, voyageComplete, worldtree, worldTreeComplete, ignare, ignareComplete, star, starComplete, musicbox, musicboxComplete, crimsonmap, crimsonmapComplete);
+                        if(dataMode === 'insert') characterInsert(characterName, shortInfo, heart, heartComplete, island, isLandComplete, seeds, seedsComplete, artworks, artworkComplete, voyage, voyageComplete, worldtree, worldTreeComplete, ignare, ignareComplete, star, starComplete, musicbox, musicboxComplete, crimsonmap, crimsonMapsComplete);
+                        else characterUpdate(characterName, shortInfo, heart, heartComplete, island, isLandComplete, seeds, seedsComplete, artworks, artworkComplete, voyage, voyageComplete, worldtree, worldTreeComplete, ignare, ignareComplete, star, starComplete, musicbox, musicboxComplete, crimsonmap, crimsonMapsComplete);
 
                         return characterSearch(characterName);
                     } catch (error) {
@@ -261,6 +261,8 @@ async function getCharacterCollectText(characterName, content = null) {
     const characterData = [];
     let collectsTotal = 0;
     let collectsNow = 0;
+
+    
 
     if (apiStatus === true) {
         try {
@@ -318,12 +320,12 @@ async function getCharacterCollectText(characterName, content = null) {
             } else {
                 console.error(`Error: apiData is undefined or not an object.`);
             }
-        }
+        }console.log('durl')
 
         return `${commandTitle}\n[획득정보]\n${collectsNow}/${collectsTotal}\n---상세정보는 전체보기---\n\n[상세내용]\n${characterData.join('\n')}`;
     } else {
         const characterResult = await characterSearch(characterName);
-
+        console.log('durl')
         if (Array.isArray(characterResult) && characterResult.length === 0) {
             return '[안내] 데이터를 가져올 수 없습니다. (이유: 서비스 점검시간)';
         } else {
@@ -384,7 +386,7 @@ const characterUpdate = async (characterName, textdata, heartData, heartStu, isl
     try {
         const updateQuery = 'UPDATE LOA_CHARACTER_COLLECT SET collect_text = ?, collect_heartofgiant_count = ?, collect_heartofgiant_complete = ?, collect_island_count = ?, collect_island_complete = ?, collect_mokokoseeds_count = ?, collect_mokokoseeds_complete = ?,' +
                             'collect_artwark_count = ?, collect_artwork_complete = ?, collect_voyageadventure_count = ?, collect_voyageadventure_complete = ?, collect_theworldtreeleaves_count = ?, collect_theworldtreeleaves_complete = ?,' +
-                            'collect_ignaismark_count = ?, collect_ignaismark_complete = ?, collect_orpheusstar_count = ?, collect_orpheusstar_complete = ?, collect_memorymusicbox_count = ?, collect_memorymusicbox_complete = ?, collect_crimsonnailsfate_count = ?, collect_crimsonnailsfate_complete = ? updateTime = NOW() ' +
+                            'collect_ignaismark_count = ?, collect_ignaismark_complete = ?, collect_orpheusstar_count = ?, collect_orpheusstar_complete = ?, collect_memorymusicbox_count = ?, collect_memorymusicbox_complete = ?, collect_crimsonnailsfate_count = ?, collect_crimsonnailsfate_complete = ?, updateTime = NOW() ' +
                             'WHERE characterName = ?';
         const updateValues = [textdata, heartData, heartStu, islandData, isLandStu, seedData, seedStu, artData, artStu, voyageData, voyageStu, treeData, treeStu, ignareData, ignareStu, starData, starStu, musicData, musicStu, crimsonmapData, crimsonmapStu, characterName];
         const result = await queryDb(conn, updateQuery, updateValues);
@@ -456,7 +458,7 @@ function returnCollect(collectName) {
         case "해도":
         case "크림스네일":
         case "크림스네일의해도":
-            return "CRIMSONNAIL"
+            return "CRIMSONNAILSFATE"
         case 'returnData':
             return "returnData";
         default:

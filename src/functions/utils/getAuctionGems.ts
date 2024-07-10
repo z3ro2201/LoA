@@ -38,7 +38,27 @@ async function getAuctionGems(strItemName) {
         {shortName: '7홍', itemName: '7레벨 홍염'},
         {shortName: '8홍', itemName: '8레벨 홍염'},
         {shortName: '9홍', itemName: '9레벨 홍염'},
-        {shortName: '10홍', itemName: '10레벨 홍염'}
+        {shortName: '10홍', itemName: '10레벨 홍염'},
+        {shortName: '1겁', itemName: '1레벨 겁화'},
+        {shortName: '2겁', itemName: '2레벨 겁화'},
+        {shortName: '3겁', itemName: '3레벨 겁화'},
+        {shortName: '4겁', itemName: '4레벨 겁화'},
+        {shortName: '5겁', itemName: '5레벨 겁화'},
+        {shortName: '6겁', itemName: '6레벨 겁화'},
+        {shortName: '7겁', itemName: '7레벨 겁화'},
+        {shortName: '8겁', itemName: '8레벨 겁화'},
+        {shortName: '9겁', itemName: '9레벨 겁화'},
+        {shortName: '10겁', itemName: '10레벨 겁화'},
+        {shortName: '1작', itemName: '1레벨 작열'},
+        {shortName: '2작', itemName: '2레벨 작열'},
+        {shortName: '3작', itemName: '3레벨 작열'},
+        {shortName: '4작', itemName: '4레벨 작열'},
+        {shortName: '5작', itemName: '5레벨 작열'},
+        {shortName: '6작', itemName: '6레벨 작열'},
+        {shortName: '7작', itemName: '7레벨 작열'},
+        {shortName: '8작', itemName: '8레벨 작열'},
+        {shortName: '9작', itemName: '9레벨 작열'},
+        {shortName: '10작', itemName: '10레벨 작열'}
     ];
 
 
@@ -50,7 +70,7 @@ async function getAuctionGems(strItemName) {
         if(itemName === null) return {
             code: 204,
             error: {
-                message: '보석정보를 입력해주세요. (/경매보석 [1홍] [10멸])'
+                message: '보석정보를 입력해주세요. (/경매보석 [1홍] [10멸] [1겁] [1작])'
             }
         };
 

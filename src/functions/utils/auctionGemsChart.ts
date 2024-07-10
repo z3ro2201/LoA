@@ -27,7 +27,7 @@ function auctionGemChart(strItemName) {
             
             // 보석 데이터 모음
             const gemsRow = document.createElement('div');
-            const gemsName = ['멸화', '홍염'];
+            const gemsName = ['멸화', '홍염', '겁화', '작열'];
             const gemsSelector = document.createElement('select');
             gemsName.forEach(item => {
                 const elementOption = document.createElement('option');
