@@ -14,7 +14,7 @@ async function getAllServerSubCharacterInfoText(characterName: string) {
     const suspendAccountCheck = await getCharacterSuspendAccount(characterName);
     const apiStatus = await apiCheck();
     if(apiStatus === true) {
-        if(suspendAccountCheck === 204) {
+        if(suspendAccountCheck.code === 204) {
             try {
                     const response = await axios.get(apiUrl, {
                         headers: global.token.lostarkHeader
@@ -58,7 +58,7 @@ async function getAllServerSubCharacterInfoText(characterName: string) {
                 } catch (error) {
                     throw error; // 오류를 호출자로 던짐
                 }
-        } else if (suspendAccountCheck === 200) {
+        } else if (suspendAccountCheck.code === 200) {
             return '해당 계정은 정지된 계정입니다.';
         } else {
             return '해당 계정은 없는 계정입니다.';

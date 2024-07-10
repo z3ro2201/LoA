@@ -8,23 +8,43 @@ import getCharacterData from './getCharacterData';
 interface gems {
     level: number
 }
-
+interface TooltipElement {
+    type: string;
+    value: string | TooltipValue;
+  }
+  
+  interface TooltipValue {
+    bEquip?: number;
+    leftStr0?: string;
+    leftStr2?: string;
+    qualityValue?: number;
+    rightStr0?: string;
+    slotData?: Record<string, any>;
+    [key: string]: any;
+  }
+  
+  interface TooltipData {
+    [key: string]: TooltipElement;
+  }
 async function getCharacterGemText(characterName: string) {
     const apiUrl = `${global.apiUrl.lostark}armories/characters/${characterName}?filters=profiles%2Bgems`;
 
     const suspendAccountCheck = await getCharacterSuspendAccount(characterName);
     const apiStatus = await apiCheck();
     if(apiStatus === true) {
-        if(suspendAccountCheck === 204) {
+        if(suspendAccountCheck.code === 204) {
             const updateData = await getCharacterData(characterName);
             try {
                 const response = await axios.get(apiUrl, {
                     headers: global.token.lostarkHeader
                 });
+                
 
                 if(response.data !== null) {
-                    const profile = response.data.ArmoryProfile;
                     const gems = response.data.ArmoryGem;
+                    if(gems.Gems === null) {
+                        return '보석을 장착하지 않은것 같습니다.'
+                    }
 
                     // 보석정보
                     const gemsList = [];
@@ -32,11 +52,16 @@ async function getCharacterGemText(characterName: string) {
                     let i:number = 0;
                     for(const tmp of gems.Gems) {
                         const matches = tmp.Name.replace(global.regex.htmlEntity, '').match(/(\d+)\S* (\S*)의 보석/);
-                        const skillsName = gems.Effects.filter((item) => tmp.Slot === item.GemSlot)[0];
+                        const toolTip:TooltipData  =JSON.parse(tmp.Tooltip.replace(/\r\n/g, ''))
+                        const tooltipArray =  Object.values(toolTip)
+                        const filteredItems = tooltipArray.filter((item) => item.type === 'ItemPartBox');
+                        const skillsName = filteredItems[0].value['Element_001'].split('<BR>')[0].replace(global.regex.htmlEntity, '').replace(/\s*\[.*?\]/g, '');
+                        
+                        // const skillsName = tmp.filter((item) => tmp.Slot === item.GemSlot)[0];
                         if (matches && matches.length === 3) {
                           const level = matches[1];
                           const type = matches[2];
-                          gemsTmpArr.push({level: level, gemsName: type, skills: skillsName.Name});
+                          gemsTmpArr.push({level: level, gemsName: type, skills: skillsName});
                           
                           //보석 목록에 추가할것
                           const isMatched = gemsList.some(gem => gem.type.includes(type));
@@ -80,15 +105,16 @@ async function getCharacterGemText(characterName: string) {
 
                     return `❙ 보석정보\n❙ 전체 (${i}) ${tmpGemsList.join(' ')}\n━━━━━━━━━━━━━━${characterData.join("\n")}`;
                 } else {
-                    return '존재하지 않는 계정을 검색하셨습니다.';
+                    console.log(suspendAccountCheck)
+                    return suspendAccountCheck.message;
                 }
             } catch (error) {
                 throw error; // 오류를 호출자로 던짐
             }
-        } else if (suspendAccountCheck === 200) {
+        } else if (suspendAccountCheck.code === 200) {
             return '해당 계정은 정지된 계정입니다.';
         } else {
-            return '해당 계정은 없는 계정입니다.';
+            return suspendAccountCheck.message;
         }
     } else {
         return '[안내] 데이터를 가져올 수 없습니다. (이유: 서비스 점검시간)';

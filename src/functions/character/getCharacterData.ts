@@ -1,6 +1,8 @@
 import axios from 'axios'
 import global from '../../config/config'
 import { init as initDb, connect as connectDb, query as queryDb } from '../../config/mysqlConf'
+import Cheerio from 'cheerio'
+
 
 async function getCharacterData(characterName: string) {
     const apiUrl = `${global.apiUrl.lostark}armories/characters/${characterName}`;
@@ -8,6 +10,10 @@ async function getCharacterData(characterName: string) {
         const response = await axios.get(apiUrl, {
             headers: global.token.lostarkHeader
         });
+        
+        if(response.data === null) {
+            return '데이터가 없습니다'
+        }
         const profile = response.data.ArmoryProfile;
         const engraving = response.data.ArmoryEngraving;
         const card = response.data.ArmoryCard;

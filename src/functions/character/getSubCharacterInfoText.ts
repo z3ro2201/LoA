@@ -12,7 +12,7 @@ interface subCharacterList {
 async function getSubCharacterInfoText(characterName: string) {
     const apiUrl = `${global.apiUrl.lostark}characters/${characterName}/siblings`;
     const suspendAccountCheck = await getCharacterSuspendAccount(characterName);
-    if(suspendAccountCheck === 204) {
+    if(suspendAccountCheck.code === 204) {
 
         try {
             const response = await axios.get(apiUrl, {
@@ -46,7 +46,7 @@ async function getSubCharacterInfoText(characterName: string) {
         } catch (error) {
             throw error; // 오류를 호출자로 던짐
         }
-    } else if (suspendAccountCheck === 200) {
+    } else if (suspendAccountCheck.code === 200) {
         return '해당 계정은 정지된 계정입니다.';
     } else {
         return '해당 계정은 없는 계정입니다.';

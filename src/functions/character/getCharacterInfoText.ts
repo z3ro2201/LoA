@@ -17,7 +17,13 @@ async function getCharacterInfoText(characterName: string) {
     // 직업각인목록
     const professionalEngraving = ["광전사의 비기", "광기", "중력 숙련", "분노의 망치", "전투 태세", "고독한 기사", "심판자", "축복의 오라", "처단자", "포식자", "오의 강화", "초심", "충격 단련", "극의: 체술", "세맥타통", "역천지체", "절제", "절정", "일격필살", "오의난무", "강화 무기", "핸드거너", "화력 강화", "포격 강화", "두 번쨰 동료", "죽음의 습격", "아르데타인의 기술", "진화의 유산", "사냥의 시간", "피스메이커", "황후의 은총", "황제의 칙령", "넘치는 교감", "상급 소환사", "진실된 용맹", "절실한 구원", "환류", "점화", "완벽한 억제", "멈출 수 없는 충동", "잔재된 기운", "버스트", "달의 소리", "갈증", "그믐의 경계", "만월의 집행자", "회귀", "만개", "이슬비", "질풍노도"];
     
-    if(suspendAccountCheck === 204) {
+    if (suspendAccountCheck.code === 201) {
+        return {
+            code: 201,
+            message: suspendAccountCheck.message
+        }
+    }
+    else if(suspendAccountCheck.code === 204) {
         // 데이터를 리턴할 변수
         let code = 0;
         let characterData = '';
@@ -255,12 +261,12 @@ async function getCharacterInfoText(characterName: string) {
                 message: characterData
             };
         }
-    } else if (suspendAccountCheck === 200) {
+    } else if (suspendAccountCheck.code === 200) {
         return {
             code: 204,
             message: '해당 계정은 정지된 계정입니다.'
         };
-    } else if (suspendAccountCheck === 202) {
+    } else if (suspendAccountCheck.code === 202) {
          // 로스트아크 점검중일때
         let characterData = '';
         let code = 0;

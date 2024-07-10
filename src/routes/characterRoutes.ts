@@ -343,7 +343,7 @@ characterRouter.get('/:characterName/suspend', async (req: Request, res: Respons
         console.log(characterData)
         res.status(200).send({
             code: characterData,
-            message: (characterData === 200) ? '정지된 계정입니다.' : (characterData === 404) ? '생성되지 않았거나 삭제된 계정입니다.' : '정상 계정입니다.'
+            message: (characterData.code === 200) ? '정지된 계정입니다.' : (characterData.code === 404) ? '생성되지 않았거나 삭제된 계정입니다.' : '정상 계정입니다.'
         })
     } catch (error) {
         console.error(error);
