@@ -9,6 +9,7 @@ src/config/config.ts
 src/functions/check/getLostarkServerStatus.ts
 src/functions/utils/apiCheck.ts
 src/functions/utils/getExchangeRate.ts
+src/functions/utils/getKBO.ts
 
 .env
 .env.local

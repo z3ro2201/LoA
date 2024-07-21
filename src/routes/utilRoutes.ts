@@ -10,6 +10,7 @@ import {getEventCoupon} from '../functions/utils/getEventCoupon'
 import {getLOAONData} from '../functions/utils/getLoaon'
 import { getInvenSasa } from '../functions/utils/getInvenSasa'
 import { getExchangeRate } from  '../functions/utils/getExchangeRate'
+import { getKBORankData } from '../functions/utils/getKBO';
 
 const utilRouter: Router = express.Router();
 
@@ -197,5 +198,13 @@ utilRouter.get(['/exchange', '/exchange/:exchange', '/exchange/:exchange/:rate']
     })
 });
 
+// 코구
+utilRouter.get('/kborank', async (req: Request, res: Response) => {
+    const getRankData = await getKBORankData();
+    res.status(200).json({
+        code: 200,
+        data: getRankData
+    })
+})
 
 export default utilRouter;
