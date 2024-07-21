@@ -48,28 +48,36 @@ async function getProcyonsTime(procyonCategoryName: string) {
                         const islandSize = tmp.RewardItems;
                         let rewardItem = null;
                         for(let i = 0; i < islandSize.length; i++) {
-                            // console.log(tmp.RewardItems[i].Items)
-                            const normalizedName = tmp.RewardItems[i].Items.Name;
-                            const rewardItemSize = tmp.RewardItems[i].Items.length;
-                            for (let n = 0; n < rewardItemSize; n++) {
-                                const rewardItems = tmp.RewardItems[i].Items[n].Name;
+                            // 시작시간 변환
+                            const utcDate = new Date(startTime[0]);
+                            const kstOffset = 9 * 60 * 60 * 1000; 
+                            const timeCorrect = new Date(utcDate.getTime() + kstOffset)
+                            const isoKstDate = timeCorrect.toISOString().replace('Z', '').split('.')[0];
+                            
+                            const filteredItems = tmp.RewardItems[i].Items.filter(item =>
+                                Array.isArray(item.StartTimes) &&
+                                item.StartTimes.some(startTime => startTime === isoKstDate)
+                            );
 
-                                // 골드섬인지 확인
-                                if(rewardItems === '골드') {
+                            const isTodayIncluded = filteredItems.length > 0;
+                            if (isTodayIncluded) {
+                                const isGold = filteredItems.filter(item => item.Name === '골드');
+                                const isCard = filteredItems.filter(item => item.Name.includes('카드'));
+                                const isCoin = filteredItems.filter(item => item.Name.includes('주화'));
+
+                                if(isGold[0]) {
                                     rewardItem = '골드'
                                 }
-                                else if(rewardItems.includes('카드') || rewardItems === '영혼의 잎사귀') {
+                                else if(isCard[0]) {
                                     rewardItem = '카드'
                                 }
-                                else if(rewardItems.includes('주화')) {
+                                else if(isCoin[0]) {
                                     rewardItem = '주화'
                                 } else {
                                     rewardItem = '실링'
                                 }
-                                // else 
-                                // const isGold = rewardItem === '골드';
-                                // const isCard = rewardItem.includes('카드');
-                                // console.log(tmp.Location, `골드? :${isGold}`, `카드? : ${isCard}`);
+                                
+                                // console.log(isoKstDate, `골드: ${isGold[0]? isGold[0].Name:''}`, `카드: ${isCard[0]? isCard[0].Name:''}`, `주화: ${isCoin[0] ? isCoin[0].Name: ''}`);
                             }
                             // 위에 해당하지 않을 경우, 일반 카드 항목들을 검사합니다.
                             // if (rewardItemTypes.includes(normalizedName)) {
