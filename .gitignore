@@ -8,6 +8,7 @@ src/config/mysql.ts
 src/config/config.ts
 src/functions/check/getLostarkServerStatus.ts
 src/functions/utils/apiCheck.ts
+src/functions/utils/getExchangeRate.ts
 
 .env
 .env.local

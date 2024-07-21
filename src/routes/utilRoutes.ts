@@ -9,6 +9,7 @@ import {getPatchnews} from '../functions/utils/getPatchnews'
 import {getEventCoupon} from '../functions/utils/getEventCoupon'
 import {getLOAONData} from '../functions/utils/getLoaon'
 import { getInvenSasa } from '../functions/utils/getInvenSasa'
+import { getExchangeRate } from  '../functions/utils/getExchangeRate'
 
 const utilRouter: Router = express.Router();
 
@@ -184,5 +185,17 @@ utilRouter.get('/invenSasa/:characterName', async (req: Request, res: Response) 
     const invenBoardUrl:string = 'https://www.inven.co.kr/board/lostark/5355?query=list&p=1&sterm=&name=subjcont&keyword=';
     res.redirect(`${invenBoardUrl}${characterName}`)
 })
+
+// 환율시세
+utilRouter.get(['/exchange', '/exchange/:exchange', '/exchange/:exchange/:rate'], async (req: Request, res: Response) => {
+    const exchange: string | null = req.params.exchange || null;
+    const rate: number | null = req.params.rate ? parseInt(req.params.rate) : null;
+    const getData = await getExchangeRate(exchange, rate);
+    res.status(200).json({
+        code: 200,
+        data: getData
+    })
+});
+
 
 export default utilRouter;
