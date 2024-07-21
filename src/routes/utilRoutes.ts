@@ -11,6 +11,7 @@ import {getLOAONData} from '../functions/utils/getLoaon'
 import { getInvenSasa } from '../functions/utils/getInvenSasa'
 import { getExchangeRate } from  '../functions/utils/getExchangeRate'
 import { getKBORankData } from '../functions/utils/getKBO';
+import { getRiceData } from '../functions/utils/getRiceData'
 
 const utilRouter: Router = express.Router();
 
@@ -204,6 +205,15 @@ utilRouter.get('/kborank', async (req: Request, res: Response) => {
     res.status(200).json({
         code: 200,
         data: getRankData
+    })
+})
+
+// 쌀값
+utilRouter.get('/getRice', async (req: Request, res: Response) => {
+    const getRice = await getRiceData();
+    res.status(200).json({
+        code: 200,
+        data: getRice
     })
 })
 
