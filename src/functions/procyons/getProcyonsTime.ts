@@ -107,7 +107,7 @@ async function getProcyonsTime(procyonCategoryName: string) {
                     const location = (categoryName === "항해") ? item.Location.replace('[대항해] ', '') : item.Location;
 
                     if(categoryName === '모험 섬') {
-                        timeTable.push({ time: `${time.getHours().toString().padStart(2, '0')}:${time.getMinutes().toString().padStart(2, '0')}`, ContentsName: '[' + item.RewardItem + '섬]', Location: location})
+                        timeTable.push({ time: `${time.getHours().toString().padStart(2, '0')}:${time.getMinutes().toString().padStart(2, '0')}`, ContentsName: item.RewardItem, Location: location})
                     }
                     else {
                         timeTable.push({ time: `${time.getHours().toString().padStart(2, '0')}:${time.getMinutes().toString().padStart(2, '0')}`, ContentsName: contentsName, Location: location})
