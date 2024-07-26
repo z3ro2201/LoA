@@ -222,13 +222,17 @@ const changeRaidName = (str: string) => {
             return { name: '카멘', diff: '하드' };
         case "에키드나노말":
         case "에노":
+        case "노키":
         case "ㅇㅋㄷㄴㄴㅁ":
         case "ㅇㄴ":
+        case "ㄴㅋ":
             return { name: '에키드나', diff: '노말' };
-            case "에키드나하드":
-            case "에하":
-            case "ㅇㅋㄷㄴㄴㅁ":
-            case "ㅇㅎ":
+        case "에키드나하드":
+        case "에하":
+        case "하키":
+        case "ㅎㅋ":
+        case "ㅇㅋㄷㄴㄴㅁ":
+        case "ㅇㅎ":
                 return { name: '에키드나', diff: '하드' };
         case "에기르노말":
         case "에노":

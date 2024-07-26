@@ -1,7 +1,7 @@
 .DS_STORE
 
 node_modules/
-dist/
+dist/server.js
 
 src/server.ts
 src/config/mysql.ts
