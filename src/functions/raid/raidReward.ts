@@ -3,8 +3,8 @@ import global from '../../config/config'
 import { init as initDb, connect as connectDb, query as queryDb } from '../../config/mysqlConf'
 
 const command: Record<string, string>= {
-    command: global.prefix + '보상(ㄹㅇㄷㅂㅅ)',
-    help: '[오레하|아르고스|발싱(발탄:싱글[ㅂㅌㅅㄱ]|발탄노말|발탄하드|비싱(비아키스:싱글[ㅂㅇㅅㄱ])|비아노말|비아하드|쿠싱(쿠크세이튼:싱글[ㅋㅅ])|쿠크|싱브(아브렐슈드:싱글)|노브|하브|노칸|하칸|싱칸(일리아칸:싱글)|노양겔|하양겔|싱양겔(카양겔:싱글)|상노탑|상하탑|상싱탑(상아탑:싱글)|노멘|하멘|에키드나노말|에키드나하드|에기르노말|에기르하드]\n(재료를 보려면 뒤에 "더보기" 추가하세요. 초성가능)',
+    command: global.prefix + '보상(레이드보상)',
+    help: '[오레하|아르고스|발싱(발탄:싱글[ㅂㅌㅅㄱ]|발탄노말|발탄하드|비싱(비아키스:싱글[ㅂㅇㅅㄱ])|비아노말|비아하드|쿠싱(쿠크세이튼:싱글[ㅋㅅ])|쿠크|싱브(아브렐슈드:싱글)|노브|하브|노칸|하칸|싱칸(일리아칸:싱글)|노양겔|하양겔|싱양겔(카양겔:싱글)|상노탑|상하탑|상싱탑(상아탑:싱글)|노멘|하멘|에키드나노말|에키드나하드|에기르노말|에기르하드]',
     description: '레이드 보상을 볼 수 있습니다.'
 }
 
@@ -17,14 +17,14 @@ export const raidName = async (str: string, goldOptions: string) => {
         const rewardLength = rewards.length;
         let totalGold:number = 0;
         let bonusGold:number = 0;
-        if (parseInt(goldOptions) === 1) {
-            console.log(goldOptions);
-            for (const reward of rewards) {
-                const diffTitle = (rewardLength > 1) ? `[${reward.raid_phase}관문] 입장레벨: ${reward.raid_minItemLevel}${reward.raid_maxItemLevel ? `, 골드획득불가: ${reward.raid_maxItemLevel}\n` : '\n'}` : '';
-                rewardArr.push(`${diffTitle}획득가능 골드: ${reward.raid_rewardGold}G\n`);
-                totalGold += parseInt(reward.raid_rewardGold);
-            }
-        } else {
+        // if (parseInt(goldOptions) === 1) {
+        //     console.log(goldOptions);
+        //     for (const reward of rewards) {
+        //         const diffTitle = (rewardLength > 1) ? `[${reward.raid_phase}관문] 입장레벨: ${reward.raid_minItemLevel}${reward.raid_maxItemLevel ? `, 골드획득불가: ${reward.raid_maxItemLevel}\n` : '\n'}` : '';
+        //         rewardArr.push(`${diffTitle}획득가능 골드: ${reward.raid_rewardGold}G\n`);
+        //         totalGold += parseInt(reward.raid_rewardGold);
+        //     }
+        // } else {
             for (const reward of rewards) {
                 const diffTitle = (rewardLength > 1) ? `[${reward.raid_phase}관문] 입장레벨: ${reward.raid_minItemLevel}${reward.raid_maxItemLevel ? `, 골드획득불가: ${reward.raid_maxItemLevel}\n` : '\n'}` : '';
                 rewardArr.push(`${diffTitle}골드: ${reward.raid_rewardGold}G${reward.raid_rewardItem?`\n재료: ${reward.raid_rewardItem}`:''}${reward.raid_bonus_amount?`, 더보기: ${reward.raid_bonus_amount}`:''}${reward.raid_bonus_amountGold?` (필요: ${reward.raid_bonus_amountGold} 골드)`:''}\n`);
@@ -32,7 +32,7 @@ export const raidName = async (str: string, goldOptions: string) => {
                 if(reward.raid_bonus_amountGold !== undefined && !isNaN(reward.raid_bonus_amountGold))
                     bonusGold += parseInt(reward.raid_bonus_amountGold);
             }
-        }
+        // }
         console.log(rewards)
         const imageUrl = rewards[0]&& rewards[0].imageUrl ? '이미지로 보기: https://loaapi.2er0.io/assets/images/' + rewards[0].imageUrl : ''
         return `${title}\n${rewardArr.join('\n')}\n획득골드: ${totalGold}G${bonusGold !== 0 && !isNaN(bonusGold) ? ` / 더보기: ${bonusGold}G` : ''}\n${imageUrl}`;
