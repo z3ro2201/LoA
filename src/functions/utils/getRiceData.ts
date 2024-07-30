@@ -10,6 +10,9 @@ interface riceList {
 
 export const getRiceData = async () => {
 
+  const category = ['파괴', '수호', '돌파', '융화 재료', '파편', '에스더의 기운']
+  const result = {}
+
     try {
         const apiUrl = `${global.apiUrl.lostark}markets/items/`;
         const requests = riceListArr.map(itemId =>
@@ -19,14 +22,46 @@ export const getRiceData = async () => {
           );
       
           const responses = await Promise.all(requests);
-      
+          
           const list = responses.map(response => ({
             itemName: response.data[0].Name,
-            itemPrice: response.data[0].Stats[0].AvgPrice
+            itemPrice: response.data[0].Stats[0].AvgPrice,
+            itemTooltip: response.data[0].ToolTip
           }));
           
+          list.map(item => {
+            const jsonData = JSON.parse(item.itemTooltip)
+            const data = {
+              itemCategory: null,
+              itemTier: null
+            }
+            for (const key in jsonData) {
+              if (jsonData.hasOwnProperty(key)) {
+                  // Check if the current element has a 'type' property
+                  const element = jsonData[key];
+                  if (element.type === 'NameTagBox') {
+                    data.itemCategory = jsonData[key].value.replace(global.regex.htmlEntity, '');
+                  }
+                  else if (element.type === 'ItemTitle') {
+                    data.itemTier = jsonData[key].value.leftStr2.replace(global.regex.htmlEntity, '').replace(/[^0-9]/g, '');
+                  }
+              }
+            }
+            
+            const isMatch = category.find(cat => data.itemCategory.includes(cat) )
+            if(isMatch) {
+                // Ensure that the property in the result object is an array
+                if (!(isMatch in result) || !Array.isArray(result[isMatch])) {
+                  result[isMatch] = []; // Initialize as empty array if not already an array
+                }
+                
+                // Add the item to the corresponding category array
+                result[isMatch].push(`[${data.itemTier}티어] ${item.itemName} : ${item.itemPrice}`);
+            }
+          })
 
-          return `[쌀값]\n${list.map(item => `${item.itemName}: ${item.itemPrice}`).join('\n')}`;
+          console.log(result)
+          return `[쌀값]\n${Object.keys(result).map(key => `\n★${key}\n${result[key].join("\n")}`).join('\n')}`;
 
     }
     catch(e) {
