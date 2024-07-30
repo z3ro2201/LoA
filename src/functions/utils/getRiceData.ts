@@ -61,7 +61,7 @@ export const getRiceData = async () => {
           })
 
           console.log(result)
-          return `[쌀값]\n${Object.keys(result).map(key => `\n★${key}\n${result[key].join("\n")}`).join('\n')}`;
+          return `[쌀값]${Object.keys(result).map(key => `\n★${key}\n${result[key].join("\n")}`).join('\n')}`;
 
     }
     catch(e) {
