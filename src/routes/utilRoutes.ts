@@ -10,7 +10,7 @@ import {getEventCoupon} from '../functions/utils/getEventCoupon'
 import {getLOAONData} from '../functions/utils/getLoaon'
 import { getInvenSasa } from '../functions/utils/getInvenSasa'
 import { getExchangeRate } from  '../functions/utils/getExchangeRate'
-import { getKBORankData } from '../functions/utils/getKBO';
+import { getKBORankData, getKBOMatchScores } from '../functions/utils/getKBO';
 import { getRiceData } from '../functions/utils/getRiceData'
 
 const utilRouter: Router = express.Router();
@@ -205,6 +205,24 @@ utilRouter.get('/kborank', async (req: Request, res: Response) => {
     res.status(200).json({
         code: 200,
         data: getRankData
+    })
+})
+
+// 코구 경기정보
+utilRouter.get('/kboscore/:teamName', async (req: Request, res: Response) => {
+    const teamName: string | undefined = req.params.teamName;
+    if(!teamName) {
+        return res.status(400).json({
+            code: 400,
+            data: {
+                message: '잘못된 접근입니다.'
+            }
+        })
+    }
+    const getKBOMatchScoreData = await getKBOMatchScores(teamName);
+    res.status(200).json({
+        code: 200,
+        data: getKBOMatchScoreData
     })
 })
 
