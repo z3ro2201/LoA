@@ -10,7 +10,7 @@ import {getEventCoupon} from '../functions/utils/getEventCoupon'
 import {getLOAONData} from '../functions/utils/getLoaon'
 import { getInvenSasa } from '../functions/utils/getInvenSasa'
 import { getExchangeRate } from  '../functions/utils/getExchangeRate'
-import { getKBORankData, getKBOMatchScores } from '../functions/utils/getKBO';
+import { getKBORankData, getKBOMatchScores, getKBONowMatchScore } from '../functions/utils/getKBO';
 import { getRiceData } from '../functions/utils/getRiceData'
 
 const utilRouter: Router = express.Router();
@@ -220,6 +220,15 @@ utilRouter.get('/kboscore/:teamName', async (req: Request, res: Response) => {
         })
     }
     const getKBOMatchScoreData = await getKBOMatchScores(teamName);
+    res.status(200).json({
+        code: 200,
+        data: getKBOMatchScoreData
+    })
+})
+
+// 코구 현재(오늘) 경기스코어정보
+utilRouter.get('/kbonow', async (req: Request, res: Response) => {
+    const getKBOMatchScoreData = await getKBONowMatchScore();
     res.status(200).json({
         code: 200,
         data: getKBOMatchScoreData
