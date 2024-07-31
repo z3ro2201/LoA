@@ -246,6 +246,11 @@ const changeRaidName = (str: string) => {
         case "ㅇㄱㄹㅎㄷ":
         case "ㅇㅎ":
             return { name: '에기르', diff: '하드' };
+        case "베히모스":
+        case "베히":
+        case "ㅂㅎㅁㅅ":
+        case "ㅂㅎ":
+            return { name: '베히모스' };
         default: return 0;
     }
 }
