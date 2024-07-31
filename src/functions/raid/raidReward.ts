@@ -35,7 +35,7 @@ export const raidName = async (str: string, goldOptions: string) => {
         // }
         console.log(rewards)
         const imageUrl = rewards[0]&& rewards[0].imageUrl ? '이미지로 보기: https://loaapi.2er0.io/assets/images/' + rewards[0].imageUrl : ''
-        return `${title}\n${rewardArr.join('\n')}\n획득골드: ${totalGold}G${bonusGold !== 0 && !isNaN(bonusGold) ? `\n더보기: -${bonusGold}G` : ''}\n${imageUrl ? `\n${imageUrl}`}`;
+        return `${title}\n${rewardArr.join('\n')}\n획득골드: ${totalGold}G${bonusGold !== 0 && !isNaN(bonusGold) ? `\n더보기: -${bonusGold}G` : ''}\n${imageUrl ? `\n${imageUrl}`:''}`;
     } else {
         return `${command.command} ${command.help}`;
     }
