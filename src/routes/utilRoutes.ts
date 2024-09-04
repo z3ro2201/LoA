@@ -202,9 +202,10 @@ utilRouter.get(['/exchange', '/exchange/:exchange', '/exchange/:exchange/:rate']
 // 코구
 utilRouter.get('/kborank', async (req: Request, res: Response) => {
     const getRankData = await getKBORankData();
+    const { code, message } = getRankData
     res.status(200).json({
-        code: 200,
-        data: getRankData
+        code: code,
+        data: message
     })
 })
 
@@ -220,18 +221,20 @@ utilRouter.get('/kboscore/:teamName', async (req: Request, res: Response) => {
         })
     }
     const getKBOMatchScoreData = await getKBOMatchScores(teamName);
+    const { code, message } = getKBOMatchScoreData
     res.status(200).json({
-        code: 200,
-        data: getKBOMatchScoreData
+        code: code,
+        data: message
     })
 })
 
 // 코구 현재(오늘) 경기스코어정보
 utilRouter.get('/kbonow', async (req: Request, res: Response) => {
     const getKBOMatchScoreData = await getKBONowMatchScore();
+    const { code, message } = getKBOMatchScoreData
     res.status(200).json({
-        code: 200,
-        data: getKBOMatchScoreData
+        code: code,
+        data: message
     })
 })
 
